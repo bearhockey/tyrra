@@ -15,7 +15,7 @@ screen = pygame.display.set_mode(screen_size)
 avgTemp = 288
 tempStep = 0.29
 
-planet_map = Map(120, 80)
+planet_map = Map(600, 400)
 
 while 1:
     clock.tick(60)
@@ -24,6 +24,6 @@ while 1:
             sys.exit(0)
 
     screen.fill(black)
-    planet_map.draw(screen, zoom=4)
+    planet_map.draw(screen)
 
     pygame.display.flip()

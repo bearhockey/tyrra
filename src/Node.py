@@ -7,7 +7,14 @@ class Node(object):
         self.y = y
         self.elevation = elevation
 
+    def add_elevation(self, value):
+        self.elevation += value
+        if self.elevation > 1.0:
+            self.elevation = 1.0
+        elif self.elevation < 0.0:
+            self.elevation = 0.0
+
     def draw(self, screen, zoom=1):
-        height = self.elevation*255
+        height = self.elevation * 255
         rect = pygame.Rect(self.x * zoom, self.y * zoom, zoom, zoom)
         pygame.draw.rect(screen, (height, height, height), rect)
