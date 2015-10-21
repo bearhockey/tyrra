@@ -1,6 +1,7 @@
 import pygame
 import sys
 
+from Controller import Controller
 from Map import Map
 
 pygame.init()
@@ -15,13 +16,16 @@ screen = pygame.display.set_mode(screen_size)
 avgTemp = 288
 tempStep = 0.29
 
-planet_map = Map(600, 400)
+keys = Controller()
+planet_map = Map(width/2, height/2)
 
 while 1:
     clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit(0)
+
+    keys.poll_keyboard(planet_map)
 
     screen.fill(black)
     planet_map.draw(screen)

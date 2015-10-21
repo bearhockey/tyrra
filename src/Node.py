@@ -16,5 +16,5 @@ class Node(object):
 
     def draw(self, screen, zoom=1):
         height = self.elevation * 255
-        rect = pygame.Rect(self.x * zoom, self.y * zoom, zoom, zoom)
+        rect = pygame.Rect(self.x * zoom+1, self.y * zoom+1, zoom+1, zoom+1)
         pygame.draw.rect(screen, (height, height, height), rect)

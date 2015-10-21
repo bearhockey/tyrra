@@ -13,9 +13,20 @@ class Elevation(object):
                 node.elevation = level
 
     @staticmethod
+    def land_ceiling(node_map, ceiling=0.5):
+        for row in node_map:
+            for node in row:
+                if node.elevation > ceiling:
+                    node.elevation = ceiling
+
+    @staticmethod
     def build_land(node_map, x, y, val, base_line, render_limit, increment):
         if val > 0:
             if node_map[x][y].elevation < val + base_line and abs(val) > render_limit:
+                node_map[x][y].add_elevation(val)
+                Elevation.build_check(node_map, x, y, val, base_line, render_limit, increment)
+        else:
+            if node_map[x][y].elevation > val - base_line and abs(val) > render_limit:
                 node_map[x][y].add_elevation(val)
                 Elevation.build_check(node_map, x, y, val, base_line, render_limit, increment)
 
@@ -27,26 +38,26 @@ class Elevation(object):
             i = i_list.pop()
             if i == 1:
                 if x > 0:
-                    Elevation.build_land(node_map, x - 1, y, Maths.move_to_zero(val, increment, .01), base_line,
+                    Elevation.build_land(node_map, x - 1, y, Maths.move_to_zero(val, increment), base_line,
                                          render_limit, increment)
                 else:
-                    Elevation.build_land(node_map, len(node_map) - 1, y, Maths.move_to_zero(val, increment, .01),
+                    Elevation.build_land(node_map, len(node_map) - 1, y, Maths.move_to_zero(val, increment),
                                          base_line, render_limit, increment)
             elif i == 2:
                 if x < len(node_map) - 1:
                     # print len(node_map)
-                    Elevation.build_land(node_map, x + 1, y, Maths.move_to_zero(val, increment, .01), base_line,
+                    Elevation.build_land(node_map, x + 1, y, Maths.move_to_zero(val, increment), base_line,
                                          render_limit, increment)
                 else:
-                    Elevation.build_land(node_map, 0, y, Maths.move_to_zero(val, increment, .01), base_line,
+                    Elevation.build_land(node_map, 0, y, Maths.move_to_zero(val, increment), base_line,
                                          render_limit, increment)
             elif i == 3:
                 if y > 0:
-                    Elevation.build_land(node_map, x, y - 1, Maths.move_to_zero(val, increment, 0.01), base_line,
+                    Elevation.build_land(node_map, x, y - 1, Maths.move_to_zero(val, increment), base_line,
                                          render_limit, increment)
             elif i == 4:
                 if y < len(node_map[x]) - 1:
-                    Elevation.build_land(node_map, x, y + 1, Maths.move_to_zero(val, increment, 0.01), base_line,
+                    Elevation.build_land(node_map, x, y + 1, Maths.move_to_zero(val, increment), base_line,
                                          render_limit, increment)
             else:
                 print 'something is wrong'
