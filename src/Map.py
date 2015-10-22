@@ -22,6 +22,10 @@ class Map(object):
         self.sea_level = 0.5
         self.canvas = None
 
+        # some weird generation constants for now
+        self.gen_depth = 0.05
+        self.render_limit = 0.25
+
         self.x_offset = 0
         self.y_offset = 0
 
@@ -31,7 +35,7 @@ class Map(object):
             x = random.randrange(1, width)
             y = random.randrange(1, height)
             print '{0}, {1} out of {2}, {3}'.format(x, y, width, height)
-            Elevation.build_land(self.map, x, y, 0.5, 0.4, 0.004, 0.002)
+            Elevation.build_land(self.map, x, y, 0.7, 0.5, self.render_limit, self.gen_depth)
         x = random.randrange(1, width)
         y = random.randrange(1, height)
         # Elevation.build_land(self.map, x, y, -0.1, 0, 0.004, 0.002)
