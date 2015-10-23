@@ -23,22 +23,23 @@ class Map(object):
         self.canvas = None
 
         # some weird generation constants for now
-        self.gen_depth = 0.05
-        self.render_limit = 0.25
+        self.gen_depth = 0.02
+        self.render_limit = 0.01
 
         self.x_offset = 0
         self.y_offset = 0
 
-        Elevation.flat_land(self.map, self.sea_level)
+        Elevation.flat_land(self.map, 0.4)
         # build 3 things
         for _ in range(0, 3):
             x = random.randrange(1, width)
             y = random.randrange(1, height)
             print '{0}, {1} out of {2}, {3}'.format(x, y, width, height)
-            Elevation.build_land(self.map, x, y, 0.7, 0.5, self.render_limit, self.gen_depth)
+            Elevation.build(self.map, x, y, self.sea_level, 0.85, 5000)
+            #Elevation.build_land(self.map, x, y, 0.7, 0.5, self.render_limit, self.gen_depth)
         x = random.randrange(1, width)
         y = random.randrange(1, height)
-        # Elevation.build_land(self.map, x, y, -0.1, 0, 0.004, 0.002)
+        Elevation.build(self.map, x, y, -self.sea_level, -0.85, 5000)
         Elevation.land_ceiling(self.map, 0.65)
 
         # map layers

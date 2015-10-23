@@ -20,6 +20,33 @@ class Elevation(object):
                     node.elevation = ceiling
 
     @staticmethod
+    def build(node_map, x, y, floor, ceiling, branch):
+        current_x = x
+        current_y = y
+        done_list = []
+        while branch > 0:
+            if (current_x, current_y) not in done_list:
+                if node_map[current_x][current_y].elevation < floor:
+                    node_map[current_x][current_y].elevation = min(floor+random.random(), ceiling)
+                    done_list.append((current_x, current_y))
+                    branch -= 1
+            if bool(random.getrandbits(1)):
+                i_list = [0, -1]
+            else:
+                i_list = [0, 1]
+            random.shuffle(i_list)
+            current_x += i_list[0]
+            current_y += i_list[1]
+            if current_x < 0:
+                current_x = len(node_map)-1
+            elif current_x > len(node_map)-1:
+                current_x = 0
+            if current_y < 0:
+                current_y = 0
+            elif current_y > len(node_map[current_x])-1:
+                current_y = len(node_map[current_x])-1
+
+    @staticmethod
     def build_land(node_map, x, y, val, base_line, render_limit, increment):
         if val > 0:
             if node_map[x][y].elevation < val + base_line and abs(val) > render_limit:
