@@ -17,7 +17,7 @@ avgTemp = 288
 tempStep = 0.29
 
 keys = Controller()
-planet_map = Map(width/2, height/2)
+planet_map = Map(width / 2, height / 2, seed=1)
 
 while 1:
     clock.tick(60)

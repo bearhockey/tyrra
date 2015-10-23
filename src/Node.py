@@ -14,7 +14,20 @@ class Node(object):
         elif self.elevation < 0.0:
             self.elevation = 0.0
 
-    def draw(self, screen, zoom=1):
+    def is_above(self, level):
+        if self.elevation > level:
+            return True
+        else:
+            return False
+
+    def draw(self, screen, zoom=1, filters=None):
         height = self.elevation * 255
-        rect = pygame.Rect(self.x * zoom+1, self.y * zoom+1, zoom+1, zoom+1)
-        pygame.draw.rect(screen, (height, height, height), rect)
+        rect = pygame.Rect(self.x * zoom + 1, self.y * zoom + 1, zoom + 1, zoom + 1)
+        r = height
+        g = height
+        b = height
+        if filters:
+            if 'water' in filters:
+                b = min(height + (255 / 2), 255)
+        pygame.draw.rect(screen, (r, g, b), rect)
+

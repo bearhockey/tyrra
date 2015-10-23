@@ -1,10 +1,22 @@
-from Maths import Maths
 import random
+
+from noise import snoise2
+from Maths import Maths
 
 
 class Elevation(object):
     def __init__(self):
         print 'elevation is cool'
+
+    @staticmethod
+    def rando_card(node_map, octaves=1, seed=0):
+        freq = octaves * 16.0
+        for row in node_map:
+            for node in row:
+                node.elevation = (snoise2((node.x + seed) / freq,
+                                          (node.y + seed) / freq,
+                                          octaves) + 1) / 2
+                # print node.elevation
 
     @staticmethod
     def flat_land(node_map, level=0.5):
@@ -20,16 +32,29 @@ class Elevation(object):
                     node.elevation = ceiling
 
     @staticmethod
+    def land_floor(node_map, floor=0.5):
+        for row in node_map:
+            for node in row:
+                if node.elevation < floor:
+                    node.elevation = floor
+
+    @staticmethod
+    def amplify(node_map, cutoff, factor):
+        for row in node_map:
+            for node in row:
+                if node.elevation < cutoff:
+                    node.elevation *= factor
+
+    @staticmethod
     def build(node_map, x, y, floor, ceiling, branch):
         current_x = x
         current_y = y
         done_list = []
         while branch > 0:
             if (current_x, current_y) not in done_list:
-                if node_map[current_x][current_y].elevation < floor:
-                    node_map[current_x][current_y].elevation = min(floor+random.random(), ceiling)
-                    done_list.append((current_x, current_y))
-                    branch -= 1
+                node_map[current_x][current_y].elevation = min(floor+random.random(), ceiling)
+                done_list.append((current_x, current_y))
+                branch -= 1
             if bool(random.getrandbits(1)):
                 i_list = [0, -1]
             else:
@@ -43,8 +68,8 @@ class Elevation(object):
                 current_x = 0
             if current_y < 0:
                 current_y = 0
-            elif current_y > len(node_map[current_x])-1:
-                current_y = len(node_map[current_x])-1
+            elif current_y > len(node_map[current_x]) - 1:
+                current_y = len(node_map[current_x]) - 1
 
     @staticmethod
     def build_land(node_map, x, y, val, base_line, render_limit, increment):

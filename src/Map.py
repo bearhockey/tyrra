@@ -29,18 +29,9 @@ class Map(object):
         self.x_offset = 0
         self.y_offset = 0
 
-        Elevation.flat_land(self.map, 0.4)
-        # build 3 things
-        for _ in range(0, 3):
-            x = random.randrange(1, width)
-            y = random.randrange(1, height)
-            print '{0}, {1} out of {2}, {3}'.format(x, y, width, height)
-            Elevation.build(self.map, x, y, self.sea_level, 0.85, 5000)
-            #Elevation.build_land(self.map, x, y, 0.7, 0.5, self.render_limit, self.gen_depth)
-        x = random.randrange(1, width)
-        y = random.randrange(1, height)
-        Elevation.build(self.map, x, y, -self.sea_level, -0.85, 5000)
-        Elevation.land_ceiling(self.map, 0.65)
+        Elevation.rando_card(self.map, octaves=16, seed=random.randint(-65536, 65536))
+        Elevation.land_ceiling(self.map, 0.6)
+        Elevation.amplify(self.map, self.sea_level, 0.5)
 
         # map layers
         self.drawing_layers = {
@@ -58,7 +49,11 @@ class Map(object):
         self.canvas = pygame.Surface(size=(self.width * zoom_level, self.height * zoom_level))
         for row in self.map:
             for node in row:
-                node.draw(self.canvas, zoom=zoom_level)
+                filters = []
+                if self.drawing_layers['water']:
+                    if not node.is_above(self.sea_level):
+                        filters.append('water')
+                node.draw(self.canvas, zoom=zoom_level, filters=filters)
 
     def draw(self, screen):
         if self.canvas:
