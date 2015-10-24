@@ -1,10 +1,11 @@
+import pygame
+
+
 class Star(object):
-    def __init__(self, radius=10, luminosity=128, temperature=128):
+    def __init__(self, radius=128, luminosity=128, temperature=128):
         self.radius = radius
         self.luminosity = luminosity
         self.temperature = temperature
-
-        self.satellites = []
 
     def get_color(self):
         r = 255 - self.temperature
@@ -13,3 +14,5 @@ class Star(object):
 
         return r, g, b
 
+    def draw_grid(self, screen, position):
+        pygame.draw.circle(screen, self.get_color(), position, self.radius/2)
