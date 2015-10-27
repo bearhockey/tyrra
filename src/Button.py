@@ -1,10 +1,12 @@
-import pygame
-from Box import Box
+from TextBox import TextBox
 
-class Button(Box):
+
+class Button(TextBox):
     def __init__(self, rect, box_color=None, border_color=None, message='', text_color=None, font=None):
-        Box.__init__(self, rect, box_color, border_color)
-        self.active = False
-        self.message = message
-        self.text_color = text_color
-        self.font = font
+        TextBox.__init__(self, rect, box_color, border_color, message, text_color, font)
+
+    def check_click(self):
+        if TextBox.check_click(self):
+            return True
+        else:
+            return False

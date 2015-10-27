@@ -39,9 +39,8 @@ while 1:
     # key_pressed = keys.poll_keyboard()
 
     screen.fill(black)
-    system.draw_stars(screen)
+    system.draw(screen)
     # planet_map.draw(screen)
-    system.draw_gui(screen)
 
     system.update(key_pressed, mouse)
 

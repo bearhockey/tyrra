@@ -6,6 +6,7 @@ class Box(object):
         self.rect = rect
         self.box_color = box_color
         self.border_color = border_color
+        self.border = 2
 
     def check_click(self):
         pos = pygame.mouse.get_pos()

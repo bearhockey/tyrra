@@ -1,26 +1,23 @@
 import pygame
-from Box import Box
+from TextBox import TextBox
 from TextCursor import TextCursor
 
 
-class InputBox(Box):
-    def __init__(self, rect, box_color=None, border_color=None, message='', text_color=None, font=None):
-        Box.__init__(self, rect, box_color, border_color)
+class InputBox(TextBox):
+    def __init__(self, rect, box_color=None, border_color=None, message='', text_color=None, font=None,
+                 text_limit=None):
+        TextBox.__init__(self, rect, box_color, border_color, message, text_color, font)
         self.active = False
-        self.message = message
-        self.text_color = text_color
-        self.font = font
+        self.text_limit = text_limit
 
     def check_click(self):
-        if Box.check_click(self):
+        if TextBox.check_click(self):
             self.active = True
         else:
             self.active = False
 
     def draw(self, screen):
-        Box.draw(self, screen)
-        if len(self.message) != 0:
-            screen.blit(self.font.render(self.message, True, self.text_color), self.rect)
+        TextBox.draw(self, screen)
         if self.active:
             TextCursor.draw(screen, (self.rect.left + self.font.size(self.message)[0], self.rect.top), self.font)
 
@@ -30,8 +27,6 @@ class InputBox(Box):
                 self.message = self.message[0:-1]
             elif in_key == pygame.K_RETURN:
                 return self.message
-            # elif in_key == K_MINUS:
-            #  current_string.append("_")
-            elif in_key <= 127:
+            elif len(self.message) < self.text_limit and 48 <= in_key <= 57:
                 self.message += chr(in_key)
             return None
