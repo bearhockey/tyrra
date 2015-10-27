@@ -15,20 +15,23 @@ class Controller(object):
                      'action': pygame.K_SPACE
                      }
 
-    def poll_keyboard(self, map_object):
+    def poll_keyboard(self, map_object=None):
         if pygame.key.get_focused():
             press = pygame.key.get_pressed()
 
-            for key, value in self.numbers.iteritems():
-                if press[value]:
-                    map_object.create_map(zoom_level=key)
+            if map_object:
+                for key, value in self.numbers.iteritems():
+                    if press[value]:
+                        map_object.create_map(zoom_level=key)
 
-            if press[self.keys['left']]:
-                map_object.x_offset += map_object.zoom*2
-            elif press[self.keys['right']]:
-                map_object.x_offset -= map_object.zoom*2
-            if press[self.keys['down']]:
-                map_object.y_offset -= map_object.zoom*2
-            elif press[self.keys['up']]:
-                map_object.y_offset += map_object.zoom*2
+                if press[self.keys['left']]:
+                    map_object.x_offset += map_object.zoom*2
+                elif press[self.keys['right']]:
+                    map_object.x_offset -= map_object.zoom*2
+                if press[self.keys['down']]:
+                    map_object.y_offset -= map_object.zoom*2
+                elif press[self.keys['up']]:
+                    map_object.y_offset += map_object.zoom*2
+
+            return press
 
