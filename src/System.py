@@ -54,6 +54,26 @@ class System(object):
 
     def generate_name(self):
         self.seed = -self.x * self.y
+        lookup = ['Aleph', 'Alpha', 'Antares', 'Beta', 'Bootes', 'Barum', 'Ceres', 'Charion', 'Chardibus', 'Chalupa',
+                  'Delta', 'Darion', 'Doolan', 'Echo', 'Eres', 'Eribus', 'Encephalus', 'Ender', 'Foxtrot', 'Famicom',
+                  'Gamma', 'Gregorio', 'Grace', 'Gaea', 'Gaia', 'Howzer', 'Hera', 'Hosio', 'Ignus', 'Io', 'Ionus',
+                  'Ibus', 'Jax', 'Jovia', 'Jolo', 'Keras', 'Kodia', 'Li', 'Libra', 'Lol', 'Orphius', 'Orchid',
+                  'Odyssus', 'Persephone', 'Pax', 'Qualude', 'Qi', 'Ra', 'Rez', 'Radium', 'Tia', 'Tori', 'Uso', 'Ura',
+                  'Varia', 'Verit', 'Wex', 'Woolio', 'X', 'Yota', 'Yttrius', 'Zoe', 'Zee', 'Zae', 'Zeebs']
+        base = len(lookup) # Base whatever.
+        name = list()
+        num = self.seed
+        while num > 0:
+            digit = num%base
+            num = num//base
+            name.append(lookup[digit])
+        string = ""
+        string += "{0} supercluster.  ".format(name.pop())
+        string += "{0} group.  ".format(name.pop())
+        string += "{0} system.  ".format(name.pop())
+        string += "-".join(name)
+        self.name = string
+        # return string
 
     def draw(self, screen):
         self.draw_gui(screen)
@@ -102,6 +122,7 @@ class System(object):
                     self.y = int(self.y_box.message)
                 del self.stars[:]
                 self.generate_stars()
+                self.generate_name()
         if key:
             self.x_box.poll(key)
             self.y_box.poll(key)
