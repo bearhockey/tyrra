@@ -4,6 +4,7 @@ import random
 from Box import Box
 from Button import Button
 from InputBox import InputBox
+from Satellite import Satellite
 from Star import Star
 
 
@@ -12,18 +13,21 @@ class System(object):
         self.x = x
         self.y = y
         self.name = 'Poop'
+        self.short_name = 'Jerk'
         self.seed = 0
 
         self.stars = []
+        self.planets = []
         self.white = (255, 255, 255)
 
         self.big_font_size = 24
         self.small_font_size = 16
-        self.font = pygame.font.Font(pygame.font.get_default_font(), self.big_font_size)
+        self.font = pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
         self.small_font = pygame.font.Font(pygame.font.get_default_font(), self.small_font_size)
 
         # main screen turn on
         self.main_window = Box(pygame.Rect(20, 50, 800, 600), (0, 0, 0), self.white)
+        print self.main_window.rect.center
         # input boxes
         box_width = self.font.size('12345678900')[0]
         self.x_box = InputBox(pygame.Rect(100, 660, box_width, 30), (10, 10, 10), self.white, '0', self.white,
@@ -31,11 +35,28 @@ class System(object):
         self.y_box = InputBox(pygame.Rect(400, 660, box_width, 30), (10, 10, 10), self.white, '0', self.white,
                               self.font, 10)
         # buttons
-        self.generate_button = Button(pygame.Rect(650, 650, 100, 50), (20, 150, 30), self.white, 'GENERATE',
-                                      self.white, self.small_font)
+        self.generate_button = Button(pygame.Rect(650, 650, 100, 50), (20, 150, 30), self.white, u'\u304D',
+                                      self.white, self.font)
+
+    def generate(self):
+        self.generate_seed()
+        self.generate_name()
+        self.generate_stars()
+        self.generate_planets()
+
+    def generate_planets(self):
+        random.seed(self.seed)
+        planet_num = 100
+        while planet_num > 0:
+            planet_num -= random.randrange(10, 100)
+            self.planets.append(Satellite(radius=random.randint(1, 255)))
+
+    def generate_seed(self):
+        self.seed = float(0.5) * float(self.x + self.y) * float(self.x + self.y + 1) + self.y
+        self.seed = int(self.seed)
+        print 'Seed: {0}'.format(self.seed)
 
     def generate_stars(self):
-        self.seed = -self.x * self.y
         random.seed(self.seed)
         rand = random.randrange(0, 9)
         self.stars.append(Star(radius=random.randint(1, 255),
@@ -50,44 +71,56 @@ class System(object):
                                    luminosity=random.randint(1, 255),
                                    temperature=random.randint(1, 255)))
 
-        sorted(self.stars, key=lambda star: star.radius)
+        sorted(self.stars, key=lambda star: star.radius, reverse=True)
+        star_designations = ['Major', 'Minor', 'Augmented', 'Diminished']
+        for sun in self.stars:
+            sun.name = '{0} {1}'.format(self.short_name, star_designations.pop(0))
 
     def generate_name(self):
-        self.seed = -self.x * self.y
         lookup = ['Aleph', 'Alpha', 'Antares', 'Beta', 'Bootes', 'Barum', 'Ceres', 'Charion', 'Chardibus', 'Chalupa',
                   'Delta', 'Darion', 'Doolan', 'Echo', 'Eres', 'Eribus', 'Encephalus', 'Ender', 'Foxtrot', 'Famicom',
                   'Gamma', 'Gregorio', 'Grace', 'Gaea', 'Gaia', 'Howzer', 'Hera', 'Hosio', 'Ignus', 'Io', 'Ionus',
-                  'Ibus', 'Jax', 'Jovia', 'Jolo', 'Keras', 'Kodia', 'Li', 'Libra', 'Lol', 'Orphius', 'Orchid',
+                  'Ibus', 'Jax', 'Jova', 'Jolo', 'Keras', 'Kodia', 'Li', 'Libra', 'Lol', 'Orphius', 'Orchid',
                   'Odyssus', 'Persephone', 'Pax', 'Qualude', 'Qi', 'Ra', 'Rez', 'Radium', 'Tia', 'Tori', 'Uso', 'Ura',
                   'Varia', 'Verit', 'Wex', 'Woolio', 'X', 'Yota', 'Yttrius', 'Zoe', 'Zee', 'Zae', 'Zeebs']
-        base = len(lookup) # Base whatever.
-        name = list()
-        num = self.seed
+        base = len(lookup)  # Base whatever.
+        name = []
+        num = self.seed + pow(2, 16)
         while num > 0:
             digit = num%base
             num = num//base
             name.append(lookup[digit])
-        string = ""
-        string += "{0} supercluster.  ".format(name.pop())
-        string += "{0} group.  ".format(name.pop())
-        string += "{0} system.  ".format(name.pop())
-        string += "-".join(name)
+
+        string = u""
+        string += u"{0} supercluster.  ".format(name.pop())
+        string += u"{0} group.  ".format(name.pop())
+        string += u"{0} system.  ".format(name.pop())
+        self.short_name = u"-".join(name)
+        string += self.short_name
         self.name = string
-        # return string
 
     def draw(self, screen):
         self.draw_gui(screen)
         self.draw_stars(screen)
+        self.draw_planets(screen)
 
     def draw_text(self, screen, font, text, color, position):
         screen.blit(font.render(text, True, color), pygame.Rect(position[0], position[1], 200, 50))
 
     def draw_stars(self, screen):
-        i = 100
+        i = 0
         for star in self.stars:
-            i += star.radius
-            star.draw_grid(screen, (i, 200))
-            i += star.radius
+            center = self.main_window.rect.center
+            star.draw_grid(screen, (center[0] + i, center[1] - center[1] / 3 + i))
+            i += star.radius / 4
+
+    def draw_planets(self, screen):
+        i = 0
+        for planet in self.planets:
+            i += planet.radius / 10
+            center = self.main_window.rect.center
+            planet.draw(screen, (center[0], center[1] + i))
+            i += planet.radius / 10 + 5
 
     def draw_gui(self, screen):
         self.main_window.draw(screen)
@@ -99,17 +132,19 @@ class System(object):
         self.generate_button.draw(screen)
 
         self.draw_text(screen, self.font, self.name, self.white, (20, 20))
-        star_designations = ['Major', 'Minor', 'Augmented', 'Diminished']
+        text_offset = 0
         for star in self.stars:
             text_offset = self.stars.index(star) * 100
-            self.draw_text(screen, self.small_font, '<NAME> {0}'.format(star_designations.pop(0)), self.white,
-                           (900, 50 + text_offset))
+            self.draw_text(screen, self.small_font, '{0}'.format(star.name), self.white, (900, 50 + text_offset))
             self.draw_text(screen, self.small_font, 'Temperature: {0}K'.format(star.get_temperature()), self.white,
                            (900, 70 + text_offset))
             self.draw_text(screen, self.small_font, 'Size: {0}'.format(star.get_size()), self.white,
                            (900, 90 + text_offset))
             self.draw_text(screen, self.small_font, 'Luminosity: {0}'.format(star.get_luminosity()), self.white,
                            (900, 110 + text_offset))
+        for planet in self.planets:
+            self.draw_text(screen, self.small_font, 'Planets: {0}'.format(len(self.planets)), self.white,
+                           (900, 350 + text_offset))
 
     def update(self, key, mouse):
         if mouse[1]:
@@ -121,8 +156,8 @@ class System(object):
                 if len(self.y_box.message) != 0:
                     self.y = int(self.y_box.message)
                 del self.stars[:]
-                self.generate_stars()
-                self.generate_name()
+                del self.planets[:]
+                self.generate()
         if key:
             self.x_box.poll(key)
             self.y_box.poll(key)
