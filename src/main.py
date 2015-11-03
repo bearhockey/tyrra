@@ -3,7 +3,6 @@ import sys
 
 from Controller import Controller
 from Map import Map
-from Star import Star
 from System import System
 
 pygame.init()
@@ -14,6 +13,11 @@ screen_size = width, height = (1280, 720)
 black = (0, 0, 0)
 screen = pygame.display.set_mode(screen_size)
 
+mode = {'ship': 0,
+        'system': 1,
+        'planet': 2}
+
+game_mode = mode['ship']
 keys = Controller()
 system = System()
 planet_map = Map(width/2, height/2, seed=123)
@@ -41,8 +45,12 @@ while 1:
     # key_pressed = keys.poll_keyboard()
 
     screen.fill(black)
-    system.draw(screen)
-    # planet_map.draw(screen)
+    if game_mode == mode['ship']:
+        print 'hey'
+    elif game_mode == mode['system']:
+        system.draw(screen)
+    elif game_mode == mode['planet']:
+        planet_map.draw(screen)
 
     system.update(key_pressed, mouse)
 
