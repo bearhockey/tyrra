@@ -3,6 +3,7 @@ import sys
 
 from Controller import Controller
 from Map import Map
+from Ship import Ship
 from System import System
 
 pygame.init()
@@ -19,6 +20,7 @@ mode = {'ship': 0,
 
 game_mode = mode['ship']
 keys = Controller()
+ship = Ship()
 system = System()
 planet_map = Map(width/2, height/2, seed=123)
 
@@ -46,12 +48,12 @@ while 1:
 
     screen.fill(black)
     if game_mode == mode['ship']:
-        print 'hey'
+        ship.update(key_pressed, mouse)
+        ship.draw(screen)
     elif game_mode == mode['system']:
+        system.update(key_pressed, mouse)
         system.draw(screen)
     elif game_mode == mode['planet']:
         planet_map.draw(screen)
-
-    system.update(key_pressed, mouse)
 
     pygame.display.flip()
