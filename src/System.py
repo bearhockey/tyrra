@@ -106,7 +106,10 @@ class System(object):
         self.draw_planets(screen)
 
     def draw_text(self, screen, font, text, color, position):
-        screen.blit(font.render(text, True, color), pygame.Rect(position[0], position[1], 200, 50))
+        screen.blit(font.render(text, True, color), pygame.Rect(position[0],
+                                                                position[1],
+                                                                font.size(text)[0],
+                                                                font.size(text)[1]))
 
     def draw_stars(self, screen):
         i = 0

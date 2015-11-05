@@ -18,11 +18,13 @@ mode = {'ship': 0,
         'system': 1,
         'planet': 2}
 
-game_mode = mode['ship']
+game_mode = mode['system']
 keys = Controller()
 ship = Ship()
+# system = None
 system = System()
-planet_map = Map(width/2, height/2, seed=123)
+planet_map = None
+# planet_map = Map(width/2, height/2, seed=123)
 
 mouse_button = {'LEFT': 1, 'MIDDLE': 2, 'RIGHT': 3}
 
@@ -51,9 +53,11 @@ while 1:
         ship.update(key_pressed, mouse)
         ship.draw(screen)
     elif game_mode == mode['system']:
-        system.update(key_pressed, mouse)
-        system.draw(screen)
+        if system:
+            system.update(key_pressed, mouse)
+            system.draw(screen)
     elif game_mode == mode['planet']:
-        planet_map.draw(screen)
+        if planet_map:
+            planet_map.draw(screen)
 
     pygame.display.flip()

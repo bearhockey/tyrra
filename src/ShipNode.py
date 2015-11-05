@@ -14,14 +14,23 @@ class ShipNode(Box):
                      (0, 0, 0), (100, 100, 100))
         self.border = 1
 
-    def move(self, x, y, zoom=None):
+    def set(self, x, y, zoom=None):
         self.offset = (x, y)
         if zoom:
             self.zoom = zoom
 
-    def update(self):
+    def move(self, x, y, zoom=None):
+        self.set(x + self.offset[0], y + self.offset[1], zoom)
+
+    def update(self, mouse):
         if self.check_click():
-            self.box_color = (255, 0, 0)
+            if mouse[1]:
+                self.box_color = (255, 0, 0)
+            elif mouse[3]:
+                self.box_color = (0, 0, 0)
+            return True
+        else:
+            return False
 
     def draw(self, screen):
         zoomed_size = self.cell_size * self.zoom
