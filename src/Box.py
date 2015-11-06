@@ -8,8 +8,8 @@ class Box(object):
         self.border_color = border_color
         self.border = 2
 
-    def check_click(self):
-        pos = pygame.mouse.get_pos()
+    def check_click(self, offset=(0, 0)):
+        pos = (pygame.mouse.get_pos()[0] - offset[0], pygame.mouse.get_pos()[1] - offset[1])
         if self.rect.collidepoint(pos):
             return True
         else:

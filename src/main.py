@@ -18,9 +18,9 @@ mode = {'ship': 0,
         'system': 1,
         'planet': 2}
 
-game_mode = mode['system']
+game_mode = mode['ship']
 keys = Controller()
-ship = Ship()
+ship = Ship(size_x=40, size_y=40)
 # system = None
 system = System()
 planet_map = None

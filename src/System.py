@@ -2,6 +2,7 @@ import pygame
 import random
 
 import Color
+import Text
 
 from Box import Box
 from Button import Button
@@ -32,9 +33,9 @@ class System(object):
         # input boxes
         box_width = self.font.size('12345678900')[0]
         self.x_box = InputBox(pygame.Rect(100, 660, box_width, 30), (10, 10, 10), Color.white, '0', Color.white,
-                              self.font, 10)
+                              self.font, 10, allowed_characters=range(48, 57))
         self.y_box = InputBox(pygame.Rect(400, 660, box_width, 30), (10, 10, 10), Color.white, '0', Color.white,
-                              self.font, 10)
+                              self.font, 10, allowed_characters=range(48, 57))
         # buttons
         self.generate_button = Button(pygame.Rect(650, 650, 100, 50), (20, 150, 30), Color.white, u'\u304D',
                                       Color.white, self.font)
@@ -105,12 +106,6 @@ class System(object):
         self.draw_stars(screen)
         self.draw_planets(screen)
 
-    def draw_text(self, screen, font, text, color, position):
-        screen.blit(font.render(text, True, color), pygame.Rect(position[0],
-                                                                position[1],
-                                                                font.size(text)[0],
-                                                                font.size(text)[1]))
-
     def draw_stars(self, screen):
         i = 0
         for star in self.stars:
@@ -129,25 +124,25 @@ class System(object):
     def draw_gui(self, screen):
         self.main_window.draw(screen)
         # cords
-        self.draw_text(screen, self.font, 'X:', Color.white, (50, 650))
-        self.draw_text(screen, self.font, 'Y:', Color.white, (350, 650))
+        Text.draw_text(screen, self.font, 'X:', Color.white, (50, 650))
+        Text.draw_text(screen, self.font, 'Y:', Color.white, (350, 650))
         self.x_box.draw(screen)
         self.y_box.draw(screen)
         self.generate_button.draw(screen)
 
-        self.draw_text(screen, self.font, self.name, Color.white, (20, 20))
+        Text.draw_text(screen, self.font, self.name, Color.white, (20, 20))
         text_offset = 0
         for star in self.stars:
             text_offset = self.stars.index(star) * 100
-            self.draw_text(screen, self.small_font, '{0}'.format(star.name), Color.white, (900, 50 + text_offset))
-            self.draw_text(screen, self.small_font, 'Temperature: {0}K'.format(star.get_temperature()), Color.white,
+            Text.draw_text(screen, self.small_font, '{0}'.format(star.name), Color.white, (900, 50 + text_offset))
+            Text.draw_text(screen, self.small_font, 'Temperature: {0}K'.format(star.get_temperature()), Color.white,
                            (900, 70 + text_offset))
-            self.draw_text(screen, self.small_font, 'Size: {0}'.format(star.get_size()), Color.white,
+            Text.draw_text(screen, self.small_font, 'Size: {0}'.format(star.get_size()), Color.white,
                            (900, 90 + text_offset))
-            self.draw_text(screen, self.small_font, 'Luminosity: {0}'.format(star.get_luminosity()), Color.white,
+            Text.draw_text(screen, self.small_font, 'Luminosity: {0}'.format(star.get_luminosity()), Color.white,
                            (900, 110 + text_offset))
         for planet in self.planets:
-            self.draw_text(screen, self.small_font, 'Planets: {0}'.format(len(self.planets)), Color.white,
+            Text.draw_text(screen, self.small_font, 'Planets: {0}'.format(len(self.planets)), Color.white,
                            (900, 350 + text_offset))
 
     def update(self, key, mouse):
