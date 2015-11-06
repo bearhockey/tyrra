@@ -26,9 +26,10 @@ system = System()
 planet_map = None
 # planet_map = Map(width/2, height/2, seed=123)
 
-mouse_button = {'LEFT': 1, 'MIDDLE': 2, 'RIGHT': 3}
+mouse_button = {'LEFT': 1, 'MIDDLE': 2, 'RIGHT': 3, 'WHEEL_UP': 4, 'WHEEL_DOWN': 5}
 
-mouse = {mouse_button['LEFT']: 0, mouse_button['MIDDLE']: 0, mouse_button['RIGHT']: 0}
+mouse = {mouse_button['LEFT']: 0, mouse_button['MIDDLE']: 0, mouse_button['RIGHT']: 0, mouse_button['WHEEL_UP']: 0,
+         mouse_button['WHEEL_DOWN']: 0}
 
 # show fonts for debug purposes
 print pygame.font.get_fonts()
@@ -43,8 +44,13 @@ while 1:
             key_pressed = event.key
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse[event.button] = 1
+            print event.button
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse[event.button] = 0
+            print event.button
+
+    if mouse[4]:
+        print 'Yay'
 
     # key_pressed = keys.poll_keyboard()
 

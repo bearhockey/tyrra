@@ -44,8 +44,9 @@ class Ship(object):
             for y in range(0, size_y):
                 self.grid[x].append(ShipNode(x, y, cell_size=16))
         self.grid_offset = (25, 55)
+        self.zoom_level = 1
 
-        self.mass_set(self.grid_offset[0], self.grid_offset[1], 4)
+        self.mass_set(self.grid_offset[0], self.grid_offset[1], self.zoom_level)
 
     def mass_move(self, x, y, zoom=None):
         for row in self.grid:
@@ -96,6 +97,16 @@ class Ship(object):
                 self.grid_offset = (self.starting_scroll_pos[0] + new_pos_x, self.starting_scroll_pos[1] + new_pos_y)
                 if self.main_window_active:
                     self.mass_set(self.grid_offset[0], self.grid_offset[1])
+            elif mouse[4]:
+                print 'HEY'
+                self.zoom_level += 1
+                self.mass_move(0, 0, self.zoom_level)
+            elif mouse[5]:
+                print 'uyouu'
+                self.zoom_level -= 1
+                if self.zoom_level < 1:
+                    self.zoom_level = 1
+                self.mass_move(0, 0, self.zoom_level)
             else:
                 self.scrolling = False
 
