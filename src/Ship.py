@@ -98,11 +98,9 @@ class Ship(object):
                 if self.main_window_active:
                     self.mass_set(self.grid_offset[0], self.grid_offset[1])
             elif mouse[4]:
-                print 'HEY'
                 self.zoom_level += 1
                 self.mass_move(0, 0, self.zoom_level)
             elif mouse[5]:
-                print 'uyouu'
                 self.zoom_level -= 1
                 if self.zoom_level < 1:
                     self.zoom_level = 1

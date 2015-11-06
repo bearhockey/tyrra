@@ -44,23 +44,25 @@ while 1:
             key_pressed = event.key
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse[event.button] = 1
-            print event.button
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse[event.button] = 0
-            print event.button
 
-    if mouse[4]:
-        print 'Yay'
+        if game_mode == mode['ship']:
+            ship.update(key_pressed, mouse)
+        elif game_mode == mode['system']:
+            if system:
+                system.update(key_pressed, mouse)
+        elif game_mode == mode['planet']:
+            if planet_map:
+                pass
 
     # key_pressed = keys.poll_keyboard()
 
     screen.fill(black)
     if game_mode == mode['ship']:
-        ship.update(key_pressed, mouse)
         ship.draw(screen)
     elif game_mode == mode['system']:
         if system:
-            system.update(key_pressed, mouse)
             system.draw(screen)
     elif game_mode == mode['planet']:
         if planet_map:
