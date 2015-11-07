@@ -1,6 +1,14 @@
 import pygame
 
+import Color
+
 from Box import Box
+
+node_type = {
+    'BLANK': 0,
+    'FLOOR': 1,
+    'ARMOR': 2
+    }
 
 
 class ShipNode(Box):
@@ -14,7 +22,7 @@ class ShipNode(Box):
                      (0, 0, 0), (100, 100, 100))
         self.border = 1
 
-        self.type = 0
+        self.type = node_type['BLANK']
 
     def set(self, x, y, zoom=None):
         self.offset = (x, y)
@@ -27,18 +35,18 @@ class ShipNode(Box):
     def update(self, mouse, offset=(0, 0)):
         if self.check_click(offset=offset):
             if mouse[1]:
-                self.type = 1
+                self.type = node_type['FLOOR']
             elif mouse[2]:
-                self.type = 0
+                self.type = node_type['BLANK']
             return True
         else:
             return False
 
     def draw(self, screen):
-        if self.type == 1:
-            self.box_color = (255, 0, 0)
+        if self.type == node_type['FLOOR']:
+            self.box_color = Color.gray
         else:
-            self.box_color = (0, 0, 0)
+            self.box_color = Color.black
         zoomed_size = self.cell_size * self.zoom
         self.rect.x = self.cell_x * zoomed_size + self.offset[0]
         self.rect.y = self.cell_y * zoomed_size + self.offset[1]

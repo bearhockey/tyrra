@@ -29,7 +29,7 @@ class Ship(object):
                                                   border_color=Color.white)
         self.main_screen = pygame.Surface(size=(800, 600))
         self.main_window_active = True
-        self.name = InputBox(pygame.Rect(900, 50, 200, 50), box_color=None, border_color=Color.white, message='Tyrra',
+        self.name = InputBox(pygame.Rect(880, 50, 250, 50), box_color=None, border_color=Color.white, message='Tyrra',
                              text_color=Color.white, font=self.font, text_limit=16)
 
         # self.name = 'Tyrra'
@@ -68,9 +68,6 @@ class Ship(object):
                 self.mass_move(0, -8)
             elif key == pygame.K_DOWN:
                 self.mass_move(0, 8)
-
-            if key in self.number:
-                self.mass_move(0, 0, self.number[key])
 
             self.name.poll(key)
         if mouse:
@@ -121,8 +118,8 @@ class Ship(object):
         # ship preview
         position = (880, 370)
         size = 8
-        pygame.draw.rect(screen, Color.white, pygame.Rect(position[0], position[1], len(self.grid)*size,
-                                                          len(self.grid[0])*size), 2)
+        pygame.draw.rect(screen, Color.white, pygame.Rect(position[0], position[1], len(self.grid) * size,
+                                                          len(self.grid[0]) * size), 2)
         for row in self.grid:
             for node in row:
                 if node.type:
