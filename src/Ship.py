@@ -6,6 +6,7 @@ import Text
 from Box import Box
 from InputBox import InputBox
 from ShipNode import ShipNode
+from Window import Window
 
 
 class Ship(object):
@@ -26,11 +27,18 @@ class Ship(object):
         self.ship_window = self.main_window = Box(pygame.Rect(self.main_window_pos[0], self.main_window_pos[1],
                                                               800, 600),
                                                   box_color=None,
-                                                  border_color=Color.white)
+                                                  border_color=Color.d_gray,
+                                                  highlight_color=Color.white,
+                                                  active_color=Color.gray)
         self.main_screen = pygame.Surface(size=(800, 600))
         self.main_window_active = True
-        self.name = InputBox(pygame.Rect(880, 50, 250, 50), box_color=None, border_color=Color.white, message='Tyrra',
+        self.name = InputBox(pygame.Rect(880, 50, 250, 50), box_color=None, border_color=Color.d_gray,
+                             highlight_color=Color.white, active_color=Color.gray, message='Tyrra',
                              text_color=Color.white, font=self.font, text_limit=16)
+
+        self.floor_selector = Window((880, 200), (250, 50))
+        self.floor_selector.components.append(Box(pygame.Rect(10, 10, 25, 25), Color.gray, border_color=None,
+                                                  highlight_color=Color.white, active_color=Color.blue))
 
         # self.name = 'Tyrra'
         self.scrolling = False
@@ -70,15 +78,11 @@ class Ship(object):
                 self.mass_move(0, 8)
 
             self.name.poll(key)
+        self.main_window.check_click(mouse, self.main_window_pos)
+        self.name.check_click(mouse)
+        self.floor_selector.update(mouse=mouse, key=key)
         if mouse:
-            if self.main_window.check_click():
-                self.main_window_active = True
-                self.main_window.border_color = Color.white
-            else:
-                self.main_window_active = False
-                self.main_window.border_color = (120, 120, 120)
             if mouse[1] or mouse[2]:
-                self.name.check_click(offset=self.main_window_pos)
                 if self.main_window_active:
                     for row in self.grid:
                         for node in row:
@@ -92,7 +96,7 @@ class Ship(object):
                 new_pos_x = pygame.mouse.get_pos()[0] - self.starting_mouse_pos[0]
                 new_pos_y = pygame.mouse.get_pos()[1] - self.starting_mouse_pos[1]
                 self.grid_offset = (self.starting_scroll_pos[0] + new_pos_x, self.starting_scroll_pos[1] + new_pos_y)
-                if self.main_window_active:
+                if self.main_window.active:
                     self.mass_set(self.grid_offset[0], self.grid_offset[1])
             elif mouse[4]:
                 self.zoom_level += 1
@@ -114,6 +118,8 @@ class Ship(object):
                 node.draw(self.main_screen)
         screen.blit(self.main_screen, self.main_window_pos)
         self.ship_window.draw(screen)
+
+        self.floor_selector.draw(screen)
 
         # ship preview
         position = (880, 370)

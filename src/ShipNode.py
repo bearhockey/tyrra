@@ -33,7 +33,7 @@ class ShipNode(Box):
         self.set(x + self.offset[0], y + self.offset[1], zoom)
 
     def update(self, mouse, offset=(0, 0)):
-        if self.check_click(offset=offset):
+        if self.check_click(mouse, offset=offset):
             if mouse[1]:
                 self.type = node_type['FLOOR']
             elif mouse[2]:
