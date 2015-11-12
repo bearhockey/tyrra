@@ -145,7 +145,7 @@ class ShipGrid(object):
             if mouse[1] or mouse[2]:
                 for row in self.grid:
                     for node in row:
-                        if node.update(mouse, offset=offset):
+                        if node.update(key=key, mouse=mouse, offset=offset):
                             break
             elif mouse[4]:
                 self.zoom_level += 1
@@ -166,10 +166,9 @@ class ShipGrid(object):
                 self.grid_offset = (self.starting_scroll_pos[0] + new_pos_x, self.starting_scroll_pos[1] + new_pos_y)
                 self.mass_set(self.grid_offset[0], self.grid_offset[1])
             else:
-                print 'nothing'
                 self.scrolling = False
         else:
-            print 'nothing'
+            self.scrolling = False
 
     def draw(self, screen):
         screen.fill(Color.black)

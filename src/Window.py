@@ -17,7 +17,7 @@ class Window(object):
     def update(self, key, mouse, offset=None):
         if offset is None:
             offset = self.position
-        if self.border.check_click(mouse, offset):
+        if self.border.check_mouse_inside(mouse, offset):
             for component in self.components:
                 update = getattr(component, 'update', None)
                 if callable(update):

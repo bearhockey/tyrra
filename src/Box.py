@@ -14,12 +14,15 @@ class Box(object):
         self.active = False
         self.border = 2
 
-    def update(self, mouse, key, offset=(0, 0)):
+    def update(self, key, mouse, offset=(0, 0)):
         return self.check_click(mouse=mouse, offset=offset)
 
-    def check_click(self, mouse, offset=(0, 0)):
+    def check_mouse_inside(self, mouse, offset=(0, 0)):
         pos = (pygame.mouse.get_pos()[0] - offset[0], pygame.mouse.get_pos()[1] - offset[1])
-        if self.rect.collidepoint(pos):
+        return self.rect.collidepoint(pos)
+
+    def check_click(self, mouse, offset=(0, 0)):
+        if self.check_mouse_inside(mouse=mouse, offset=offset):
             self.status = 'HIGHLIGHT'
             if 1 in mouse.values():
                 self.active = True
