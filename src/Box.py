@@ -15,7 +15,7 @@ class Box(object):
         self.border = 2
 
     def update(self, mouse, key, offset=(0, 0)):
-        self.check_click(mouse=mouse, offset=offset)
+        return self.check_click(mouse=mouse, offset=offset)
 
     def check_click(self, mouse, offset=(0, 0)):
         pos = (pygame.mouse.get_pos()[0] - offset[0], pygame.mouse.get_pos()[1] - offset[1])

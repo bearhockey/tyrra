@@ -6,20 +6,22 @@ from Box import Box
 
 
 class Window(object):
-    def __init__(self, position, size):
+    def __init__(self, position, size, name=None):
+        self.name = name
         self.position = position
         self.canvas = pygame.Surface(size=size)
         self.border = Box(pygame.Rect(position[0], position[1], size[0], size[1]), box_color=None,
-                          border_color=Color.white)
+                          border_color=Color.white, highlight_color=Color.white, active_color=Color.white)
         self.components = []
 
-    def update(self, mouse, key, offset=None):
+    def update(self, key, mouse, offset=None):
         if offset is None:
-            offset=self.position
-        for component in self.components:
-            update = getattr(component, 'update', None)
-            if callable(update):
-                update(mouse, key, offset)
+            offset = self.position
+        if self.border.check_click(mouse, offset):
+            for component in self.components:
+                update = getattr(component, 'update', None)
+                if callable(update):
+                    update(key=key, mouse=mouse, offset=offset)
 
     def draw(self, screen):
         self.canvas.fill(Color.black)

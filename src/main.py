@@ -1,6 +1,7 @@
 import pygame
 import sys
 
+from ControlPanel import ControlPanel
 from Controller import Controller
 from Map import Map
 from Ship import Ship
@@ -14,15 +15,18 @@ screen_size = width, height = (1280, 720)
 black = (0, 0, 0)
 screen = pygame.display.set_mode(screen_size)
 
-mode = {'ship': 0,
-        'system': 1,
-        'planet': 2}
+mode = {'main': 0,
+        'ship': 1,
+        'system': 2,
+        'planet': 3}
 
-game_mode = mode['ship']
+game_mode = mode['main']
 keys = Controller()
-ship = Ship(size_x=40, size_y=40)
-# system = None
-system = System()
+panel = ControlPanel(main_window_width=800, main_window_height=600, main_white_space=50)
+ship = None
+# ship = Ship(size_x=40, size_y=40)
+system = None
+# system = System()
 planet_map = None
 # planet_map = Map(width/2, height/2, seed=123)
 
@@ -47,7 +51,9 @@ while 1:
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse[event.button] = 0
 
-        if game_mode == mode['ship']:
+        if game_mode == mode['main']:
+            panel.update(key_pressed, mouse)
+        elif game_mode == mode['ship']:
             ship.update(key_pressed, mouse)
         elif game_mode == mode['system']:
             if system:
@@ -57,9 +63,11 @@ while 1:
                 pass
 
     # key_pressed = keys.poll_keyboard()
-
+    # draw
     screen.fill(black)
-    if game_mode == mode['ship']:
+    if game_mode == mode['main']:
+        panel.draw(screen)
+    elif game_mode == mode['ship']:
         ship.draw(screen)
     elif game_mode == mode['system']:
         if system:

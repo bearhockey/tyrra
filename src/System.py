@@ -5,10 +5,10 @@ import Color
 import Text
 
 from Box import Box
-from Button import Button
 from InputBox import InputBox
 from Satellite import Satellite
 from Star import Star
+from TextBox import TextBox
 
 
 class System(object):
@@ -32,13 +32,16 @@ class System(object):
         print self.main_window.rect.center
         # input boxes
         box_width = self.font.size('12345678900')[0]
-        self.x_box = InputBox(pygame.Rect(100, 660, box_width, 30), (10, 10, 10), Color.white, '0', Color.white,
-                              self.font, 10, allowed_characters=range(48, 57))
-        self.y_box = InputBox(pygame.Rect(400, 660, box_width, 30), (10, 10, 10), Color.white, '0', Color.white,
-                              self.font, 10, allowed_characters=range(48, 57))
+        self.x_box = InputBox(pygame.Rect(100, 660, box_width, 30), (10, 10, 10), Color.white,
+                              highlight_color=Color.white, active_color=Color.white, message='0',
+                              text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
+        self.y_box = InputBox(pygame.Rect(400, 660, box_width, 30), (10, 10, 10), Color.white,
+                              highlight_color=Color.white, active_color=Color.white, message='0',
+                              text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
         # buttons
-        self.generate_button = Button(pygame.Rect(650, 650, 100, 50), (20, 150, 30), Color.white, u'\u304D',
-                                      Color.white, self.font)
+        self.generate_button = TextBox(pygame.Rect(650, 650, 100, 50), (20, 150, 30), Color.white,
+                                       highlight_color=Color.white, active_color=Color.white, message=u'\u304D',
+                                       text_color=Color.white, font=self.font)
 
     def generate(self):
         self.generate_seed()
