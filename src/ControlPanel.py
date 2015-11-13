@@ -3,10 +3,9 @@ import pygame
 import Color
 
 from Ship import ShipGrid
-from System import System
+from System import System, SystemMap
 from TextBox import TextBox
 from Window import Window
-
 
 
 class ControlPanel(object):
@@ -25,7 +24,9 @@ class ControlPanel(object):
         # ship grid construct
         self.window_list[1].components.append(ShipGrid(size_x=40, size_y=40))
         # system construct
-        self.window_list[2].components.append(System())
+        self.system = System(x=454556, y=45645)
+        self.system.generate()
+        self.window_list[2].components.append(self.system.system_map)
 
         self.window_dict = {'blank': 0,
                             'ship': 1,

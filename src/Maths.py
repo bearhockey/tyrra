@@ -1,3 +1,4 @@
+import math
 import random
 
 
@@ -17,3 +18,7 @@ class Maths(object):
             return value + random.uniform(Maths.minimum, increment)
         else:
             return 0
+
+    @staticmethod
+    def collide_circle(point, circle_center, circle_radius):
+        return math.sqrt((point[0]-circle_center[0])**2+(point[1]-circle_center[1])**2) < circle_radius

@@ -2,9 +2,9 @@ import pygame
 import random
 
 import Color
+import Maths
 import Text
 
-from Box import Box
 from InputBox import InputBox
 from Satellite import Satellite
 from Star import Star
@@ -22,26 +22,22 @@ class System(object):
         self.stars = []
         self.planets = []
 
+        self.star_orbit = 0
+
         self.big_font_size = 24
         self.small_font_size = 16
         self.font = pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
         self.small_font = pygame.font.Font(pygame.font.get_default_font(), self.small_font_size)
 
-        # main screen turn on
-        self.main_window = Box(pygame.Rect(20, 50, 800, 600), (0, 0, 0), Color.white)
-        print self.main_window.rect.center
-        # input boxes
-        box_width = self.font.size('12345678900')[0]
-        self.x_box = InputBox(pygame.Rect(100, 660, box_width, 30), (10, 10, 10), Color.white,
-                              highlight_color=Color.white, active_color=Color.white, message='0',
-                              text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
-        self.y_box = InputBox(pygame.Rect(400, 660, box_width, 30), (10, 10, 10), Color.white,
-                              highlight_color=Color.white, active_color=Color.white, message='0',
-                              text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
+        self.main_window = pygame.Rect(0, 0, 800, 600)
+
         # buttons
         self.generate_button = TextBox(pygame.Rect(650, 650, 100, 50), (20, 150, 30), Color.white,
                                        highlight_color=Color.white, active_color=Color.white, message=u'\u304D',
                                        text_color=Color.white, font=self.font)
+
+        self.system_map = SystemMap(stars=self.stars, planets=self.planets, star_orbit=self.star_orbit,
+                                    window_width=self.main_window.width, window_height=self.main_window.height)
 
     def generate(self):
         self.generate_seed()
@@ -64,13 +60,23 @@ class System(object):
     def generate_stars(self):
         random.seed(self.seed)
         rand = random.randrange(0, 9)
-        self.stars.append(Star(radius=random.randint(1, 255),
+        position = self.main_window.center
+        radius = random.randint(1, 255)
+        # star.draw_grid(screen, (center[0] + i, center[1] - center[1] / 3 + i))
+        # i += star.radius / 4
+        self.stars.append(Star(position=position,
+                               radius=radius,
                                luminosity=random.randint(1, 255),
                                temperature=random.randint(1, 255)))
         if rand > 6:
-            self.stars.append(Star(radius=random.randint(1, 255),
+            self.star_orbit += radius/2
+            position = (position[0]+radius/2, position[1]+radius/2)
+            radius = random.randint(1, 255)
+            self.stars.append(Star(position=position,
+                                   radius=radius,
                                    luminosity=random.randint(1, 255),
                                    temperature=random.randint(1, 255)))
+            self.star_orbit += radius/2
         if rand > 9:
             self.stars.append(Star(radius=random.randint(1, 255),
                                    luminosity=random.randint(1, 255),
@@ -80,6 +86,7 @@ class System(object):
         star_designations = ['Major', 'Minor', 'Augmented', 'Diminished']
         for sun in self.stars:
             sun.name = '{0} {1}'.format(self.short_name, star_designations.pop(0))
+        self.system_map.star_orbit = self.star_orbit
 
     def generate_name(self):
         lookup = ['Aleph', 'Alpha', 'Antares', 'Beta', 'Bootes', 'Barum', 'Ceres', 'Charion', 'Chardibus', 'Chalupa',
@@ -106,31 +113,13 @@ class System(object):
 
     def draw(self, screen):
         self.draw_gui(screen)
-        self.draw_stars(screen)
-        self.draw_planets(screen)
-
-    def draw_stars(self, screen):
-        i = 0
-        for star in self.stars:
-            center = self.main_window.rect.center
-            star.draw_grid(screen, (center[0] + i, center[1] - center[1] / 3 + i))
-            i += star.radius / 4
-
-    def draw_planets(self, screen):
-        i = 0
-        for planet in self.planets:
-            i += planet.radius / 10
-            center = self.main_window.rect.center
-            planet.draw(screen, (center[0], center[1] + i))
-            i += planet.radius / 10 + 5
 
     def draw_gui(self, screen):
         self.main_window.draw(screen)
         # cords
         Text.draw_text(screen, self.font, 'X:', Color.white, (50, 650))
         Text.draw_text(screen, self.font, 'Y:', Color.white, (350, 650))
-        self.x_box.draw(screen)
-        self.y_box.draw(screen)
+
         self.generate_button.draw(screen)
 
         Text.draw_text(screen, self.font, self.name, Color.white, (20, 20))
@@ -148,7 +137,7 @@ class System(object):
             Text.draw_text(screen, self.small_font, 'Planets: {0}'.format(len(self.planets)), Color.white,
                            (900, 350 + text_offset))
 
-    def update(self, key, mouse):
+    def update(self, key, mouse, offset=(0, 0)):
         if mouse[1]:
             self.x_box.check_click()
             self.y_box.check_click()
@@ -163,3 +152,77 @@ class System(object):
         if key:
             self.x_box.poll(key)
             self.y_box.poll(key)
+
+
+class SystemMap(object):
+    def __init__(self, stars, planets, star_orbit, window_width=200, window_height=100):
+        self.main_window = pygame.Rect(0, 0, window_width, window_height)
+        self.big_font_size = 24
+        self.small_font_size = 16
+        self.font = pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
+        self.small_font = pygame.font.Font(pygame.font.get_default_font(), self.small_font_size)
+
+        self.stars = stars
+        self.planets = planets
+        self.star_orbit = star_orbit
+
+        box_width = self.font.size('12345678900')[0]
+        self.x_box = InputBox(pygame.Rect(800-box_width*2, 570, box_width, 30), (10, 10, 10), Color.white,
+                              highlight_color=Color.white, active_color=Color.white, message='0',
+                              text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
+        self.y_box = InputBox(pygame.Rect(800-box_width, 570, box_width, 30), (10, 10, 10), Color.white,
+                              highlight_color=Color.white, active_color=Color.white, message='0',
+                              text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
+
+        self.mouse_box = TextBox(pygame.Rect(0, 0, 200, 30), box_color=None,border_color=None, highlight_color=None,
+                                 active_color=None, message='Poop', text_color=Color.white, font=self.small_font)
+
+    def draw_stars(self, screen):
+        '''
+        i = 0
+        for star in self.stars:
+            center = self.main_window.center
+            star.draw_grid(screen, (center[0] + i, center[1] - center[1] / 3 + i))
+            i += star.radius / 4
+            '''
+        for star in self.stars:
+            star.draw_grid(screen, position=star.position)
+        # orbit
+        if self.star_orbit > 0:
+            elipse_box = pygame.Rect(self.main_window.center[0]-self.star_orbit/2,
+                                     self.main_window.center[1]-self.star_orbit/4,
+                                     self.star_orbit,
+                                     self.star_orbit/2)
+            pygame.draw.ellipse(screen, Color.white, elipse_box, 2)
+
+    def draw_planets(self, screen):
+        i = 0
+        for planet in self.planets:
+            i += planet.radius / 10
+            center = self.main_window.center
+            planet.draw(screen, (center[0], center[1] + i))
+            i += planet.radius / 10 + 5
+
+    def update(self, key, mouse, offset=(0, 0)):
+        mouse_position = pygame.mouse.get_pos()
+        hover = False
+        for star in self.stars:
+            star_position = (star.position[0] + offset[0], star.position[1] + offset[1])
+            if Maths.Maths.collide_circle(point=mouse_position, circle_center=star_position,
+                                          circle_radius=star.radius/2):
+                self.mouse_box.message = star.name
+                hover = True
+                break
+        if hover:
+            self.mouse_box.text_rect.left = mouse_position[0]
+            self.mouse_box.text_rect.top = mouse_position[1]
+        else:
+            self.mouse_box.message = ''
+
+    def draw(self, screen):
+        screen.fill(Color.black)
+        self.draw_stars(screen)
+        # self.draw_planets(screen)
+        self.x_box.draw(screen)
+        self.y_box.draw(screen)
+        self.mouse_box.draw(screen)

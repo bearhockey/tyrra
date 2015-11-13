@@ -3,7 +3,8 @@ import math
 
 
 class Star(object):
-    def __init__(self, radius=128, luminosity=128, temperature=128, name='SUN'):
+    def __init__(self, position=(0, 0), radius=128, luminosity=128, temperature=128, name='SUN'):
+        self.position = position
         self.radius = radius
         self.luminosity = luminosity
         self.temperature = temperature
