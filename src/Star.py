@@ -3,12 +3,13 @@ import math
 
 
 class Star(object):
-    def __init__(self, position=(0, 0), radius=128, luminosity=128, temperature=128, name='SUN'):
+    def __init__(self, position=(0, 0), radius=128, luminosity=128, temperature=128, name='SUN', orbit_point=0):
         self.position = position
         self.radius = radius
         self.luminosity = luminosity
         self.temperature = temperature
         self.name = name
+        self.orbit_point = orbit_point
 
     def get_temperature(self):
         return 2000 + (self.temperature * 32)
@@ -22,6 +23,9 @@ class Star(object):
     def draw_grid(self, screen, position):
         pygame.draw.circle(screen, self.convert_temperature_to_color(), position, self.radius / 2)
         pygame.draw.circle(screen, (0, 0, 0), position, self.radius / 2, 1)
+
+    def draw_orbit(self, screen, orbit):
+        self.draw_grid(screen, position=orbit.get_point(self.orbit_point))
 
     def convert_temperature_to_color(self):
         red_limit = 144

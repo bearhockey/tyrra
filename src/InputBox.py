@@ -12,6 +12,11 @@ class InputBox(TextBox):
         self.text_limit = text_limit
         self.allowed_characters = allowed_characters
 
+    def update(self, key, mouse, offset=(0, 0)):
+        if key:
+            self.poll(key)
+        return TextBox.update(self, key, mouse, offset)
+
     def draw(self, screen):
         TextBox.draw(self, screen)
         if self.active:

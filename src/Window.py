@@ -6,26 +6,32 @@ from Box import Box
 
 
 class Window(object):
-    def __init__(self, position, size, name=None):
+    def __init__(self, position, size, name=None, border_color=Color.white):
         self.name = name
         self.position = position
         self.canvas = pygame.Surface(size=size)
         self.border = Box(pygame.Rect(position[0], position[1], size[0], size[1]), box_color=None,
-                          border_color=Color.white, highlight_color=Color.white, active_color=Color.white)
+                          border_color=border_color, highlight_color=border_color, active_color=border_color)
         self.components = []
+        self.sprites = []
 
     def update(self, key, mouse, offset=None):
         if offset is None:
             offset = self.position
-        if self.border.check_mouse_inside(mouse, offset):
+            # offset = (0, 0)
+        if self.border.check_mouse_inside(mouse, (0, 0)):
+            # print 'mouse inside {0}'.format(self.name)
             for component in self.components:
                 update = getattr(component, 'update', None)
                 if callable(update):
-                    update(key=key, mouse=mouse, offset=offset)
+                    # print 'Update on {0}'.format(component)
+                    component.update(key=key, mouse=mouse, offset=offset)
 
     def draw(self, screen):
         self.canvas.fill(Color.black)
         for component in self.components:
             component.draw(self.canvas)
+        for sprite in self.sprites:
+            sprite.draw(self.canvas)
         screen.blit(self.canvas, self.position)
         self.border.draw(screen)

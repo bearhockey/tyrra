@@ -19,6 +19,9 @@ class TextBox(Box):
                                      self.rect.width - self.border * 4,
                                      self.rect.height - self.border * 4)
 
+    def update(self, key, mouse, offset=(0, 0)):
+        return Box.update(self, key, mouse, offset)
+
     def draw(self, screen):
         Box.draw(self, screen)
         if len(self.message) != 0:
