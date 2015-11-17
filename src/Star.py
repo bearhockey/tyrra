@@ -3,12 +3,14 @@ import math
 
 
 class Star(object):
-    def __init__(self, position=(0, 0), radius=128, luminosity=128, temperature=128, name='SUN', orbit_point=0):
+    def __init__(self, position=(0, 0), radius=128, luminosity=128, temperature=128, name='SUN', orbit=None,
+                 orbit_point=0):
         self.position = position
         self.radius = radius
         self.luminosity = luminosity
         self.temperature = temperature
         self.name = name
+        self.orbit = orbit
         self.orbit_point = orbit_point
 
     def get_temperature(self):
@@ -26,6 +28,12 @@ class Star(object):
 
     def draw_orbit(self, screen, orbit):
         self.draw_grid(screen, position=orbit.get_point(self.orbit_point))
+
+    def draw(self, screen):
+        if self.orbit is not None:
+            self.draw_orbit(screen, orbit=self.orbit)
+        else:
+            self.draw_grid(screen, self.position)
 
     def convert_temperature_to_color(self):
         red_limit = 144

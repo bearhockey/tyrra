@@ -43,10 +43,22 @@ class System(object):
 
     def generate_planets(self):
         random.seed(self.seed)
-        planet_num = 100
-        while planet_num > 0:
-            planet_num -= random.randrange(10, 100)
-            self.planets.append(Satellite(radius=random.randint(1, 255)))
+        center = self.main_window.center
+        star_sum = self.star_orbit.orbit
+        for star in self.stars:
+            star_sum += star.radius/2
+        planet_num = 200
+        while planet_num > 100:
+            planet_num -= random.randrange(10, 50)
+            print 'planet num is {0}'.format(planet_num)
+            self.planets.append(Satellite(sun_position=center,
+                                          radius=random.randint(1, 255),
+                                          orbit=planet_num+star_sum))
+        orbit_position = 360/len(self.planets)
+        i = 1
+        for planet in self.planets:
+            planet.orbit_point = orbit_position*i
+            i += 1
 
     def generate_seed(self):
         self.seed = float(0.5) * float(self.x + self.y) * float(self.x + self.y + 1) + self.y
@@ -81,12 +93,13 @@ class System(object):
         self.stars = sorted(self.stars, key=lambda star: star.radius, reverse=True)
         star_designations = ['Major', 'Minor', 'Augmented', 'Diminished']
         orbit_position = 360/len(self.stars)
+        self.star_orbit.set_orbit(orbit)
         i = 1
         for sun in self.stars:
             sun.name = '{0} {1}'.format(self.short_name, star_designations.pop(0))
             sun.orbit_point = orbit_position*i
+            sun.orbit = self.star_orbit
             i += 1
-        self.star_orbit.set_orbit(orbit)
 
     def generate_name(self):
         lookup = ['Aleph', 'Alpha', 'Antares', 'Beta', 'Bootes', 'Barum', 'Ceres', 'Charion', 'Chardibus', 'Chalupa',
@@ -180,11 +193,24 @@ class SystemMap(object):
         self.mouse_box = TextBox(pygame.Rect(0, 0, 200, 30), box_color=None,border_color=None, highlight_color=None,
                                  active_color=None, message='Poop', text_color=Color.white, font=self.small_font)
 
+    def draw_bodies(self, screen):
+        # orbits
+        if self.star_orbit.orbit > 0:
+            self.star_orbit.draw(screen)
+        if len(self.planets) > 0:
+            for planet in self.planets:
+                planet.orbit.draw(screen)
+        # combine lists and then draw them
+        bodies = self.stars + self.planets
+        bodies = sorted(bodies, key=lambda y: y.orbit.get_point(y.orbit_point)[1], reverse=False)
+        for body in bodies:
+            body.draw(screen)
+
     def draw_stars(self, screen):
         # orbit
         if self.star_orbit.orbit > 0:
             self.star_orbit.draw(screen)
-            # pygame.draw.circle(screen, Color.white, self.star_orbit.get_point(91), 5)
+
         self.stars = sorted(self.stars, key=lambda sun: sun.orbit_point, reverse=True)
         for star in self.stars:
             if self.star_orbit.orbit > 0:
@@ -192,22 +218,18 @@ class SystemMap(object):
             else:
                 star.draw_grid(screen, position=star.position)
 
-
     def draw_planets(self, screen):
-        i = 0
         for planet in self.planets:
-            i += planet.radius / 10
-            center = self.main_window.center
-            planet.draw(screen, (center[0], center[1] + i))
-            i += planet.radius / 10 + 5
+            planet.draw(screen)
 
     def rotate(self, amount):
-        for star in self.stars:
-            star.orbit_point += amount
-            if star.orbit_point > 360:
-                star.orbit_point -= 360
-            if star.orbit_point < 1:
-                star.orbit_point += 360
+        bodies = self.stars + self.planets
+        for body in bodies:
+            body.orbit_point += amount
+            if body.orbit_point > 360:
+                body.orbit_point -= 360
+            if body.orbit_point < 1:
+                body.orbit_point += 360
 
     def update(self, key, mouse, offset=(0, 0)):
         mouse_position = pygame.mouse.get_pos()
@@ -244,8 +266,9 @@ class SystemMap(object):
 
     def draw(self, screen):
         screen.fill(Color.black)
-        self.draw_stars(screen)
-        self.draw_planets(screen)
+        # self.draw_stars(screen)
+        # self.draw_planets(screen)
+        self.draw_bodies(screen)
         self.x_box.draw(screen)
         self.y_box.draw(screen)
         self.mouse_box.draw(screen)
