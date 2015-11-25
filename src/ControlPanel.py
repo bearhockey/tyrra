@@ -25,11 +25,11 @@ class ControlPanel(object):
                                    name='Ship'),
                             Window((main_white_space, main_white_space), (main_window_width, main_window_height),
                                    name='System')]
-        self.sidebar_list = [Window((main_white_space+main_window_width+side_white_space, side_white_space),
+        self.sidebar_list = [Window((main_white_space + main_window_width + side_white_space, side_white_space),
                                     (side_window_width, wide_window_height), name='Blank', border_color=Color.d_gray),
-                             Window((main_white_space+main_window_width+side_white_space, side_white_space),
+                             Window((main_white_space + main_window_width + side_white_space, side_white_space),
                                     (side_window_width, wide_window_height), name='Ship', border_color=Color.d_gray),
-                             Window((main_white_space+main_window_width+side_white_space, side_white_space),
+                             Window((main_white_space + main_window_width + side_white_space, side_white_space),
                                     (side_window_width, wide_window_height), name='System', border_color=Color.d_gray)]
         # ship grid construct
         self.window_list[1].components.append(ShipGrid(size_x=40, size_y=40))
@@ -57,7 +57,7 @@ class ControlPanel(object):
         self.sidebar_list[2].components.append(self.y_cord_box)
         self.sidebar_list[2].sprites.append(self.generate_button)
         self.sidebar_list[2].components.append(TextBox(pygame.Rect(50, 50, 50, 50), Color.d_gray, border_color=None,
-                                                   highlight_color=Color.white, active_color=Color.blue))
+                                                       highlight_color=Color.white, active_color=Color.blue))
 
         self.window_dict = {'blank': 0,
                             'ship': 1,
@@ -82,7 +82,8 @@ class ControlPanel(object):
             try:
                 self.main_window = self.window_list[new_window]
                 self.side_window = self.sidebar_list[new_window]
-            except:
+            except Exception as e:
+                print e
                 pass
         self.screen_title.message = self.main_window.name
 
