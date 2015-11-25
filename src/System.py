@@ -225,7 +225,7 @@ class SystemMap(object):
     def rotate(self, amount):
         bodies = self.stars + self.planets
         for body in bodies:
-            body.orbit_point += amount
+            body.orbit_point += amount/10
             if body.orbit_point > 360:
                 body.orbit_point -= 360
             if body.orbit_point < 1:

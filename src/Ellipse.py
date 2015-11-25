@@ -12,8 +12,16 @@ class Ellipse(object):
         if angle == 0:
             angle = 360
         rad = angle*(pi/180)
-        x = (self.x_radius * self.y_radius) / sqrt(pow(self.y_radius, 2) + pow(self.x_radius, 2)*(pow(tan(rad), 2)))
-        y = (self.x_radius * self.y_radius) / sqrt(pow(self.x_radius, 2) + pow(self.y_radius, 2)/pow(tan(rad), 2))
+        try:
+            x = (self.x_radius * self.y_radius) / sqrt(pow(self.y_radius, 2) + pow(self.x_radius, 2)*(pow(tan(rad), 2)))
+        except Exception as e:
+            # print e
+            x = 0
+        try:
+            y = (self.x_radius * self.y_radius) / sqrt(pow(self.x_radius, 2) + pow(self.y_radius, 2)/pow(tan(rad), 2))
+        except Exception as e:
+            # print e
+            y = 0
 
         if 90 < angle < 270:
             x = -x
