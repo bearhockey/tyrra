@@ -38,6 +38,7 @@ class System(object):
         self.generate_name()
         self.generate_stars()
         self.generate_planets()
+
         self.system_map = SystemMap(stars=self.stars, planets=self.planets, star_orbit=self.star_orbit,
                                     window_width=self.main_window.width, window_height=self.main_window.height)
 
@@ -206,22 +207,6 @@ class SystemMap(object):
         for body in bodies:
             body.draw(screen)
 
-    def draw_stars(self, screen):
-        # orbit
-        if self.star_orbit.orbit > 0:
-            self.star_orbit.draw(screen)
-
-        self.stars = sorted(self.stars, key=lambda sun: sun.orbit_point, reverse=True)
-        for star in self.stars:
-            if self.star_orbit.orbit > 0:
-                star.draw_orbit(screen, self.star_orbit)
-            else:
-                star.draw_grid(screen, position=star.position)
-
-    def draw_planets(self, screen):
-        for planet in self.planets:
-            planet.draw(screen)
-
     def rotate(self, amount):
         bodies = self.stars + self.planets
         for body in bodies:
@@ -234,15 +219,19 @@ class SystemMap(object):
     def update(self, key, mouse, offset=(0, 0)):
         mouse_position = pygame.mouse.get_pos()
         hover = False
-        for star in reversed(self.stars):
+        bodies = self.stars + self.planets
+        for body in reversed(bodies):
+            '''
             if self.star_orbit.orbit > 0:
-                star_position = (self.star_orbit.get_point(star.orbit_point)[0] + offset[0],
-                                 self.star_orbit.get_point(star.orbit_point)[1] + offset[1])
+                star_position = (self.star_orbit.get_point(body.orbit_point)[0] + offset[0],
+                                 self.star_orbit.get_point(body.orbit_point)[1] + offset[1])
             else:
-                star_position = (star.position[0] + offset[0], star.position[1] + offset[1])
-            if Maths.Maths.collide_circle(point=mouse_position, circle_center=star_position,
-                                          circle_radius=star.radius/2):
-                self.mouse_box.message = star.name
+                star_position = (body.position[0] + offset[0], body.position[1] + offset[1])
+            '''
+            body_position = body.orbit.get_point(body.orbit_point)
+            if Maths.Maths.collide_circle(point=mouse_position, circle_center=body_position,
+                                          circle_radius=body.radius/body.radius_mod):
+                self.mouse_box.message = body.name
                 hover = True
                 break
         if hover:

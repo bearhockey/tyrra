@@ -49,11 +49,11 @@ class Ship(object):
                                    message='T', text_color=Color.blue, text_outline=True, font=self.small_font))
 
         # debug load button
-        self.load_box = TextBox(pygame.Rect(50, 350, 70, 40), Color.blue, border_color=Color.gray,
+        self.load_box = TextBox(pygame.Rect(75, 375, 75, 40), Color.blue, border_color=Color.gray,
                                 highlight_color=Color.white, active_color=Color.white, message='LOAD',
                                 text_color=Color.white, text_outline=True, font=self.font)
         # debug save button
-        self.save_box = TextBox(pygame.Rect(150, 350, 70, 40), Color.red, border_color=Color.gray,
+        self.save_box = TextBox(pygame.Rect(200, 375, 75, 40), Color.red, border_color=Color.gray,
                                 highlight_color=Color.white, active_color=Color.white, message='SAVE',
                                 text_color=Color.white, text_outline=True, font=self.font)
 
@@ -206,7 +206,6 @@ class ShipGrid(object):
                 if not self.scrolling:
                     self.starting_mouse_pos = pygame.mouse.get_pos()
                     self.starting_scroll_pos = self.grid_offset
-                    print self.starting_scroll_pos
                 self.scrolling = True
                 new_pos_x = pygame.mouse.get_pos()[0] - self.starting_mouse_pos[0]
                 new_pos_y = pygame.mouse.get_pos()[1] - self.starting_mouse_pos[1]
