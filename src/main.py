@@ -41,23 +41,25 @@ print pygame.font.get_fonts()
 while 1:
     clock.tick(60)
     key_pressed = None
+    unicode_pressed = None
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit(0)
         elif event.type == pygame.KEYDOWN:
             key_pressed = event.key
+            unicode_pressed = event.unicode
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse[event.button] = 1
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse[event.button] = 0
 
         if game_mode == mode['main']:
-            panel.update(key_pressed, mouse)
+            panel.update((key_pressed, unicode_pressed), mouse)
         elif game_mode == mode['ship']:
             ship.update(key_pressed, mouse)
         elif game_mode == mode['system']:
             if system:
-                system.update(key_pressed, mouse)
+                system.update((key_pressed, unicode_pressed), mouse)
         elif game_mode == mode['planet']:
             if planet_map:
                 pass

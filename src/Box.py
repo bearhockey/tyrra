@@ -2,7 +2,8 @@ import pygame
 
 
 class Box(object):
-    def __init__(self, rect, box_color=None, border_color=None, highlight_color=None, active_color=None):
+    def __init__(self, rect, box_color=None, border_color=None, highlight_color=None, active_color=None, border=2,
+                 name=None):
         self.rect = rect
         self.box_color = box_color
         self.border_color = {
@@ -12,7 +13,8 @@ class Box(object):
         }
         self.status = 'NORMAL'
         self.active = False
-        self.border = 2
+        self.border = border
+        self.name = name
 
     def update(self, key, mouse, offset=(0, 0)):
         return self.check_click(mouse=mouse, offset=offset)

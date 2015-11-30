@@ -4,7 +4,7 @@ import Color
 
 from Box import Box
 from InputBox import InputBox
-from Ship import ShipGrid
+from Ship import Ship, ShipGrid, ShipPreview
 from System import System, SystemMap
 from TextBox import TextBox
 from Window import Window
@@ -31,8 +31,10 @@ class ControlPanel(object):
                                     (side_window_width, wide_window_height), name='Ship', border_color=Color.d_gray),
                              Window((main_white_space + main_window_width + side_white_space, side_white_space),
                                     (side_window_width, wide_window_height), name='System', border_color=Color.d_gray)]
-        # ship grid construct
-        self.window_list[1].components.append(ShipGrid(size_x=40, size_y=40))
+        # ship construct
+        self.ship = Ship(size_x=40, size_y=40)
+        self.window_list[1].components.append(self.ship.ship_grid)
+        self.sidebar_list[1].components.append(self.ship)
 
         # system construct
         # self.system = System(x=454556, y=45645)

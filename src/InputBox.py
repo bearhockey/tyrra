@@ -13,7 +13,7 @@ class InputBox(TextBox):
         self.allowed_characters = allowed_characters
 
     def update(self, key, mouse, offset=(0, 0)):
-        if key:
+        if key[0] or key[1]:
             self.poll(key)
         return TextBox.update(self, key, mouse, offset)
 
@@ -24,11 +24,11 @@ class InputBox(TextBox):
 
     def poll(self, in_key):
         if self.active:
-            if in_key == pygame.K_BACKSPACE:
+            if in_key[0] == pygame.K_BACKSPACE:
                 self.message = self.message[0:-1]
-            elif in_key == pygame.K_RETURN:
+            elif in_key[0] == pygame.K_RETURN:
                 return self.message
             elif len(self.message) < self.text_limit:
-                if not self.allowed_characters or in_key in self.allowed_characters:
-                    self.message += chr(in_key)
+                if not self.allowed_characters or in_key[0] in self.allowed_characters:
+                    self.message += in_key[1]
             return None

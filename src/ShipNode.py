@@ -7,7 +7,8 @@ from Box import Box
 node_type = {
     'BLANK': 0,
     'FLOOR': 1,
-    'ARMOR': 2
+    'ARMOR': 2,
+    'THRUSTER': 3
     }
 
 
@@ -32,18 +33,20 @@ class ShipNode(Box):
     def move(self, x, y, zoom=None):
         self.set(x + self.offset[0], y + self.offset[1], zoom)
 
-    def update(self, key, mouse, offset=(0, 0)):
+    def update(self, mouse, floor_type=None, offset=(0, 0)):
         if self.check_click(mouse, offset=offset):
-            if mouse[1]:
-                self.type = node_type['FLOOR']
-            elif mouse[2]:
-                self.type = node_type['BLANK']
+            if floor_type is not None:
+                self.type = floor_type
             return True
         else:
             return False
 
     def draw(self, screen):
-        if self.type == node_type['FLOOR']:
+        if self.type == node_type['THRUSTER']:
+            self.box_color = Color.blue
+        elif self.type == node_type['ARMOR']:
+            self.box_color = Color.d_gray
+        elif self.type == node_type['FLOOR']:
             self.box_color = Color.gray
         else:
             self.box_color = Color.black
