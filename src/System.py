@@ -33,6 +33,16 @@ class System(object):
 
         self.system_map = None
 
+        self.roman = {1: 'I',
+                      2: 'II',
+                      3: 'III',
+                      4: 'IV',
+                      5: 'V',
+                      6: 'VI',
+                      7: 'VII',
+                      8: 'VIII',
+                      9: 'IX'}
+
     def generate(self):
         self.generate_seed()
         self.generate_name()
@@ -49,12 +59,16 @@ class System(object):
         for star in self.stars:
             star_sum += star.radius/2
         planet_num = 200
+        planet_count = 1
         while planet_num > 100:
             planet_num -= random.randrange(10, 50)
             print 'planet num is {0}'.format(planet_num)
+            planet_name = '{0} {1}'.format(self.short_name, self.roman[planet_count])
             self.planets.append(Satellite(sun_position=center,
                                           radius=random.randint(1, 255),
-                                          orbit=planet_num+star_sum))
+                                          orbit=planet_num+star_sum,
+                                          name=planet_name))
+            planet_count += 1
         orbit_position = 360/len(self.planets)
         i = 1
         for planet in self.planets:
