@@ -43,7 +43,10 @@ class System(object):
                       8: 'VIII',
                       9: 'IX'}
 
-    def generate(self):
+    def generate(self, clear=True):
+        if clear:
+            del self.stars[:]
+            del self.planets[:]
         self.generate_seed()
         self.generate_name()
         self.generate_stars()
@@ -229,6 +232,9 @@ class SystemMap(object):
                 body.orbit_point -= 360
             if body.orbit_point < 1:
                 body.orbit_point += 360
+
+    def always(self):
+        self.rotate(10)
 
     def update(self, key, mouse, offset=(0, 0)):
         mouse_position = pygame.mouse.get_pos()

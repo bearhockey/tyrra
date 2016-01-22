@@ -64,6 +64,9 @@ while 1:
             if planet_map:
                 pass
 
+    # always do always
+    panel.always()
+
     # key_pressed = keys.poll_keyboard()
     # draw
     screen.fill(black)

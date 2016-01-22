@@ -15,6 +15,13 @@ class Window(object):
         self.components = []
         self.sprites = []
 
+    def always(self):
+        elements = self.components + self.sprites
+        for element in elements:
+            always = getattr(element, 'always', None)
+            if callable(always):
+                element.always()
+
     def update(self, key, mouse, offset=None):
         if offset is None:
             offset = self.position
