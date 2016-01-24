@@ -3,7 +3,7 @@ import pygame
 
 class Box(object):
     def __init__(self, rect, box_color=None, border_color=None, highlight_color=None, active_color=None, border=2,
-                 name=None):
+                 name=None, image=None):
         self.rect = rect
         self.box_color = box_color
         self.border_color = {
@@ -15,6 +15,7 @@ class Box(object):
         self.active = False
         self.border = border
         self.name = name
+        self.image = image
 
     def update(self, key, mouse, offset=(0, 0)):
         return self.check_click(mouse=mouse, offset=offset)
@@ -41,7 +42,9 @@ class Box(object):
             return False
 
     def draw(self, screen):
-        if self.box_color:
+        if self.image:
+            screen.blit(self.image, self.rect)
+        elif self.box_color:
             pygame.draw.rect(screen, self.box_color, self.rect, 0)
         if self.border_color[self.status]:
             pygame.draw.rect(screen, self.border_color[self.status], self.rect, 2)

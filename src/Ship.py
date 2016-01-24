@@ -21,7 +21,7 @@ class Ship(object):
         self.ship_preview = self.ship_grid.preview_window
 
         # objects are drawn on side bar
-        self.name_box = InputBox(pygame.Rect(50, 10, 250, 50), box_color=None, border_color=Color.d_gray,
+        self.name_box = InputBox(pygame.Rect(70, 10, 250, 50), box_color=None, border_color=Color.d_gray,
                                  highlight_color=Color.white, active_color=Color.gray, message=self.name,
                                  text_color=Color.white, font=self.font, text_limit=16)
 
