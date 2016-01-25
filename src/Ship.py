@@ -25,58 +25,121 @@ class Ship(object):
                                  highlight_color=Color.white, active_color=Color.gray, message=self.name,
                                  text_color=Color.white, font=self.font, text_limit=16)
 
+        # nav
+        self.stats_button = TextBox(pygame.Rect(25, 70, 80, 30), box_color=Color.d_gray, border_color=Color.gray,
+                                    highlight_color=Color.white, active_color=Color.gray, message='Stats',
+                                    text_color=Color.white, text_outline=True, font=self.font)
+        self.edit_button = TextBox(pygame.Rect(120, 70, 90, 30), box_color=Color.d_gray, border_color=Color.gray,
+                                   highlight_color=Color.white, active_color=Color.gray, message='Edit',
+                                   text_color=Color.white, text_outline=True, font=self.font)
+
         # floors
-        self.floor_text = TextBox(pygame.Rect(40, 75, 100, 25), box_color=None, border_color=None, highlight_color=None,
+        self.floor_text = TextBox(pygame.Rect(25, 110, 100, 25), box_color=None, border_color=None, highlight_color=None,
                                   active_color=None, message='Floors:', text_color=Color.white, text_outline=True,
                                   font=self.small_font)
         self.floor_dictionary = {'blank': 0,
                                  'floor': 1,
                                  'armor': 2,
-                                 'thruster': 3}
+                                 'engine': 3,
+                                 'gun': 4,
+                                 'power': 5}
+        self.floor_stats = {'blank': (0, 0, 0, 0),
+                            'floor': (0, -1, -1, -1),
+                            'armor': (0, 10, -2, 0),
+                            'engine': (0, 0, 10, -5),
+                            'gun': (10, 0, -1, -5),
+                            'power': (0, 0, -1, 10)}
+
         self.floors = []
-        self.floors.append(Box(pygame.Rect(40, 100, 25, 25), Color.black, border_color=Color.d_gray,
+        self.floors.append(Box(pygame.Rect(25, 140, 25, 25), Color.black, border_color=Color.d_gray,
                                highlight_color=Color.white, active_color=Color.blue, border=1, name='blank'))
-        self.floors.append(Box(pygame.Rect(70, 100, 25, 25), Color.gray, border_color=Color.d_gray,
+        self.floors.append(Box(pygame.Rect(55, 140, 25, 25), Color.gray, border_color=Color.d_gray,
                                highlight_color=Color.white, active_color=Color.blue, border=1, name='floor'))
-        self.floors.append(Box(pygame.Rect(100, 100, 25, 25), Color.d_gray, border_color=Color.d_gray,
+        self.floors.append(Box(pygame.Rect(85, 140, 25, 25), Color.d_gray, border_color=Color.d_gray,
                                highlight_color=Color.white, active_color=Color.blue, border=1, name='armor'))
         self.ship_grid.selected_cell_type = self.floor_dictionary['blank']
 
+        # some text
+        self.attack_text = TextBox(pygame.Rect(230, 425, 50, 50), message='Attack:', text_color=Color.red,
+                                   font=self.small_font)
+        self.attack_value = TextBox(pygame.Rect(300, 425, 50, 50), message='', text_color=Color.red,
+                                    font=self.small_font)
+        self.armor_text = TextBox(pygame.Rect(230, 455, 50, 50), message='Armor:', text_color=Color.gray,
+                                  font=self.small_font)
+        self.armor_value = TextBox(pygame.Rect(300, 455, 50, 50), message='', text_color=Color.gray,
+                                   font=self.small_font)
+        self.speed_text = TextBox(pygame.Rect(230, 485, 50, 50), message='Speed:', text_color=Color.blue,
+                                  font=self.small_font)
+        self.speed_value = TextBox(pygame.Rect(300, 485, 50, 50), message='', text_color=Color.blue,
+                                   font=self.small_font)
+        self.power_text = TextBox(pygame.Rect(230, 515, 50, 50), message='Power:', text_color=Color.green,
+                                  font=self.small_font)
+        self.power_value = TextBox(pygame.Rect(300, 515, 50, 50), message='', text_color=Color.green,
+                                   font=self.small_font)
+
         # components
-        # self.ship_components = []
-        self.floors.append(TextBox(pygame.Rect(40, 150, 25, 25), Color.black, border_color=Color.d_gray,
-                                   highlight_color=Color.white, active_color=Color.blue, border=1, name='thruster',
-                                   message='T', text_color=Color.blue, text_outline=True, font=self.small_font))
+        self.floors.append(TextBox(pygame.Rect(25, 180, 25, 25), Color.black, border_color=Color.d_gray,
+                                   highlight_color=Color.white, active_color=Color.blue, border=1, name='engine',
+                                   message='E1', text_color=Color.blue, text_outline=True, font=self.small_font))
+        self.floors.append(TextBox(pygame.Rect(55, 180, 25, 25), Color.black, border_color=Color.d_gray,
+                                   highlight_color=Color.white, active_color=Color.blue, border=1, name='gun',
+                                   message='G1', text_color=Color.red, text_outline=True, font=self.small_font))
+        self.floors.append(TextBox(pygame.Rect(85, 180, 25, 25), Color.black, border_color=Color.d_gray,
+                                   highlight_color=Color.white, active_color=Color.blue, border=1, name='power',
+                                   message='P1', text_color=Color.green, text_outline=True, font=self.small_font))
 
         # debug load button
-        self.load_box = TextBox(pygame.Rect(75, 375, 75, 40), Color.blue, border_color=Color.gray,
+        self.load_box = TextBox(pygame.Rect(230, 545, 75, 40), Color.blue, border_color=Color.gray,
                                 highlight_color=Color.white, active_color=Color.white, message='LOAD',
                                 text_color=Color.white, text_outline=True, font=self.font)
         # debug save button
-        self.save_box = TextBox(pygame.Rect(200, 375, 75, 40), Color.red, border_color=Color.gray,
+        self.save_box = TextBox(pygame.Rect(230, 585, 75, 40), Color.red, border_color=Color.gray,
                                 highlight_color=Color.white, active_color=Color.white, message='SAVE',
                                 text_color=Color.white, text_outline=True, font=self.font)
 
     def update(self, key, mouse, offset=(0, 0)):
         self.name_box.update(key, mouse, offset)
+        self.stats_button.update(key, mouse, offset)
+        self.edit_button.update(key, mouse, offset)
         for tile in self.floors:
             tile.update(key, mouse, offset)
             if tile.active:
                 self.ship_grid.selected_cell_type = self.floor_dictionary[tile.name]
+                self.ship_grid.selected_cell_stats = self.floor_stats[tile.name]
         if self.load_box.update(key, mouse, offset):
             self.load('../data/test.txt')
         if self.save_box.update(key, mouse, offset):
             self.save('../data/test.txt')
 
+        # get stats
+        attack, armor, speed, power = self.ship_grid.get_stats()
+        self.attack_value.message = str(attack)
+        self.armor_value.message = str(armor)
+        self.speed_value.message = str(speed)
+        self.power_value.message = str(power)
+
     def draw(self, screen):
         screen.fill(Color.black)
         self.name_box.draw(screen)
+        self.stats_button.draw(screen)
+        self.edit_button.draw(screen)
+
         self.floor_text.draw(screen)
         for tile in self.floors:
             tile.draw(screen)
 
         self.load_box.draw(screen)
         self.save_box.draw(screen)
+
+        self.attack_text.draw(screen)
+        self.attack_value.draw(screen)
+        self.armor_text.draw(screen)
+        self.armor_value.draw(screen)
+        self.speed_text.draw(screen)
+        self.speed_value.draw(screen)
+        self.power_text.draw(screen)
+        self.power_value.draw(screen)
+
         self.ship_preview.draw(screen)
 
     def load(self, file_name):
@@ -86,7 +149,8 @@ class Ship(object):
         index = 0
         for row in self.ship_grid.grid:
             for node in row:
-                node.type = data['GRID'][index]
+                node.type = data['GRID'][index][0]
+                node.set_stats(data['GRID'][index][1])
                 index += 1
 
     def save(self, file_name):
@@ -94,7 +158,7 @@ class Ship(object):
         grid = []
         for row in self.ship_grid.grid:
             for node in row:
-                grid.append(node.type)
+                grid.append((node.type, node.get_stats()))
         dump['GRID'] = grid
         with open(file_name, 'w') as outfile:
             json.dump(dump, outfile)
@@ -153,6 +217,7 @@ class ShipGrid(object):
         self.starting_mouse_pos = None
 
         self.selected_cell_type = 0
+        self.selected_cell_stats = (0, 0, 0, 0)
 
         self.cell_size = 4
         self.grid = []
@@ -165,7 +230,7 @@ class ShipGrid(object):
 
         self.mass_set(self.grid_offset[0], self.grid_offset[1], self.zoom_level)
 
-        self.preview_window = ShipPreview(self, (75, 425), (200, 200), zoom=4, padding=20)
+        self.preview_window = ShipPreview(self, (20, 425), (200, 200), zoom=4, padding=20)
 
     def mass_move(self, x, y, zoom=None):
         for row in self.grid:
@@ -176,6 +241,20 @@ class ShipGrid(object):
         for row in self.grid:
             for node in row:
                 node.set(x, y, zoom)
+
+    def get_stats(self):
+        attack = 0
+        armor = 0
+        speed = 0
+        power = 0
+        for row in self.grid:
+            for node in row:
+                attack += node.attack
+                armor += node.armor
+                speed += node.speed
+                power += node.power
+
+        return attack, armor, speed, power
 
     def update(self, key, mouse, offset=(0, 0)):
         if key:
@@ -193,6 +272,7 @@ class ShipGrid(object):
                 for row in self.grid:
                     for node in row:
                         if node.update(mouse=mouse, floor_type=self.selected_cell_type, offset=offset):
+                            node.set_stats(self.selected_cell_stats)
                             break
             elif mouse[4]:
                 self.zoom_level += 1

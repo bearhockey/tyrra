@@ -8,7 +8,10 @@ node_type = {
     'BLANK': 0,
     'FLOOR': 1,
     'ARMOR': 2,
-    'THRUSTER': 3
+    'ENGINE': 3,
+    'GUN': 4,
+    'POWER': 5,
+    'GUN-SIGHT': 6
     }
 
 
@@ -25,6 +28,11 @@ class ShipNode(Box):
 
         self.type = node_type['BLANK']
 
+        self.attack = 0
+        self.armor = 0
+        self.speed = 0
+        self.power = 0
+
     def set(self, x, y, zoom=None):
         self.offset = (x, y)
         if zoom:
@@ -32,6 +40,27 @@ class ShipNode(Box):
 
     def move(self, x, y, zoom=None):
         self.set(x + self.offset[0], y + self.offset[1], zoom)
+
+    def get_stats(self):
+        return self.attack, self.armor, self.speed, self.power
+
+    def set_stats(self, (attack, armor, speed, power)):
+        if attack:
+            self.attack = attack
+        else:
+            self.attack = 0
+        if armor:
+            self.armor = armor
+        else:
+            self.armor = 0
+        if speed:
+            self.speed = speed
+        else:
+            self.speed = 0
+        if power:
+            self.power = power
+        else:
+            self.power = 0
 
     def update(self, mouse, floor_type=None, offset=(0, 0)):
         if self.check_click(mouse, offset=offset):
@@ -42,7 +71,11 @@ class ShipNode(Box):
             return False
 
     def draw(self, screen):
-        if self.type == node_type['THRUSTER']:
+        if self.type == node_type['POWER']:
+            self.box_color = Color.green
+        elif self.type == node_type['GUN']:
+            self.box_color = Color.red
+        elif self.type == node_type['ENGINE']:
             self.box_color = Color.blue
         elif self.type == node_type['ARMOR']:
             self.box_color = Color.d_gray

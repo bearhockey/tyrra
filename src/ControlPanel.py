@@ -9,6 +9,7 @@ from Map import Map
 from Ship import Ship
 from System import System
 from TextBox import TextBox
+from TextBoxList import TextBoxList
 from Window import Window
 
 
@@ -43,14 +44,16 @@ class ControlPanel(object):
                                                border_color=Color.d_gray)
 
         # console
-        # ../data/test.txt
         self.stars = pygame.image.load(os.path.join('..', 'res', 'stars.png'))
         self.the_big_board = Box(pygame.Rect(0, 0, main_window_width, main_window_height-120), box_color=None,
                                  border_color=None, highlight_color=None, active_color=None, image=self.stars)
-        self.console = TextBox(pygame.Rect(0, main_window_height-120, main_window_width, 120), box_color=Color.d_gray,
-                               border_color=Color.gray, highlight_color=Color.gray, active_color=None, border=3,
-                               name='Console', message=">> You see some fucking stars. It's fucking majestic as balls",
-                               text_color=Color.white, text_outline=Color.black, font=self.small_font)
+        self.console = TextBoxList(pygame.Rect(0, main_window_height-120, main_window_width, 120),
+                                   box_color=Color.d_gray, border_color=Color.gray, highlight_color=Color.gray,
+                                   active_color=None, border=3, name='Console', text_color=Color.white,
+                                   text_outline=True, font=self.small_font, list_size=5, line_size=20)
+        # some debug lines
+        self.console.add_message(u">> You see some fucking stars. It's fucking majestic as balls.")
+
         self.window_list['console'].sprites.append(self.the_big_board)
         self.window_list['console'].sprites.append(self.console)
         # main navigation buttons
@@ -62,15 +65,19 @@ class ControlPanel(object):
                                                               (self.big_font_size+4)/2*len(window), 45),
                                                   Color.d_gray, border_color=None, highlight_color=Color.white,
                                                   active_color=None, message=window, text_color=Color.white,
-                                                  text_outline=Color.black, font=self.font)
+                                                  text_outline=True, font=self.font)
                 y_offset += 55
 
         for button in self.nav_button:
             self.sidebar_list['console'].components.append(self.nav_button[button])
 
         self.back_to_console = TextBox(pygame.Rect(10, 10, 50, 30), Color.d_gray, border_color=None,
-                                    highlight_color=Color.blue, active_color=None, message='< <',
-                                    text_color=Color.white, font=self.font)
+                                       highlight_color=Color.blue, active_color=None, message='< <',
+                                       text_color=Color.white, font=self.font)
+
+        # email  client  construct
+        # self.email = EmailClient()
+        self.sidebar_list['Messages'].components.append(self.back_to_console)
 
         # ship construct
         self.ship = Ship(size_x=40, size_y=40)
@@ -123,7 +130,7 @@ class ControlPanel(object):
             self.sidebar_list['System'].components.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
                                                                   message=star.name,
                                                                   text_color=Color.white,
-                                                                  text_outline=Color.black,
+                                                                  text_outline=True,
                                                                   font=self.small_font))
             y_off += 60
             self.sidebar_list['System'].components.append(star_list[-1])
@@ -135,7 +142,7 @@ class ControlPanel(object):
             self.sidebar_list['System'].components.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
                                                                   message=planet.name,
                                                                   text_color=Color.white,
-                                                                  text_outline=Color.black,
+                                                                  text_outline=True,
                                                                   font=self.small_font))
             y_off += 50
             self.sidebar_list['System'].components.append(planet_list[-1])
@@ -183,6 +190,8 @@ class ControlPanel(object):
             for button in self.nav_button:
                 if self.nav_button[button].update(key=key, mouse=mouse, offset=self.side_window.position):
                     self.switch_window(button)
+            # debug console message
+            # self.console.message =  >> Your current attack is: {0}".format(self.ship.ship_grid.get_stats()[0])
 
     def draw(self, screen):
         self.main_window.draw(screen)
