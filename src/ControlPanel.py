@@ -47,14 +47,24 @@ class ControlPanel(object):
         self.stars = pygame.image.load(os.path.join('..', 'res', 'stars.png'))
         self.the_big_board = Box(pygame.Rect(0, 0, main_window_width, main_window_height-120), box_color=None,
                                  border_color=None, highlight_color=None, active_color=None, image=self.stars)
+        self.board_bottom = Box(pygame.Rect(0, main_window_height-120, main_window_width, 120), box_color=Color.d_gray,
+                                border_color=Color.gray, highlight_color=Color.gray, active_color=Color.gray,
+                                border=3, name='Console-back')
         self.console = TextBoxList(pygame.Rect(0, main_window_height-120, main_window_width, 120),
-                                   box_color=Color.d_gray, border_color=Color.gray, highlight_color=Color.gray,
-                                   active_color=None, border=3, name='Console', text_color=Color.white,
-                                   text_outline=True, font=self.small_font, list_size=5, line_size=20)
+                                   name='Console', text_color=Color.white, text_outline=True, font=self.small_font,
+                                   list_size=5, line_size=20)
         # some debug lines
         self.console.add_message(u">> You see some fucking stars. It's fucking majestic as balls.")
+        self.console.add_message(u'>> This is also a message 1')
+        self.console.add_message(u'>> This is also a message 2')
+        self.console.add_message(u'>> This is also a message 3')
+
+        print 'final boxes'
+        for box in self.console.text_boxes:
+            print '{0} - {1}'.format(box.rect.top, box.message)
 
         self.window_list['console'].sprites.append(self.the_big_board)
+        self.window_list['console'].sprites.append(self.board_bottom)
         self.window_list['console'].sprites.append(self.console)
         # main navigation buttons
         self.nav_button = {}
