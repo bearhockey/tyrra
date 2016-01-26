@@ -1,3 +1,5 @@
+import pygame
+
 from TextBox import TextBox
 
 
@@ -23,13 +25,9 @@ class TextBoxList(object):
         self.text_boxes = []
 
     def add_message(self, message=''):
-        print 'start append'
-        print ''
         for text_box in self.text_boxes:
-            text_box.rect.top += self.line_size
-            print 'line size is {0}'.format(self.line_size)
-            print 'top is {0} for ({1})'.format(text_box.rect.top, text_box.message)
-        self.text_boxes.append(TextBox(self.rect, box_color=self.box_color, border_color=self.border_color,
+            text_box.translate_rect(top=self.line_size)
+        self.text_boxes.append(TextBox(pygame.Rect(self.rect), box_color=self.box_color, border_color=self.border_color,
                                        highlight_color=self.highlight_color, active_color=self.active_color,
                                        border=self.border, name=self.name, message=message, text_color=self.text_color,
                                        text_outline=self.text_outline, font=self.font))

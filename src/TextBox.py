@@ -19,6 +19,20 @@ class TextBox(Box):
                                      self.rect.width - self.border * 4,
                                      self.rect.height - self.border * 4)
 
+    def translate_rect(self, left=None, top=None, width=None, height=None):
+        if left:
+            self.rect.left += left
+            self.text_rect.left += left
+        if top:
+            self.rect.top += top
+            self.text_rect.top += top
+        if width:
+            self.rect.width += width
+            self.text_rect.width += width
+        if height:
+            self.rect.height += height
+            self.text_rect.height += height
+
     def update(self, key, mouse, offset=(0, 0)):
         return Box.update(self, key, mouse, offset)
 
