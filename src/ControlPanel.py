@@ -7,6 +7,7 @@ from Box import Box
 from InputBox import InputBox
 from Map import Map
 from Ship import Ship
+from SpaceBattle import SpaceBattle
 from System import System
 from TextBox import TextBox
 from TextBoxList import TextBoxList
@@ -28,7 +29,8 @@ class ControlPanel(object):
                             'email': False,
                             'Ship': True,
                             'System': True,
-                            'planet': False}
+                            'planet': False,
+                            'Battle': True}
 
         self.window_list = {}
         self.sidebar_list = {}
@@ -58,10 +60,6 @@ class ControlPanel(object):
         self.console.add_message(u'>> This is also a message 1')
         self.console.add_message(u'>> This is also a message 2')
         self.console.add_message(u'>> This is also a message 3')
-
-        print 'final boxes'
-        for box in self.console.text_boxes:
-            print '{0} - {1}'.format(box.rect.top, box.message)
 
         self.window_list['console'].sprites.append(self.the_big_board)
         self.window_list['console'].sprites.append(self.board_bottom)
@@ -124,6 +122,11 @@ class ControlPanel(object):
                                     highlight_color=None, active_color=None, message='',
                                     text_color=Color.white, font=self.font)
         self.switch_window('console')
+
+        # battle screen
+        self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font)
+        self.window_list['Battle'].components.append(self.space_battle)
+        self.sidebar_list['Battle'].components.append(self.space_battle.side_panel)
 
     def generate_system_list(self):
         del self.sidebar_list['System'].components[:]

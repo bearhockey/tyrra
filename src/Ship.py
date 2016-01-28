@@ -112,6 +112,9 @@ class Ship(object):
             self.save('../data/test.txt')
 
         # get stats
+        self.update_stats()
+
+    def update_stats(self):
         attack, armor, speed, power = self.ship_grid.get_stats()
         self.attack_value.message = str(attack)
         self.armor_value.message = str(armor)
@@ -140,6 +143,7 @@ class Ship(object):
         self.power_text.draw(screen)
         self.power_value.draw(screen)
 
+        self.ship_preview.draw_border(screen)
         self.ship_preview.draw(screen)
 
     def load(self, file_name):
@@ -152,6 +156,7 @@ class Ship(object):
                 node.type = data['GRID'][index][0]
                 node.set_stats(data['GRID'][index][1])
                 index += 1
+        self.update_stats()
 
     def save(self, file_name):
         dump = {'NAME': self.name_box.message}
@@ -173,12 +178,15 @@ class ShipPreview(object):
         self.zoom = zoom
         self.padding = padding
 
-    def draw(self, screen):
+    def draw_border(self, screen):
         pygame.draw.rect(screen, Color.black, pygame.Rect(self.position[0], self.position[1], self.size[0],
                                                           self.size[1]))
         pygame.draw.rect(screen, Color.white, pygame.Rect(self.position[0], self.position[1], self.size[0],
                                                           self.size[1]), 2)
 
+    def draw(self, screen, position=None):
+        if position is None:
+            position = self.position
         w_offset = len(self.ship_grid.grid[0]) - \
             (self.ship_grid.ship_bounds['right'] - self.ship_grid.ship_bounds['left'])
         h_offset = len(self.ship_grid.grid) - (self.ship_grid.ship_bounds['bottom'] - self.ship_grid.ship_bounds['top'])
@@ -188,8 +196,8 @@ class ShipPreview(object):
             for node in row[self.ship_grid.ship_bounds['top']:self.ship_grid.ship_bounds['bottom']+1]:
                 if node.type is not 0:
                     pygame.draw.rect(screen, Color.white,
-                                     pygame.Rect(self.padding + w_offset + self.position[0] + x * self.zoom,
-                                                 self.padding + h_offset + self.position[1] + y * self.zoom,
+                                     pygame.Rect(self.padding + w_offset + position[0] + x * self.zoom,
+                                                 self.padding + h_offset + position[1] + y * self.zoom,
                                                  self.zoom, self.zoom))
                 y += 1
             x += 1
