@@ -17,8 +17,10 @@ class Ship(object):
         self.small_font = pygame.font.Font(pygame.font.match_font('kaiti'), self.small_font_size)
         self.name = 'Tyrra'
 
-        self.ship_grid = ShipGrid(size_x, size_y)
+        self.ship_grid = ShipGrid(self, size_x, size_y)
         self.ship_preview = self.ship_grid.preview_window
+        self.box = Box(self.get_ship_rect(), border_color=Color.blue, highlight_color=Color.green,
+                       active_color=Color.red, name='Ship Hit Box')
 
         # objects are drawn on side bar
         self.name_box = InputBox(pygame.Rect(70, 10, 250, 50), box_color=None, border_color=Color.d_gray,
@@ -34,9 +36,9 @@ class Ship(object):
                                    text_color=Color.white, text_outline=True, font=self.font)
 
         # floors
-        self.floor_text = TextBox(pygame.Rect(25, 110, 100, 25), box_color=None, border_color=None, highlight_color=None,
-                                  active_color=None, message='Floors:', text_color=Color.white, text_outline=True,
-                                  font=self.small_font)
+        self.floor_text = TextBox(pygame.Rect(25, 110, 100, 25), box_color=None, border_color=None,
+                                  highlight_color=None, active_color=None, message='Floors:', text_color=Color.white,
+                                  text_outline=True, font=self.small_font)
         self.floor_dictionary = {'blank': 0,
                                  'floor': 1,
                                  'armor': 2,
@@ -146,6 +148,30 @@ class Ship(object):
         self.ship_preview.draw_border(screen)
         self.ship_preview.draw(screen)
 
+    def draw_ship(self, screen, position, color=None, zoom=2):
+        if color is None:
+            color = Color.white
+        self.box.rect = self.get_ship_rect(position=position, zoom=zoom)
+        # self.ship_grid.update_bounds()
+        x = 0
+        for row in self.ship_grid.grid[self.ship_grid.ship_bounds['left']:self.ship_grid.ship_bounds['right']+1]:
+            y = 0
+            for node in row[self.ship_grid.ship_bounds['top']:self.ship_grid.ship_bounds['bottom']+1]:
+                if node.type is not 0:
+                    pygame.draw.rect(screen, color,
+                                     pygame.Rect(position[0] + x*zoom, position[1] + y*zoom, zoom, zoom))
+                y += 1
+            x += 1
+        # self.box.draw(screen)
+
+    def get_ship_rect(self, position=None, zoom=1):
+        self.ship_grid.update_bounds()
+        if position is None:
+            position = (0, 0)
+        return pygame.Rect(position[0], position[1],
+                           (self.ship_grid.ship_bounds['right'] - self.ship_grid.ship_bounds['left'] + 1) * zoom,
+                           (self.ship_grid.ship_bounds['bottom'] - self.ship_grid.ship_bounds['top'] + 1) * zoom)
+
     def load(self, file_name):
         with open(file_name) as data_file:
             data = json.load(data_file)
@@ -184,27 +210,22 @@ class ShipPreview(object):
         pygame.draw.rect(screen, Color.white, pygame.Rect(self.position[0], self.position[1], self.size[0],
                                                           self.size[1]), 2)
 
-    def draw(self, screen, position=None):
+    def draw(self, screen, position=None, color=None):
         if position is None:
             position = self.position
+        if color is None:
+            color = Color.white
         w_offset = len(self.ship_grid.grid[0]) - \
             (self.ship_grid.ship_bounds['right'] - self.ship_grid.ship_bounds['left'])
         h_offset = len(self.ship_grid.grid) - (self.ship_grid.ship_bounds['bottom'] - self.ship_grid.ship_bounds['top'])
-        x = 0
-        for row in self.ship_grid.grid[self.ship_grid.ship_bounds['left']:self.ship_grid.ship_bounds['right']+1]:
-            y = 0
-            for node in row[self.ship_grid.ship_bounds['top']:self.ship_grid.ship_bounds['bottom']+1]:
-                if node.type is not 0:
-                    pygame.draw.rect(screen, Color.white,
-                                     pygame.Rect(self.padding + w_offset + position[0] + x * self.zoom,
-                                                 self.padding + h_offset + position[1] + y * self.zoom,
-                                                 self.zoom, self.zoom))
-                y += 1
-            x += 1
+
+        self.ship_grid.ship.draw_ship(screen, position=(position[0] + w_offset, position[1] + h_offset),
+                                      color=color, zoom=4)
 
 
 class ShipGrid(object):
-    def __init__(self, size_x=16, size_y=16):
+    def __init__(self, ship, size_x=16, size_y=16):
+        self.ship = ship
         self.number = {
             pygame.K_1: 1,
             pygame.K_2: 2,
@@ -303,8 +324,10 @@ class ShipGrid(object):
                 self.scrolling = False
         else:
             self.scrolling = False
+        self.update_bounds()
+        self.preview_window.ship_grid = self
 
-        # get ship bounds
+    def update_bounds(self):
         x_index = 0
         left_bound = len(self.grid)
         top_bound = len(self.grid[0])
@@ -329,8 +352,6 @@ class ShipGrid(object):
         self.ship_bounds['top'] = top_bound
         self.ship_bounds['right'] = right_bound
         self.ship_bounds['bottom'] = bottom_bound
-        self.preview_window.ship_grid = self
-        # print left_bound, top_bound, right_bound, bottom_bound
 
     def draw(self, screen):
         screen.fill(Color.black)
