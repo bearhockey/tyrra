@@ -21,6 +21,12 @@ class Ship(object):
         self.ship_preview = self.ship_grid.preview_window
         self.box = Box(self.get_ship_rect(), border_color=Color.blue, highlight_color=Color.green,
                        active_color=Color.red, name='Ship Hit Box')
+        # easy dictionary to store stats probably
+        self.ship_stats = {'crew_capacity': 1,
+                           'attack': 0,
+                           'armor': 0,
+                           'speed': 0,
+                           'power': 0}
 
         # objects are drawn on side bar
         self.name_box = InputBox(pygame.Rect(70, 10, 250, 50), box_color=None, border_color=Color.d_gray,
@@ -118,6 +124,10 @@ class Ship(object):
 
     def update_stats(self):
         attack, armor, speed, power = self.ship_grid.get_stats()
+        self.ship_stats['attack'] = attack
+        self.ship_stats['armor'] = armor
+        self.ship_stats['speed'] = speed
+        self.ship_stats['power'] = power
         self.attack_value.message = str(attack)
         self.armor_value.message = str(armor)
         self.speed_value.message = str(speed)
