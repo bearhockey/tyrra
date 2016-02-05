@@ -89,7 +89,7 @@ class ControlPanel(object):
 
         # ship construct
         self.ship = Ship(size_x=40, size_y=40)
-        self.window_list['Ship'].components.append(self.ship.ship_grid)
+        self.window_list['Ship'].components.append(self.ship.main_screen)
         self.sidebar_list['Ship'].components.append(self.ship)
         self.sidebar_list['Ship'].components.append(self.back_to_console)
 
