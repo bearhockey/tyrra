@@ -3,9 +3,7 @@ import sys
 
 from ControlPanel import ControlPanel
 from Controller import Controller
-from Map import Map
-from Ship import Ship
-from System import System
+from Title import Title
 
 pygame.init()
 
@@ -15,14 +13,22 @@ screen_size = width, height = (1280, 720)
 black = (0, 0, 0)
 screen = pygame.display.set_mode(screen_size)
 
-mode = {'main': 0,
-        'ship': 1,
-        'system': 2,
-        'planet': 3}
+big_font_size = 24
+small_font_size = 16
+font = pygame.font.Font(pygame.font.match_font('kaiti'), big_font_size)
+small_font = pygame.font.Font(pygame.font.match_font('kaiti'), small_font_size)
 
-game_mode = mode['main']
+mode = {'title': 0,
+        'main': 1,
+        'ship': 2,
+        'system': 3,
+        'planet': 4}
+
 keys = Controller()
-panel = ControlPanel(main_window_width=800, main_window_height=600, main_white_space=50)
+title = Title(font=font, screen_width=width, screen_height=height)
+panel = ControlPanel(main_window_width=875, main_window_height=700, main_white_space=10,
+                     side_window_width=375, side_window_height=700, side_white_space=10,
+                     font=font, small_font=small_font)
 ship = None
 # ship = Ship(size_x=40, size_y=40)
 system = None
@@ -36,7 +42,11 @@ mouse = {mouse_button['LEFT']: 0, mouse_button['MIDDLE']: 0, mouse_button['RIGHT
          mouse_button['WHEEL_DOWN']: 0}
 
 # show fonts for debug purposes
-print pygame.font.get_fonts()
+# print pygame.font.get_fonts()
+
+# start game things
+# title.play_title_music()
+game_mode = mode['title']
 
 while 1:
     clock.tick(60)
@@ -53,7 +63,13 @@ while 1:
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse[event.button] = 0
 
-        if game_mode == mode['main']:
+        if game_mode == mode['title']:
+            response = title.update((key_pressed, unicode_pressed), mouse)
+            if response == 'new':
+                game_mode = mode['main']
+            elif response == 'quit':
+                sys.exit(0)
+        elif game_mode == mode['main']:
             panel.update((key_pressed, unicode_pressed), mouse)
         elif game_mode == mode['ship']:
             ship.update(key_pressed, mouse)
@@ -64,13 +80,14 @@ while 1:
             if planet_map:
                 pass
 
-    # always do always
-    panel.always()
-
     # key_pressed = keys.poll_keyboard()
     # draw
     screen.fill(black)
-    if game_mode == mode['main']:
+    if game_mode == mode['title']:
+        title.draw(screen)
+    elif game_mode == mode['main']:
+        # always do always
+        panel.always()
         panel.draw(screen)
     elif game_mode == mode['ship']:
         ship.draw(screen)

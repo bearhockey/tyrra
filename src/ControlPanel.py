@@ -16,13 +16,13 @@ from Window import Window
 
 class ControlPanel(object):
     def __init__(self, main_window_width=800, main_window_height=600, main_white_space=50, side_window_width=350,
-                 wide_window_height=650, side_white_space=50):
+                 side_window_height=650, side_white_space=50, font=None, small_font=None):
         self.big_font_size = 24
         self.small_font_size = 16
         self.main_window = None
         self.side_window = None
-        self.font = pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
-        self.small_font = pygame.font.Font(pygame.font.match_font('kaiti'), self.small_font_size)
+        self.font = font or pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
+        self.small_font = small_font or pygame.font.Font(pygame.font.match_font('kaiti'), self.small_font_size)
 
         self.window_dict = {'console': False,
                             'Messages': True,
@@ -41,7 +41,7 @@ class ControlPanel(object):
                                               name=window)
             self.sidebar_list[window] = Window((main_white_space + main_window_width + side_white_space,
                                                 side_white_space),
-                                               (side_window_width, wide_window_height),
+                                               (side_window_width, side_window_height),
                                                name=window,
                                                border_color=Color.d_gray)
 
@@ -117,10 +117,7 @@ class ControlPanel(object):
         # planet surface map
         self.generate_planet_map()
 
-        # outside the windows (window control)
-        self.screen_title = TextBox(pygame.Rect(400, 665, 100, 30), box_color=None, border_color=None,
-                                    highlight_color=None, active_color=None, message='',
-                                    text_color=Color.white, font=self.font)
+        self.screen_title = None
         self.switch_window('console')
 
         # battle screen
@@ -172,7 +169,7 @@ class ControlPanel(object):
         except Exception as e:
             print e
             pass
-        self.screen_title.message = self.main_window.name
+        self.screen_title = self.main_window.name
 
     def always(self):
         self.main_window.always()
@@ -199,7 +196,7 @@ class ControlPanel(object):
         if self.back_to_console.update(key=key, mouse=mouse, offset=self.side_window.position):
             self.switch_window('console')
 
-        if self.screen_title.message == 'console':
+        if self.screen_title == 'console':
             for button in self.nav_button:
                 if self.nav_button[button].update(key=key, mouse=mouse, offset=self.side_window.position):
                     self.switch_window(button)
@@ -209,4 +206,3 @@ class ControlPanel(object):
     def draw(self, screen):
         self.main_window.draw(screen)
         self.side_window.draw(screen)
-        self.screen_title.draw(screen)
