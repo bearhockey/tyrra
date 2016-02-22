@@ -1,9 +1,9 @@
 import pygame
-import os
 
 import Color
 
 from Box import Box
+from Event import Event
 from InputBox import InputBox
 from Map import Map
 from Ship import Ship
@@ -23,6 +23,10 @@ class ControlPanel(object):
         self.side_window = None
         self.font = font or pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
         self.small_font = small_font or pygame.font.Font(pygame.font.match_font('kaiti'), self.small_font_size)
+
+        # some events consants
+        self.intro_event_file = '../data/intro.eve'
+        self.intro_event_id = 'INTRO_1'
 
         self.window_dict = {'console': False,
                             'Messages': True,
@@ -46,20 +50,16 @@ class ControlPanel(object):
                                                border_color=Color.d_gray)
 
         # console
-        self.stars = pygame.image.load(os.path.join('..', 'res', 'stars.png'))
         self.the_big_board = Box(pygame.Rect(0, 0, main_window_width, main_window_height-120), box_color=None,
-                                 border_color=None, highlight_color=None, active_color=None, image=self.stars)
+                                 border_color=None, highlight_color=None, active_color=None)
         self.board_bottom = Box(pygame.Rect(0, main_window_height-120, main_window_width, 120), box_color=Color.d_gray,
                                 border_color=Color.gray, highlight_color=Color.gray, active_color=Color.gray,
                                 border=3, name='Console-back')
         self.console = TextBoxList(pygame.Rect(0, main_window_height-120, main_window_width, 120),
                                    name='Console', text_color=Color.white, text_outline=True, font=self.small_font,
                                    list_size=5, line_size=20)
-        # some debug lines
-        self.console.add_message(u">> You see some fucking stars. It's fucking majestic as balls.")
-        self.console.add_message(u'>> This is also a message 1')
-        self.console.add_message(u'>> This is also a message 2')
-        self.console.add_message(u'>> This is also a message 3')
+
+        self.event = Event(picture=self.the_big_board, text=self.console)
 
         self.window_list['console'].sprites.append(self.the_big_board)
         self.window_list['console'].sprites.append(self.board_bottom)
@@ -67,10 +67,10 @@ class ControlPanel(object):
         # main navigation buttons
         self.nav_button = {}
         y_offset = 0
+        # self.big_font_size+4)/2*len(window)
         for window, visible in self.window_dict.iteritems():
             if visible:
-                self.nav_button[window] = TextBox(pygame.Rect(20, 50+y_offset,
-                                                              (self.big_font_size+4)/2*len(window), 45),
+                self.nav_button[window] = TextBox(pygame.Rect(20, 50+y_offset, 200, 45),
                                                   Color.d_gray, border_color=None, highlight_color=Color.white,
                                                   active_color=None, message=window, text_color=Color.white,
                                                   text_outline=True, font=self.font)
@@ -124,6 +124,14 @@ class ControlPanel(object):
         self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font)
         self.window_list['Battle'].components.append(self.space_battle)
         self.sidebar_list['Battle'].components.append(self.space_battle.side_panel)
+
+    def load_event(self, event_file, event_name):
+        self.event.read_event_file(event_file)
+        self.event.run_event(event_name)
+
+    def new_game(self):
+        self.ship.load('../data/start.shp')
+        self.load_event(event_file=self.intro_event_file, event_name=self.intro_event_id)
 
     def generate_system_list(self):
         del self.sidebar_list['System'].components[:]

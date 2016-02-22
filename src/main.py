@@ -45,7 +45,7 @@ mouse = {mouse_button['LEFT']: 0, mouse_button['MIDDLE']: 0, mouse_button['RIGHT
 # print pygame.font.get_fonts()
 
 # start game things
-# title.play_title_music()
+title.play_title_music()
 game_mode = mode['title']
 
 while 1:
@@ -66,7 +66,9 @@ while 1:
         if game_mode == mode['title']:
             response = title.update((key_pressed, unicode_pressed), mouse)
             if response == 'new':
+                title.stop_title_music()
                 game_mode = mode['main']
+                panel.new_game()
             elif response == 'quit':
                 sys.exit(0)
         elif game_mode == mode['main']:

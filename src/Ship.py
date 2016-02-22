@@ -135,8 +135,10 @@ class Ship(object):
         if self.crew_button.update(key, mouse, offset):
             self.panel_mode = 'crew'
             self.main_screen.mode = 'crew'
+
         if self.panel_mode is 'edit':
             self.update_edit_panel(key, mouse, offset)
+            # self.ship_grid.update(key=key, mouse=mouse)
 
         # get stats
         self.update_stats()
@@ -148,9 +150,9 @@ class Ship(object):
                 self.ship_grid.selected_cell_type = self.floor_dictionary[tile.name]
                 self.ship_grid.selected_cell_stats = self.floor_stats[tile.name]
         if self.load_box.update(key, mouse, offset):
-            self.load('../data/test.txt')
+            self.load('../data/save.shp')
         if self.save_box.update(key, mouse, offset):
-            self.save('../data/test.txt')
+            self.save('../data/save.shp')
 
     def update_stats(self):
         attack, armor, speed, power = self.ship_grid.get_stats()
@@ -280,6 +282,12 @@ class ShipMainScreen(object):
         self.stats = stats
         self.grid = grid
         self.crew = crew
+
+    def update(self, key, mouse, offset=(0, 0)):
+        if self.mode is 'edit':
+            self.grid.update(key=key, mouse=mouse, offset=offset)
+        elif self.mode is 'crew':
+            self.crew.update(key=key, mouse=mouse, offset=offset)
 
     def draw(self, screen):
         if self.mode is 'stats':

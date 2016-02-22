@@ -33,7 +33,12 @@ class Title(object):
 
     @staticmethod
     def play_title_music():
+        pygame.mixer.music.set_volume(0.4)
         pygame.mixer.music.play()
+
+    @staticmethod
+    def stop_title_music():
+        pygame.mixer.music.fadeout(500)
 
     def update(self, key, mouse):
         if self.new_game.update(key=key, mouse=mouse):
