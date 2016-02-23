@@ -33,7 +33,7 @@ class Title(object):
 
     @staticmethod
     def play_title_music():
-        pygame.mixer.music.set_volume(0.4)
+        pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play()
 
     @staticmethod

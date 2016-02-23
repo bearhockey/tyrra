@@ -117,11 +117,20 @@ class Ship(object):
 
         # crew screen
         self.crew_list = []
+        self.make_crew_list()
+
+    def add_crew(self, crew):
+        self.crew.append(crew)
+        self.make_crew_list()
+
+    def make_crew_list(self):
+        del self.crew_list[:]
         y_offset = 0
         for pawn in self.crew:
-            self.crew_list.append(TextBox(pygame.Rect(50, 150, 250, 40), box_color=Color.gray, border_color=Color.d_gray,
-                                          highlight_color=Color.white, active_color=Color.blue, border=2,
-                                          message=pawn.name, text_color=Color.white, text_outline=True, font=self.font))
+            self.crew_list.append(TextBox(pygame.Rect(50, 150+y_offset, 250, 40), box_color=Color.gray,
+                                          border_color=Color.d_gray, highlight_color=Color.white,
+                                          active_color=Color.blue, border=2, message=pawn.name, text_color=Color.white,
+                                          text_outline=True, font=self.font))
             y_offset += 55
 
     def update(self, key, mouse, offset=(0, 0)):
@@ -138,6 +147,8 @@ class Ship(object):
 
         if self.panel_mode is 'edit':
             self.update_edit_panel(key, mouse, offset)
+        elif self.panel_mode is 'crew':
+            self.update_crew_panel(key, mouse, offset)
             # self.ship_grid.update(key=key, mouse=mouse)
 
         # get stats
@@ -153,6 +164,14 @@ class Ship(object):
             self.load('../data/save.shp')
         if self.save_box.update(key, mouse, offset):
             self.save('../data/save.shp')
+
+    def update_crew_panel(self, key, mouse, offset=(0, 0)):
+        for crew in self.crew_list:
+            if crew.update(key, mouse, offset):
+                for pawn in self.crew:
+                    if pawn.name == crew.message:
+                        self.crew_profile.pawn = pawn
+                        break
 
     def update_stats(self):
         attack, armor, speed, power = self.ship_grid.get_stats()
@@ -451,4 +470,27 @@ class CrewProfile(object):
         pygame.draw.rect(screen, Color.d_gray,
                          (port_rect.left+1, port_rect.top+1, port_rect.width, port_rect.height), 2)
         pygame.draw.rect(screen, Color.white, port_rect, 2)
-        Text.draw_text(screen, self.font, self.pawn.name, Color.white, (300, 50))
+        Text.draw_text(screen, self.font, 'NAME:', Color.white, (300, 50))
+        Text.draw_text(screen, self.font, self.pawn.name, Color.white, (400, 50))
+        Text.draw_text(screen, self.font, 'AGE:', Color.white, (300, 80))
+        Text.draw_text(screen, self.font, str(self.pawn.age), Color.white, (400, 80))
+        Text.draw_text(screen, self.font, 'RACE:', Color.white, (300, 110))
+        Text.draw_text(screen, self.font, self.pawn.race, Color.white, (400, 110))
+        Text.draw_text(screen, self.font, 'BIO:', Color.white, (300, 150))
+        Text.draw_text(screen, self.small_font, self.pawn.bio, Color.white, (300, 180), width=400)
+
+        Text.draw_text(screen, self.font, 'JOBS', Color.white, (25, 300))
+        y = 350
+        for skill, value in self.pawn.ship_skills.iteritems():
+            Text.draw_text(screen, self.small_font, '{0}:'.format(skill), Color.white, (25, y))
+            Text.draw_text(screen, self.small_font, str(value), Color.white, (125, y))
+            y += 30
+        Text.draw_text(screen, self.font, 'STATS', Color.white, (225, 300))
+        y = 350
+        for stat, value in self.pawn.battle_skills.iteritems():
+            Text.draw_text(screen, self.small_font, '{0}:'.format(stat), Color.white, (225, y))
+            Text.draw_text(screen, self.small_font, str(value), Color.white, (325, y))
+            y += 30
+
+    def update(self, key, mouse, offset=(0, 0)):
+        pass

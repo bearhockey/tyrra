@@ -3,6 +3,7 @@ import pygame
 import Color
 
 from Box import Box
+from Debug import Debug
 from Event import Event
 from InputBox import InputBox
 from Map import Map
@@ -34,7 +35,8 @@ class ControlPanel(object):
                             'Ship': True,
                             'System': True,
                             'planet': False,
-                            'Battle': True}
+                            'Battle': True,
+                            'Debug': True}
 
         self.window_list = {}
         self.sidebar_list = {}
@@ -55,7 +57,7 @@ class ControlPanel(object):
         self.board_bottom = Box(pygame.Rect(0, main_window_height-120, main_window_width, 120), box_color=Color.d_gray,
                                 border_color=Color.gray, highlight_color=Color.gray, active_color=Color.gray,
                                 border=3, name='Console-back')
-        self.console = TextBoxList(pygame.Rect(0, main_window_height-120, main_window_width, 120),
+        self.console = TextBoxList(pygame.Rect(10, main_window_height-110, main_window_width, 120),
                                    name='Console', text_color=Color.white, text_outline=True, font=self.small_font,
                                    list_size=5, line_size=20)
 
@@ -124,6 +126,17 @@ class ControlPanel(object):
         self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font)
         self.window_list['Battle'].components.append(self.space_battle)
         self.sidebar_list['Battle'].components.append(self.space_battle.side_panel)
+
+        # debug
+        self.debug_console = TextBoxList(pygame.Rect(10, main_window_height-300, main_window_width, 300),
+                                         name='D_con', text_color=Color.white, text_outline=True, font=self.small_font,
+                                         list_size=14, line_size=20)
+        self.debug = Debug(self.debug_console, self, self.ship, self.font)
+
+        self.window_list['Debug'].sprites.append(Box(pygame.Rect(5, main_window_height-310, main_window_width-10, 5),
+                                                     box_color=Color.white, name='LINE'))
+        self.window_list['Debug'].sprites.append(self.debug_console)
+        self.sidebar_list['Debug'].components.append(self.debug)
 
     def load_event(self, event_file, event_name):
         self.event.read_event_file(event_file)
