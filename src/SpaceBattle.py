@@ -19,7 +19,7 @@ class SpaceBattle(object):
 
         for _ in range(3):
             en_ship = Ship(size_x=40, size_y=40)
-            en_ship.load('../data/enemy_1.txt')
+            en_ship.load('data/enemy_1.txt')
             self.enemy_ships.append(en_ship)
 
         for ship in self.enemy_ships:

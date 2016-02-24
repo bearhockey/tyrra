@@ -13,7 +13,7 @@ from TextBox import TextBox
 
 
 class System(object):
-    def __init__(self, x=0, y=0):
+    def __init__(self, font, small_font, x=0, y=0):
         self.x = x
         self.y = y
         self.name = 'Poop'
@@ -25,8 +25,8 @@ class System(object):
 
         self.big_font_size = 24
         self.small_font_size = 16
-        self.font = pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
-        self.small_font = pygame.font.Font(pygame.font.get_default_font(), self.small_font_size)
+        self.font = font
+        self.small_font = small_font
 
         self.main_window = pygame.Rect(0, 0, 800, 600)
         self.star_orbit = Orbit(self.main_window.center, orbit=0, color=Color.d_gray, outline=2)
@@ -52,8 +52,9 @@ class System(object):
         self.generate_stars()
         self.generate_planets()
 
-        self.system_map = SystemMap(stars=self.stars, planets=self.planets, star_orbit=self.star_orbit,
-                                    window_width=self.main_window.width, window_height=self.main_window.height)
+        self.system_map = SystemMap(self.font, self.small_font, stars=self.stars, planets=self.planets,
+                                    star_orbit=self.star_orbit, window_width=self.main_window.width,
+                                    window_height=self.main_window.height)
 
     def generate_planets(self):
         random.seed(self.seed)
@@ -186,12 +187,12 @@ class System(object):
 
 
 class SystemMap(object):
-    def __init__(self, stars, planets, star_orbit, window_width=200, window_height=100):
+    def __init__(self, font, small_font, stars, planets, star_orbit, window_width=200, window_height=100):
         self.main_window = pygame.Rect(0, 0, window_width, window_height)
         self.big_font_size = 24
         self.small_font_size = 16
-        self.font = pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
-        self.small_font = pygame.font.Font(pygame.font.get_default_font(), self.small_font_size)
+        self.font = font
+        self.small_font = small_font
 
         self.scrolling = False
         self.starting_mouse_pos = 0

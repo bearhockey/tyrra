@@ -22,11 +22,13 @@ class ControlPanel(object):
         self.small_font_size = 16
         self.main_window = None
         self.side_window = None
-        self.font = font or pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
-        self.small_font = small_font or pygame.font.Font(pygame.font.match_font('kaiti'), self.small_font_size)
+        self.font = font
+        self.small_font = small_font
+        # self.font = font or pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
+        # self.small_font = small_font or pygame.font.Font(pygame.font.match_font('kaiti'), self.small_font_size)
 
         # some events consants
-        self.intro_event_file = '../data/intro.eve'
+        self.intro_event_file = 'data/intro.eve'
         self.intro_event_id = 'INTRO_1'
 
         self.window_dict = {'console': False,
@@ -97,7 +99,7 @@ class ControlPanel(object):
 
         # system construct
         # self.system = System(x=454556, y=45645)
-        self.system = System(x=6541, y=43322)
+        self.system = System(self.font, self.small_font, x=6541, y=43322)
         self.system.generate()
         self.window_list['System'].components.append(self.system.system_map)
         self.system_map_index = len(self.window_list['System'].components)-1
@@ -143,7 +145,7 @@ class ControlPanel(object):
         self.event.run_event(event_name)
 
     def new_game(self):
-        self.ship.load('../data/start.shp')
+        self.ship.load('data/start.shp')
         self.load_event(event_file=self.intro_event_file, event_name=self.intro_event_id)
 
     def generate_system_list(self):

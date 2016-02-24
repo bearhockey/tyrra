@@ -161,9 +161,9 @@ class Ship(object):
                 self.ship_grid.selected_cell_type = self.floor_dictionary[tile.name]
                 self.ship_grid.selected_cell_stats = self.floor_stats[tile.name]
         if self.load_box.update(key, mouse, offset):
-            self.load('../data/save.shp')
+            self.load('data/save.shp')
         if self.save_box.update(key, mouse, offset):
-            self.save('../data/save.shp')
+            self.save('data/save.shp')
 
     def update_crew_panel(self, key, mouse, offset=(0, 0)):
         for crew in self.crew_list:

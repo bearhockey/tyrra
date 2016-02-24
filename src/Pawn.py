@@ -9,7 +9,7 @@ class Pawn(object):
         self.race = race or 'Human'
         self.bio = bio or 'To just short of infinity, and then we head back, because fuck man, space is hard.'
         try:
-            self.portrait = profile or pygame.image.load(os.path.join('..', 'res', 'buzz.png'))
+            self.portrait = profile or pygame.image.load(os.path.join('res', 'buzz.png'))
         except:
             pass
 
