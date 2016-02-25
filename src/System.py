@@ -13,7 +13,7 @@ from TextBox import TextBox
 
 
 class System(object):
-    def __init__(self, font, small_font, x=0, y=0):
+    def __init__(self, font, small_font, x=0, y=0, generate=True):
         self.x = x
         self.y = y
         self.name = 'Poop'
@@ -43,6 +43,12 @@ class System(object):
                       8: 'VIII',
                       9: 'IX'}
 
+        self.star_buttons = []
+        self.planet_buttons = []
+
+        if generate:
+            self.generate(clear=True)
+
     def generate(self, clear=True):
         if clear:
             del self.stars[:]
@@ -55,6 +61,7 @@ class System(object):
         self.system_map = SystemMap(self.font, self.small_font, stars=self.stars, planets=self.planets,
                                     star_orbit=self.star_orbit, window_width=self.main_window.width,
                                     window_height=self.main_window.height)
+        self.generate_system_list()
 
     def generate_planets(self):
         random.seed(self.seed)
@@ -121,15 +128,31 @@ class System(object):
             i += 1
 
     def generate_name(self):
+        lookup_a = ['A', 'Ba', 'Ca', 'Da', 'Fa', 'Ga', 'Ha', 'Ja', 'Ka', 'La', 'Ma', 'Na', 'Pa', 'Qua', 'Ra', 'Sa',
+                    'Ta', 'Va', 'Wa', 'Xa', 'Ya', 'Za']
+        lookup_e = ['E', 'BE', 'CE', 'DE', 'FE', 'GE', 'HE', 'JE', 'KE', 'LE', 'ME', 'NE', 'PE', 'QUE', 'RE', 'SE',
+                    'TE', 'VE', 'WE', 'XE', 'YE', 'ZE']
+        lookup_i = ['I', 'BI', 'CI', 'DI', 'FI', 'GI', 'HI', 'JI', 'KI', 'LI', 'MI', 'NI', 'PI', 'QUI', 'RI', 'SI',
+                    'TI', 'VI', 'WI', 'XI', 'YI', 'ZI']
+        # lookup_x = [u'\u3042', u'\u3044', u'\u3046', u'\u3048', u'\u304A', u'\u304B', u'\u304C', u'\u304D', u'\u304E']
+        '''
+        lookup_x = [u'\u3042', u'\u3044', u'\u3046', u'\u3048', u'\u304A', u'\u304B', u'\u304C', u'\u304D', u'\u304E',
+                    u'\u304F', u'\u3050', u'\u3051', u'\u3052', u'\u3053', u'\u3054', u'\u3055', u'\u3056', u'\u3057',
+                    u'\u3058', u'\u3059', u'\u305A', u'\u305B', u'\u305C', u'\u305D', u'\u305E', u'\u305F', u'\u3060',
+                    u'\u3061', u'\u3062', u'\u3063', u'\u3064', u'\u3065', u'\u3066', u'\u3067', u'\u3068', u'\u3069']
+        '''
+        lookup = lookup_a + lookup_e + lookup_i
+        '''
         lookup = ['Aleph', 'Alpha', 'Antares', 'Beta', 'Bootes', 'Barum', 'Ceres', 'Charion', 'Chardibus', 'Chalupa',
                   'Delta', 'Darion', 'Doolan', 'Echo', 'Eres', 'Eribus', 'Encephalus', 'Ender', 'Foxtrot', 'Famicom',
                   'Gamma', 'Gregorio', 'Grace', 'Gaea', 'Gaia', 'Howzer', 'Hera', 'Hosio', 'Ignus', 'Io', 'Ionus',
                   'Ibus', 'Jax', 'Jova', 'Jolo', 'Keras', 'Kodia', 'Li', 'Libra', 'Lol', 'Orphius', 'Orchid',
                   'Odyssus', 'Persephone', 'Pax', 'Qualude', 'Qi', 'Ra', 'Rez', 'Radium', 'Tia', 'Tori', 'Uso', 'Ura',
                   'Varia', 'Verit', 'Wex', 'Woolio', 'X', 'Yota', 'Yttrius', 'Zoe', 'Zee', 'Zae', 'Zeebs']
+        '''
         base = len(lookup)  # Base whatever.
         name = []
-        num = self.seed + pow(2, 16)
+        num = self.seed + pow(2, 25)
         while num > 0:
             digit = num%base
             num = num//base
@@ -143,14 +166,62 @@ class System(object):
         string += self.short_name
         self.name = string
 
+    def generate_system_list(self):
+        star_list = []
+        y_off = 0
+        for star in self.stars:
+            star_list.append(TextBox(pygame.Rect(20, 50+y_off, 50, 50), star.convert_temperature_to_color(),
+                                     border_color=None, highlight_color=Color.white, active_color=Color.blue))
+            self.star_buttons.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
+                                             message=star.name,
+                                             highlight_color=Color.gray, active_color=Color.blue,
+                                             text_color=Color.white, text_outline=True,
+                                             font=self.small_font, highlight_text=True,highlight_box=False))
+
+            y_off += 60
+            self.star_buttons.append(star_list[-1])
+
+        planet_list = []
+        y_off += 40
+        for planet in self.planets:
+            planet_list.append(TextBox(pygame.Rect(25, 50+y_off, 40, 40), Color.white, border_color=None,
+                                       highlight_color=Color.d_gray, active_color=Color.blue))
+            self.planet_buttons.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
+                                               message=planet.name,
+                                               highlight_color=Color.gray, active_color=Color.blue,
+                                               text_color=Color.white, text_outline=True,
+                                               font=self.small_font, highlight_text=True, highlight_box=False))
+            y_off += 50
+            self.planet_buttons.append(planet_list[-1])
+
     def draw(self, screen):
-        self.draw_gui(screen)
+        self.draw_body_list(screen)
+
+    def draw_body_list(self, screen):
+        # system side-bar
+        for star in self.star_buttons:
+            star.draw(screen)
+        for planet in self.planet_buttons:
+            planet.draw(screen)
+        '''
+        self.x_cord_box = InputBox(pygame.Rect(25, 600, 150, 30), box_color=Color.d_gray, border_color=Color.gray,
+                                   highlight_color=Color.white, active_color=Color.gray, message='0',
+                                   text_color=Color.white, font=self.font, text_limit=10,
+                                   allowed_characters=range(48, 57))
+        self.y_cord_box = InputBox(pygame.Rect(175, 600, 150, 30), box_color=Color.d_gray, border_color=Color.gray,
+                                   highlight_color=Color.white, active_color=Color.gray, message='0',
+                                   text_color=Color.white, font=self.font, text_limit=10,
+                                   allowed_characters=range(48, 57))
+        self.generate_button = TextBox(pygame.Rect(125, 550, 100, 50), (20, 150, 30), Color.gray,
+                                       highlight_color=Color.white, active_color=Color.blue, message=u'\u304D',
+                                       text_color=Color.white, font=self.font)
+        '''
 
     def draw_gui(self, screen):
         self.main_window.draw(screen)
         # cords
-        Text.draw_text(screen, self.font, 'X:', Color.white, (50, 650))
-        Text.draw_text(screen, self.font, 'Y:', Color.white, (350, 650))
+        # Text.draw_text(screen, self.font, 'X:', Color.white, (200, 400))
+        # Text.draw_text(screen, self.font, 'Y:', Color.white, (350, 650))
 
         self.generate_button.draw(screen)
 
@@ -170,6 +241,11 @@ class System(object):
                            (900, 350 + text_offset))
 
     def update(self, key, mouse, offset=(0, 0)):
+        for star in self.star_buttons:
+            star.update(key, mouse, offset)
+        for planet in self.planet_buttons:
+            planet.update(key, mouse, offset)
+        '''
         if mouse[1]:
             self.x_box.check_click()
             self.y_box.check_click()
@@ -184,6 +260,7 @@ class System(object):
         if key:
             self.x_box.poll(key)
             self.y_box.poll(key)
+        '''
 
 
 class SystemMap(object):
@@ -261,6 +338,8 @@ class SystemMap(object):
         else:
             self.mouse_box.message = ''
 
+        '''
+        # disabling manual rotation until we figure we need it
         if mouse is not None:
             if mouse[3]:
                 if not self.scrolling:
@@ -273,12 +352,13 @@ class SystemMap(object):
                 self.scrolling = False
         else:
             self.scrolling = False
+        '''
 
     def draw(self, screen):
         screen.fill(Color.black)
         # self.draw_stars(screen)
         # self.draw_planets(screen)
         self.draw_bodies(screen)
-        self.x_box.draw(screen)
-        self.y_box.draw(screen)
-        self.mouse_box.draw(screen)
+        # self.x_box.draw(screen)
+        # self.y_box.draw(screen)
+        # self.mouse_box.draw(screen)

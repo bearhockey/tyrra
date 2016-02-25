@@ -5,13 +5,13 @@ import Color
 from Box import Box
 from Debug import Debug
 from Event import Event
-from InputBox import InputBox
 from Map import Map
 from Ship import Ship
 from SpaceBattle import SpaceBattle
 from System import System
 from TextBox import TextBox
 from TextBoxList import TextBoxList
+from Warp import Warp
 from Window import Window
 
 
@@ -38,6 +38,7 @@ class ControlPanel(object):
                             'System': True,
                             'planet': False,
                             'Battle': True,
+                            'Warp': True,
                             'Debug': True}
 
         self.window_list = {}
@@ -98,29 +99,11 @@ class ControlPanel(object):
         self.sidebar_list['Ship'].components.append(self.back_to_console)
 
         # system construct
-        # self.system = System(x=454556, y=45645)
-        self.system = System(self.font, self.small_font, x=6541, y=43322)
-        self.system.generate()
-        self.window_list['System'].components.append(self.system.system_map)
-        self.system_map_index = len(self.window_list['System'].components)-1
-
-        # system side-bar
-        self.x_cord_box = InputBox(pygame.Rect(25, 600, 150, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                   highlight_color=Color.white, active_color=Color.gray, message='0',
-                                   text_color=Color.white, font=self.font, text_limit=10,
-                                   allowed_characters=range(48, 57))
-        self.y_cord_box = InputBox(pygame.Rect(175, 600, 150, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                   highlight_color=Color.white, active_color=Color.gray, message='0',
-                                   text_color=Color.white, font=self.font, text_limit=10,
-                                   allowed_characters=range(48, 57))
-        self.generate_button = TextBox(pygame.Rect(125, 550, 100, 50), (20, 150, 30), Color.gray,
-                                       highlight_color=Color.white, active_color=Color.blue, message=u'\u304D',
-                                       text_color=Color.white, font=self.font)
-        self.generate_system_list()
+        self.system = None
+        self.warp_to_system(x=6541, y=43322)
 
         # planet surface map
         self.generate_planet_map()
-
         self.screen_title = None
         self.switch_window('console')
 
@@ -128,6 +111,13 @@ class ControlPanel(object):
         self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font)
         self.window_list['Battle'].components.append(self.space_battle)
         self.sidebar_list['Battle'].components.append(self.space_battle.side_panel)
+
+        # warp menu
+        self.sidebar_list['Warp'].components.append(self.back_to_console)
+        self.warp = Warp(self, font=self.font, small_font=self.small_font)
+        self.sidebar_list['Warp'].components.append(self.warp)
+        self.window_list['Warp'].sprites.append(self.board_bottom)
+        self.window_list['Warp'].sprites.append(self.console)
 
         # debug
         self.debug_console = TextBoxList(pygame.Rect(10, main_window_height-300, main_window_width, 300),
@@ -139,6 +129,7 @@ class ControlPanel(object):
                                                      box_color=Color.white, name='LINE'))
         self.window_list['Debug'].sprites.append(self.debug_console)
         self.sidebar_list['Debug'].components.append(self.debug)
+        self.sidebar_list['Debug'].components.append(self.back_to_console)
 
     def load_event(self, event_file, event_name):
         self.event.read_event_file(event_file)
@@ -148,37 +139,15 @@ class ControlPanel(object):
         self.ship.load('data/start.shp')
         self.load_event(event_file=self.intro_event_file, event_name=self.intro_event_id)
 
-    def generate_system_list(self):
+    def warp_to_system(self, x, y):
+        del self.window_list['System'].components[:]
         del self.sidebar_list['System'].components[:]
-        del self.sidebar_list['System'].sprites[:]
+        self.system = System(self.font, self.small_font, x, y)
+        self.window_list['System'].components.append(self.system.system_map)
+        self.sidebar_list['System'].components.append(self.system)
+        # self.system_map_index = len(self.window_list['System'].components)-1
         self.sidebar_list['System'].components.append(self.back_to_console)
-        self.sidebar_list['System'].components.append(self.x_cord_box)
-        self.sidebar_list['System'].components.append(self.y_cord_box)
-        self.sidebar_list['System'].sprites.append(self.generate_button)
-        star_list = []
-        y_off = 0
-        for star in self.system.stars:
-            star_list.append(TextBox(pygame.Rect(20, 50+y_off, 50, 50), star.convert_temperature_to_color(),
-                                     border_color=None, highlight_color=Color.white, active_color=Color.blue))
-            self.sidebar_list['System'].components.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
-                                                                  message=star.name,
-                                                                  text_color=Color.white,
-                                                                  text_outline=True,
-                                                                  font=self.small_font))
-            y_off += 60
-            self.sidebar_list['System'].components.append(star_list[-1])
-
-        planet_list = []
-        for planet in self.system.planets:
-            planet_list.append(TextBox(pygame.Rect(25, 50+y_off, 40, 40), Color.white, border_color=None,
-                                       highlight_color=Color.d_gray, active_color=Color.blue))
-            self.sidebar_list['System'].components.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
-                                                                  message=planet.name,
-                                                                  text_color=Color.white,
-                                                                  text_outline=True,
-                                                                  font=self.small_font))
-            y_off += 50
-            self.sidebar_list['System'].components.append(planet_list[-1])
+        self.console.add_message('>> Warped to system: {0}'.format(self.system.name))
 
     def generate_planet_map(self):
         del self.window_list['planet'].sprites[:]
@@ -201,21 +170,6 @@ class ControlPanel(object):
         self.main_window.update(key=key, mouse=mouse)
         self.side_window.update(key=key, mouse=mouse)
 
-        # check for generate
-        if self.generate_button.update(key, mouse, offset=self.side_window.position):
-            if len(self.x_cord_box.message) != 0:
-                self.system.x = int(self.x_cord_box.message)
-            else:
-                self.system.x = 0
-            if len(self.y_cord_box.message) != 0:
-                self.system.y = int(self.y_cord_box.message)
-            else:
-                self.system.y = 0
-            self.system.generate(clear=True)
-            self.window_list['System'].components[self.system_map_index] = self.system.system_map
-            self.generate_system_list()
-            self.generate_planet_map()
-
         if self.back_to_console.update(key=key, mouse=mouse, offset=self.side_window.position):
             self.switch_window('console')
 
@@ -223,8 +177,6 @@ class ControlPanel(object):
             for button in self.nav_button:
                 if self.nav_button[button].update(key=key, mouse=mouse, offset=self.side_window.position):
                     self.switch_window(button)
-            # debug console message
-            # self.console.message =  >> Your current attack is: {0}".format(self.ship.ship_grid.get_stats()[0])
 
     def draw(self, screen):
         self.main_window.draw(screen)
