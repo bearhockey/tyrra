@@ -1,3 +1,4 @@
+import math
 import pygame
 import random
 
@@ -9,11 +10,14 @@ from Orbit import Orbit
 from InputBox import InputBox
 from Satellite import Satellite
 from Star import Star
+from Station import Station
 from TextBox import TextBox
 
 
 class System(object):
-    def __init__(self, font, small_font, x=0, y=0, generate=True):
+    def __init__(self, panel, font, small_font, x=0, y=0, generate=True, add_station=False):
+        self.panel = panel
+
         self.x = x
         self.y = y
         self.name = 'Poop'
@@ -43,13 +47,22 @@ class System(object):
                       8: 'VIII',
                       9: 'IX'}
 
+        self.system_button = TextBox(pygame.Rect(20, 60, 300, 30), message=self.short_name, box_color=Color.l_gray,
+                                     highlight_color=Color.gray, active_color=Color.blue, text_color=Color.black,
+                                     text_outline=True, font=self.small_font, highlight_text=False, highlight_box=True)
+        self.station_dock_button = TextBox(pygame.Rect(20, 460, 300, 30), message='DOCK', box_color=Color.d_gray,
+                                           highlight_color=Color.white, active_color=Color.blue, text_color=Color.white,
+                                           text_outline=True, font=self.small_font,
+                                           highlight_text=False, highlight_box=True)
         self.star_buttons = []
         self.planet_buttons = []
 
         if generate:
-            self.generate(clear=True)
+            self.generate(clear=True, add_station=add_station)
 
-    def generate(self, clear=True):
+        self.current_body = None
+
+    def generate(self, clear=True, add_station=False):
         if clear:
             del self.stars[:]
             del self.planets[:]
@@ -57,6 +70,10 @@ class System(object):
         self.generate_name()
         self.generate_stars()
         self.generate_planets()
+
+        if add_station:
+            random.seed(self.seed)
+            random.choice(self.planets).station = Station()
 
         self.system_map = SystemMap(self.font, self.small_font, stars=self.stars, planets=self.planets,
                                     star_orbit=self.star_orbit, window_width=self.main_window.width,
@@ -154,7 +171,7 @@ class System(object):
         name = []
         num = self.seed + pow(2, 25)
         while num > 0:
-            digit = num%base
+            digit = num % base
             num = num//base
             name.append(lookup[digit])
 
@@ -167,8 +184,10 @@ class System(object):
         self.name = string
 
     def generate_system_list(self):
+
+        self.system_button.message = '{0} System'.format(self.short_name)
         star_list = []
-        y_off = 0
+        y_off = 60
         for star in self.stars:
             star_list.append(TextBox(pygame.Rect(20, 50+y_off, 50, 50), star.convert_temperature_to_color(),
                                      border_color=None, highlight_color=Color.white, active_color=Color.blue))
@@ -176,7 +195,7 @@ class System(object):
                                              message=star.name,
                                              highlight_color=Color.gray, active_color=Color.blue,
                                              text_color=Color.white, text_outline=True,
-                                             font=self.small_font, highlight_text=True,highlight_box=False))
+                                             font=self.small_font, highlight_text=True, highlight_box=False))
 
             y_off += 60
             self.star_buttons.append(star_list[-1])
@@ -184,7 +203,11 @@ class System(object):
         planet_list = []
         y_off += 40
         for planet in self.planets:
-            planet_list.append(TextBox(pygame.Rect(25, 50+y_off, 40, 40), Color.white, border_color=None,
+            if planet.station:
+                color = Color.d_gray
+            else:
+                color = Color.white
+            planet_list.append(TextBox(pygame.Rect(25, 50+y_off, 40, 40), color, border_color=None,
                                        highlight_color=Color.d_gray, active_color=Color.blue))
             self.planet_buttons.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
                                                message=planet.name,
@@ -195,7 +218,11 @@ class System(object):
             self.planet_buttons.append(planet_list[-1])
 
     def draw(self, screen):
-        self.draw_body_list(screen)
+        self.system_button.draw(screen)
+        if self.current_body is not None:
+            self.draw_body_detail(screen)
+        else:
+            self.draw_body_list(screen)
 
     def draw_body_list(self, screen):
         # system side-bar
@@ -203,64 +230,111 @@ class System(object):
             star.draw(screen)
         for planet in self.planet_buttons:
             planet.draw(screen)
-        '''
-        self.x_cord_box = InputBox(pygame.Rect(25, 600, 150, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                   highlight_color=Color.white, active_color=Color.gray, message='0',
-                                   text_color=Color.white, font=self.font, text_limit=10,
-                                   allowed_characters=range(48, 57))
-        self.y_cord_box = InputBox(pygame.Rect(175, 600, 150, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                   highlight_color=Color.white, active_color=Color.gray, message='0',
-                                   text_color=Color.white, font=self.font, text_limit=10,
-                                   allowed_characters=range(48, 57))
-        self.generate_button = TextBox(pygame.Rect(125, 550, 100, 50), (20, 150, 30), Color.gray,
-                                       highlight_color=Color.white, active_color=Color.blue, message=u'\u304D',
-                                       text_color=Color.white, font=self.font)
-        '''
+
+    def draw_body_detail(self, screen):
+        body = self.current_body
+        Text.draw_text(screen, self.font, body.name, Color.white, (25, 100))
+        if type(body) is Star:
+            Text.draw_text(screen, self.small_font, 'Temperature:', Color.white, (20, 200))
+            Text.draw_text(screen, self.small_font, str(body.get_temperature()), Color.white, (150, 200))
+            #
+            Text.draw_text(screen, self.small_font, 'Size:', Color.white, (20, 230))
+            Text.draw_text(screen, self.small_font, str(body.get_size()), Color.white, (150, 230))
+            #
+            Text.draw_text(screen, self.small_font, 'Luminosity:', Color.white, (20, 260))
+            Text.draw_text(screen, self.small_font, str(body.get_luminosity()), Color.white, (150, 260))
+        elif type(body) is Satellite:
+            Text.draw_text(screen, self.small_font, 'I is planet', Color.green, (25, 200))
+            if body.station is not None:
+                Text.draw_text(screen, self.small_font, 'Station {0} is online'.format(body.station.name),
+                               Color.blue, (25, 250))
+                self.station_dock_button.draw(screen)
+        else:
+            Text.draw_text(screen, self.small_font, 'What am I?', Color.white, (25, 200))
 
     def draw_gui(self, screen):
-        self.main_window.draw(screen)
+        # self.main_window.draw(screen)
         # cords
         # Text.draw_text(screen, self.font, 'X:', Color.white, (200, 400))
         # Text.draw_text(screen, self.font, 'Y:', Color.white, (350, 650))
 
-        self.generate_button.draw(screen)
+        # self.generate_button.draw(screen)
 
         Text.draw_text(screen, self.font, self.name, Color.white, (20, 20))
         text_offset = 0
         for star in self.stars:
             text_offset = self.stars.index(star) * 100
             Text.draw_text(screen, self.small_font, '{0}'.format(star.name), Color.white, (900, 50 + text_offset))
-            Text.draw_text(screen, self.small_font, 'Temperature: {0}K'.format(star.get_temperature()), Color.white,
-                           (900, 70 + text_offset))
-            Text.draw_text(screen, self.small_font, 'Size: {0}'.format(star.get_size()), Color.white,
-                           (900, 90 + text_offset))
-            Text.draw_text(screen, self.small_font, 'Luminosity: {0}'.format(star.get_luminosity()), Color.white,
-                           (900, 110 + text_offset))
-        for planet in self.planets:
+
+        for _ in self.planets:
             Text.draw_text(screen, self.small_font, 'Planets: {0}'.format(len(self.planets)), Color.white,
                            (900, 350 + text_offset))
 
     def update(self, key, mouse, offset=(0, 0)):
+        if self.system_button.update(key, mouse, offset):
+            self.current_body = None
+        if self.current_body is None:
+            self.update_body_list(key, mouse, offset)
+        elif type(self.current_body) is Satellite:
+            if self.current_body.station:
+                if self.station_dock_button.update(key, mouse, offset):
+                    self.panel.dock_with_station(self.current_body.station)
+
+    def update_body_list(self, key, mouse, offset=(0, 0)):
         for star in self.star_buttons:
-            star.update(key, mouse, offset)
+            if star.update(key, mouse, offset):
+                self.current_body = self.get_body_by_name(self.stars, star.message)
         for planet in self.planet_buttons:
-            planet.update(key, mouse, offset)
-        '''
-        if mouse[1]:
-            self.x_box.check_click()
-            self.y_box.check_click()
-            if self.generate_button.check_click():
-                if len(self.x_box.message) != 0:
-                    self.x = int(self.x_box.message)
-                if len(self.y_box.message) != 0:
-                    self.y = int(self.y_box.message)
-                del self.stars[:]
-                del self.planets[:]
-                self.generate()
-        if key:
-            self.x_box.poll(key)
-            self.y_box.poll(key)
-        '''
+            if planet.update(key, mouse, offset):
+                self.current_body = self.get_body_by_name(self.planets, planet.message)
+
+    @staticmethod
+    def get_body_by_name(body_list, name):
+        for body in body_list:
+            if name == body.name:
+                return body
+
+    # prototype thing
+    def family_portrait(self):
+        # random star background
+        random.seed(self.seed)
+        canvas = pygame.Surface((self.panel.main_width, self.panel.main_height))
+        canvas.fill(color=Color.black)
+        x = 0
+        while x < self.panel.main_width:
+            y = 0
+            while y < self.panel.main_height:
+                val = random.random()*255
+                if val > 254.5:
+                    i = random.randrange(50, 255)
+                    color = pygame.Color(i, i, i)
+                    pygame.draw.circle(canvas, color, (x, y), int(math.log10(random.randrange(1, 1000))))
+                    # canvas.set_at((x, y), pygame.Color(int(val), int(val), int(val), 255))
+                y += 1
+            x += 1
+
+        # draw parent stars
+        center_x = self.panel.main_width/2 + random.randrange(-100, 100)
+        center_y = self.panel.main_height/2 + random.randrange(-100, 100)
+        for star in self.stars:
+            center = center_x+random.randrange(0, 100), center_y+random.randrange(0, 100)
+            width = int(star.get_size())*2
+            alpha_mod = 255/(width+1)
+            while width > 0:
+                r, g, b = star.convert_temperature_to_color()
+                a = 255-(width*alpha_mod)
+                # r -= width*10
+                print 'colors: {0} {1} {2} {3} @ {4}'.format(r, b, g, a, width)
+                # color = pygame.Color(r, g, b, a)
+                pygame.draw.circle(canvas, (r, g, b, a), center, width)
+                width -= 1
+            # lens flares?
+            f = 0
+            while f < random.randrange(5, 7):
+                pygame.draw.line(canvas, star.convert_temperature_to_color(), center,
+                                 (center_x+random.randrange(-50, 50), center_y+random.randrange(-50, 50)))
+                f += 1
+        return canvas
 
 
 class SystemMap(object):
@@ -286,7 +360,7 @@ class SystemMap(object):
                               highlight_color=Color.blue, active_color=Color.white, message='0',
                               text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
 
-        self.mouse_box = TextBox(pygame.Rect(0, 0, 200, 30), box_color=None,border_color=None, highlight_color=None,
+        self.mouse_box = TextBox(pygame.Rect(0, 0, 200, 30), box_color=None, border_color=None, highlight_color=None,
                                  active_color=None, message='Poop', text_color=Color.white, font=self.small_font)
 
     def draw_bodies(self, screen):

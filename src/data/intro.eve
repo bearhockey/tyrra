@@ -1,4 +1,3 @@
 {
-"INTRO_1": {"IMAGE": "res/stars.png", "NEXT": "INTRO_2"},
-"INTRO_2": {"TEXT": "You see some fucking stars. Its fucking majestic as balls."}
+"INTRO_1": {"TEXT": "You see some fucking stars. Its fucking majestic as balls."}
 }

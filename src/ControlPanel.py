@@ -1,3 +1,4 @@
+import os
 import pygame
 
 import Color
@@ -21,15 +22,16 @@ class ControlPanel(object):
         self.big_font_size = 24
         self.small_font_size = 16
         self.main_window = None
+        self.main_width = main_window_width
+        self.main_height = main_window_height
         self.side_window = None
         self.font = font
         self.small_font = small_font
-        # self.font = font or pygame.font.Font(pygame.font.match_font('kaiti'), self.big_font_size)
-        # self.small_font = small_font or pygame.font.Font(pygame.font.match_font('kaiti'), self.small_font_size)
 
         # some events consants
         self.intro_event_file = 'data/intro.eve'
         self.intro_event_id = 'INTRO_1'
+        self.station = None
 
         self.window_dict = {'console': False,
                             'Messages': True,
@@ -57,18 +59,20 @@ class ControlPanel(object):
         # console
         self.the_big_board = Box(pygame.Rect(0, 0, main_window_width, main_window_height-120), box_color=None,
                                  border_color=None, highlight_color=None, active_color=None)
-        self.board_bottom = Box(pygame.Rect(0, main_window_height-120, main_window_width, 120), box_color=Color.d_gray,
+        self.board_bottom = Box(pygame.Rect(main_white_space, main_white_space+main_window_height-120,
+                                            main_window_width, 120), box_color=Color.d_gray,
                                 border_color=Color.gray, highlight_color=Color.gray, active_color=Color.gray,
                                 border=3, name='Console-back')
-        self.console = TextBoxList(pygame.Rect(10, main_window_height-110, main_window_width, 120),
+        self.console = TextBoxList(pygame.Rect(main_white_space+10, main_white_space+main_window_height-110,
+                                               main_window_width, 120),
                                    name='Console', text_color=Color.white, text_outline=True, font=self.small_font,
                                    list_size=5, line_size=20)
 
-        self.event = Event(picture=self.the_big_board, text=self.console)
+        self.event = Event(panel=self, picture=self.the_big_board, text=self.console)
 
         self.window_list['console'].sprites.append(self.the_big_board)
-        self.window_list['console'].sprites.append(self.board_bottom)
-        self.window_list['console'].sprites.append(self.console)
+        # self.window_list['console'].sprites.append(self.board_bottom)
+        # self.window_list['console'].sprites.append(self.console)
         # main navigation buttons
         self.nav_button = {}
         y_offset = 0
@@ -116,8 +120,8 @@ class ControlPanel(object):
         self.sidebar_list['Warp'].components.append(self.back_to_console)
         self.warp = Warp(self, font=self.font, small_font=self.small_font)
         self.sidebar_list['Warp'].components.append(self.warp)
-        self.window_list['Warp'].sprites.append(self.board_bottom)
-        self.window_list['Warp'].sprites.append(self.console)
+        # self.window_list['Warp'].sprites.append(self.board_bottom)
+        # self.window_list['Warp'].sprites.append(self.console)
 
         # debug
         self.debug_console = TextBoxList(pygame.Rect(10, main_window_height-300, main_window_width, 300),
@@ -142,12 +146,22 @@ class ControlPanel(object):
     def warp_to_system(self, x, y):
         del self.window_list['System'].components[:]
         del self.sidebar_list['System'].components[:]
-        self.system = System(self.font, self.small_font, x, y)
+        self.station = None
+        self.system = System(panel=self, font=self.font, small_font=self.small_font, x=x, y=y, add_station=True)
         self.window_list['System'].components.append(self.system.system_map)
         self.sidebar_list['System'].components.append(self.system)
         # self.system_map_index = len(self.window_list['System'].components)-1
         self.sidebar_list['System'].components.append(self.back_to_console)
-        self.console.add_message('>> Warped to system: {0}'.format(self.system.name))
+        self.event.adhoc_event(picture=self.system.family_portrait(),
+                               text='Warped to system: {0}'.format(self.system.name),
+                               goto='console')
+
+    def dock_with_station(self, station=None):
+        if station:
+            self.station = station
+            self.event.adhoc_event(picture=self.station.image,
+                                   text='You have docked with {0}'.format(self.station.name),
+                                   goto='console')
 
     def generate_planet_map(self):
         del self.window_list['planet'].sprites[:]
@@ -180,4 +194,7 @@ class ControlPanel(object):
 
     def draw(self, screen):
         self.main_window.draw(screen)
+        # always draw console probably
+        self.board_bottom.draw(screen)
+        self.console.draw(screen)
         self.side_window.draw(screen)

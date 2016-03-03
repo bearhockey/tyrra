@@ -4,8 +4,9 @@ import pygame
 
 
 class Event(object):
-    def __init__(self, picture, text):
+    def __init__(self, panel, picture, text):
         self.data = None
+        self.panel = panel
         self.picture = picture
         self.text = text
 
@@ -23,7 +24,17 @@ class Event(object):
                 self.picture.image = pygame.image.load(os.path.normpath(event['IMAGE']))
             if 'TEXT' in event:
                 self.text.add_message('>> {0}'.format(event['TEXT']))
+            if 'GOTO' in event:
+                self.panel.switch_window(event['GOTO'])
             if 'PAUSE' in event:
                 print 'This wuld be a paws'
             if 'NEXT' in event:
                 self.run_event(event['NEXT'])
+
+    def adhoc_event(self, picture=None, text=None, goto=None):
+        if picture:
+            self.picture.image = picture
+        if text:
+            self.text.add_message('>> {0}'.format(text))
+        if goto:
+            self.panel.switch_window(goto)

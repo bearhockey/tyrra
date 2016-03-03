@@ -13,6 +13,8 @@ class Satellite(object):
         self.name = name
         self.radius_mod = 10
 
+        self.station = None
+
     def draw(self, screen):
         # pygame.draw.circle(screen, (255, 255, 255), position, self.radius / 10)
         # pygame.draw.circle(screen, (0, 0, 0), position, max(self.radius / 10, 5), 1)
