@@ -3,6 +3,7 @@ import pygame
 
 # stolen a little bit from http://pygame.org/wiki/TextWrap
 def draw_text(screen, font, text, color, position, width=None):
+    text = str(text)
     if not width:
         width = font.size(text)[0]
     line_spacing = 0

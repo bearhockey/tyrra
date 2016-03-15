@@ -3,11 +3,9 @@ import pygame
 import random
 
 import Color
-import Maths
 import Text
 
 from Orbit import Orbit
-from InputBox import InputBox
 from Satellite import Satellite
 from Star import Star
 from Station import Station
@@ -32,7 +30,7 @@ class System(object):
         self.font = font
         self.small_font = small_font
 
-        self.main_window = pygame.Rect(0, 0, 800, 600)
+        self.main_window = pygame.Rect(0, 0, self.panel.main_width, self.panel.main_height)
         self.star_orbit = Orbit(self.main_window.center, orbit=0, color=Color.d_gray, outline=2)
 
         self.system_map = None
@@ -172,7 +170,7 @@ class System(object):
         num = self.seed + pow(2, 25)
         while num > 0:
             digit = num % base
-            num = num//base
+            num /= base
             name.append(lookup[digit])
 
         string = u""
@@ -253,13 +251,6 @@ class System(object):
             Text.draw_text(screen, self.small_font, 'What am I?', Color.white, (25, 200))
 
     def draw_gui(self, screen):
-        # self.main_window.draw(screen)
-        # cords
-        # Text.draw_text(screen, self.font, 'X:', Color.white, (200, 400))
-        # Text.draw_text(screen, self.font, 'Y:', Color.white, (350, 650))
-
-        # self.generate_button.draw(screen)
-
         Text.draw_text(screen, self.font, self.name, Color.white, (20, 20))
         text_offset = 0
         for star in self.stars:
@@ -324,7 +315,7 @@ class System(object):
                 r, g, b = star.convert_temperature_to_color()
                 a = 255-(width*alpha_mod)
                 # r -= width*10
-                print 'colors: {0} {1} {2} {3} @ {4}'.format(r, b, g, a, width)
+                # print 'colors: {0} {1} {2} {3} @ {4}'.format(r, b, g, a, width)
                 # color = pygame.Color(r, g, b, a)
                 pygame.draw.circle(canvas, (r, g, b, a), center, width)
                 width -= 1
@@ -340,6 +331,8 @@ class System(object):
 class SystemMap(object):
     def __init__(self, font, small_font, stars, planets, star_orbit, window_width=200, window_height=100):
         self.main_window = pygame.Rect(0, 0, window_width, window_height)
+        self.center_x = window_width/2
+        self.center_y = window_height/2
         self.big_font_size = 24
         self.small_font_size = 16
         self.font = font
@@ -351,17 +344,6 @@ class SystemMap(object):
         self.stars = stars
         self.planets = planets
         self.star_orbit = star_orbit
-
-        box_width = self.font.size('12345678900')[0]
-        self.x_box = InputBox(pygame.Rect(800-box_width*2, 570, box_width, 30), (10, 10, 10), Color.white,
-                              highlight_color=Color.blue, active_color=Color.white, message='0',
-                              text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
-        self.y_box = InputBox(pygame.Rect(800-box_width, 570, box_width, 30), (10, 10, 10), Color.white,
-                              highlight_color=Color.blue, active_color=Color.white, message='0',
-                              text_color=Color.white, font=self.font, text_limit=10, allowed_characters=range(48, 57))
-
-        self.mouse_box = TextBox(pygame.Rect(0, 0, 200, 30), box_color=None, border_color=None, highlight_color=None,
-                                 active_color=None, message='Poop', text_color=Color.white, font=self.small_font)
 
     def draw_bodies(self, screen):
         # orbits
@@ -389,44 +371,7 @@ class SystemMap(object):
         self.rotate(10)
 
     def update(self, key, mouse, offset=(0, 0)):
-        mouse_position = pygame.mouse.get_pos()
-        hover = False
-        bodies = self.stars + self.planets
-        for body in reversed(bodies):
-            '''
-            if self.star_orbit.orbit > 0:
-                star_position = (self.star_orbit.get_point(body.orbit_point)[0] + offset[0],
-                                 self.star_orbit.get_point(body.orbit_point)[1] + offset[1])
-            else:
-                star_position = (body.position[0] + offset[0], body.position[1] + offset[1])
-            '''
-            body_position = body.orbit.get_point(body.orbit_point)
-            if Maths.Maths.collide_circle(point=mouse_position, circle_center=body_position,
-                                          circle_radius=body.radius/body.radius_mod):
-                self.mouse_box.message = body.name
-                hover = True
-                break
-        if hover:
-            self.mouse_box.text_rect.left = mouse_position[0]
-            self.mouse_box.text_rect.top = mouse_position[1]
-        else:
-            self.mouse_box.message = ''
-
-        '''
-        # disabling manual rotation until we figure we need it
-        if mouse is not None:
-            if mouse[3]:
-                if not self.scrolling:
-                    self.starting_mouse_pos = pygame.mouse.get_pos()
-                self.scrolling = True
-                new_pos_x = pygame.mouse.get_pos()[0] - self.starting_mouse_pos[0]
-                self.rotate(new_pos_x/10)
-                # self.scrolling = False
-            else:
-                self.scrolling = False
-        else:
-            self.scrolling = False
-        '''
+        pass
 
     def draw(self, screen):
         screen.fill(Color.black)

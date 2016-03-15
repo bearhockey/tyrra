@@ -122,6 +122,7 @@ class Ship(object):
     def add_crew(self, crew):
         self.crew.append(crew)
         self.make_crew_list()
+        self.crew_profile.pawn = self.crew[0]
 
     def make_crew_list(self):
         del self.crew_list[:]
@@ -170,7 +171,8 @@ class Ship(object):
             if crew.update(key, mouse, offset):
                 for pawn in self.crew:
                     if pawn.name == crew.message:
-                        self.crew_profile.pawn = pawn
+                        if self.crew_profile is not None:
+                            self.crew_profile.pawn = pawn
                         break
 
     def update_stats(self):
@@ -314,7 +316,8 @@ class ShipMainScreen(object):
         elif self.mode is 'edit':
             self.grid.draw(screen)
         elif self.mode is 'crew':
-            self.crew.draw(screen)
+            if self.crew is not None:
+                self.crew.draw(screen)
 
 
 class ShipGrid(object):

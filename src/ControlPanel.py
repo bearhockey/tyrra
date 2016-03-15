@@ -1,5 +1,5 @@
-import os
 import pygame
+from time import sleep
 
 import Color
 
@@ -24,9 +24,13 @@ class ControlPanel(object):
         self.main_window = None
         self.main_width = main_window_width
         self.main_height = main_window_height
+        self.console_height = 120
         self.side_window = None
         self.font = font
         self.small_font = small_font
+
+        # keeps buttons from being pressed when they aren't supposed to
+        self.window_lock = False
 
         # some events consants
         self.intro_event_file = 'data/intro.eve'
@@ -41,14 +45,15 @@ class ControlPanel(object):
                             'planet': False,
                             'Battle': True,
                             'Warp': True,
-                            'Debug': True}
+                            'Debug': True,
+                            'Station': True}
 
         self.window_list = {}
         self.sidebar_list = {}
 
         for window in self.window_dict:
             self.window_list[window] = Window((main_white_space, main_white_space),
-                                              (main_window_width, main_window_height),
+                                              (main_window_width, main_window_height-self.console_height),
                                               name=window)
             self.sidebar_list[window] = Window((main_white_space + main_window_width + side_white_space,
                                                 side_white_space),
@@ -57,14 +62,14 @@ class ControlPanel(object):
                                                border_color=Color.d_gray)
 
         # console
-        self.the_big_board = Box(pygame.Rect(0, 0, main_window_width, main_window_height-120), box_color=None,
-                                 border_color=None, highlight_color=None, active_color=None)
-        self.board_bottom = Box(pygame.Rect(main_white_space, main_white_space+main_window_height-120,
-                                            main_window_width, 120), box_color=Color.d_gray,
+        self.the_big_board = Box(pygame.Rect(0, 0, main_window_width, main_window_height-self.console_height),
+                                 box_color=None, border_color=None, highlight_color=None, active_color=None)
+        self.board_bottom = Box(pygame.Rect(main_white_space, main_white_space+main_window_height-self.console_height,
+                                            main_window_width, self.console_height), box_color=Color.d_gray,
                                 border_color=Color.gray, highlight_color=Color.gray, active_color=Color.gray,
                                 border=3, name='Console-back')
-        self.console = TextBoxList(pygame.Rect(main_white_space+10, main_white_space+main_window_height-110,
-                                               main_window_width, 120),
+        self.console = TextBoxList(pygame.Rect(main_white_space+10, main_white_space+main_window_height-
+                                               self.console_height+10, main_window_width, self.console_height),
                                    name='Console', text_color=Color.white, text_outline=True, font=self.small_font,
                                    list_size=5, line_size=20)
 
@@ -139,8 +144,12 @@ class ControlPanel(object):
         self.event.read_event_file(event_file)
         self.event.run_event(event_name)
 
-    def new_game(self):
+    def new_game(self, captain=None):
         self.ship.load('data/start.shp')
+        if captain is not None:
+            print 'Trying to mutiny...'
+            del self.ship.crew[:]
+            self.ship.add_crew(captain)
         self.load_event(event_file=self.intro_event_file, event_name=self.intro_event_id)
 
     def warp_to_system(self, x, y):
@@ -169,28 +178,35 @@ class ControlPanel(object):
         self.window_list['planet'].sprites.append(planet_map)
 
     def switch_window(self, new_window):
+        self.window_lock = True
         try:
             self.main_window = self.window_list[new_window]
             self.side_window = self.sidebar_list[new_window]
+            sleep(0.1)
         except Exception as e:
             print e
             pass
         self.screen_title = self.main_window.name
+        self.window_lock = False
 
     def always(self):
         self.main_window.always()
 
     def update(self, key, mouse):
-        self.main_window.update(key=key, mouse=mouse)
-        self.side_window.update(key=key, mouse=mouse)
+        if not self.window_lock:
+            self.main_window.update(key=key, mouse=mouse)
+            self.side_window.update(key=key, mouse=mouse)
 
-        if self.back_to_console.update(key=key, mouse=mouse, offset=self.side_window.position):
-            self.switch_window('console')
+            if self.back_to_console.update(key=key, mouse=mouse, offset=self.side_window.position):
+                self.switch_window('console')
 
-        if self.screen_title == 'console':
-            for button in self.nav_button:
-                if self.nav_button[button].update(key=key, mouse=mouse, offset=self.side_window.position):
-                    self.switch_window(button)
+            if self.screen_title == 'console':
+                for button in self.nav_button:
+                    if self.nav_button[button].update(key=key, mouse=mouse, offset=self.side_window.position):
+                        if button == 'Station' and self.station is None:
+                            self.event.adhoc_event(text='You are currently not docked at a station.')
+                        else:
+                            self.switch_window(button)
 
     def draw(self, screen):
         self.main_window.draw(screen)
