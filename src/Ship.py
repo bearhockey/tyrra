@@ -242,9 +242,13 @@ class Ship(object):
         self.ship_grid.update_bounds()
         if position is None:
             position = (0, 0)
-        return pygame.Rect(position[0], position[1],
-                           (self.ship_grid.ship_bounds['right'] - self.ship_grid.ship_bounds['left'] + 1) * zoom,
-                           (self.ship_grid.ship_bounds['bottom'] - self.ship_grid.ship_bounds['top'] + 1) * zoom)
+        return pygame.Rect(position[0], position[1], self.get_ship_size(zoom)[0], self.get_ship_size(zoom)[1])
+
+    def get_ship_size(self, zoom=1):
+        self.ship_grid.update_bounds()
+        w = (self.ship_grid.ship_bounds['right'] - self.ship_grid.ship_bounds['left'] + 1) * zoom
+        h = (self.ship_grid.ship_bounds['bottom'] - self.ship_grid.ship_bounds['top'] + 1) * zoom
+        return w, h
 
     def load(self, file_name):
         with open(file_name) as data_file:

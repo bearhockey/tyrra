@@ -2,18 +2,23 @@ import pygame
 
 import Color
 
-from TextBox import TextBox
+from Orbit import Orbit
 from Ship import Ship
+from TextBox import TextBox
 
 
 class SpaceBattle(object):
-    def __init__(self, player_ship, font, small_font):
+    def __init__(self, player_ship, font, small_font, window_size):
         self.player_ship = player_ship
         self.font = font
         self.small_font = small_font
+        self.window_size = window_size
+        self.center = (self.window_size[0]/2, self.window_size[1]/2)
 
         if player_ship is None:
             print "You have no ship and you lose somehow"
+
+        self.close_range = Orbit(position=self.center, orbit=100, color=Color.gray, outline=2)
 
         self.enemy_ships = []
 
@@ -49,6 +54,17 @@ class SpaceBattle(object):
     def draw(self, screen):
         zoom = 4
         screen.fill(Color.black)
+        # center screen: player
+        player_position = (self.center[0] - self.player_ship.get_ship_size(zoom=zoom)[0],
+                           self.center[1] - self.player_ship.get_ship_size(zoom=zoom)[1])
+        player = pygame.Surface(self.player_ship.get_ship_size(zoom=zoom))
+        player.fill(Color.black)
+        self.player_ship.draw_ship(player, position=(0, 0), zoom=zoom)
+        screen.blit(player, player_position)
+        # self.player_ship.draw_ship(screen, position=player_position, zoom=zoom)
+
+        self.close_range.draw(screen)
+
         enemy_start_x = 350 - len(self.enemy_ships)*50
         x_offset = 0
         for ship in self.enemy_ships:
@@ -58,7 +74,8 @@ class SpaceBattle(object):
                 color = Color.white
             ship.draw_ship(screen, position=(enemy_start_x+x_offset, 50), color=color, zoom=zoom)
             x_offset += 100
-        self.player_ship.draw_ship(screen, position=(300, 400), zoom=zoom)
+        # screen.blit(self.player_ship_sprite, (300, 400))
+        # self.player_ship.draw_ship(screen, position=(300, 400), zoom=zoom)
 
 
 class SpaceBattlePanel(object):

@@ -117,7 +117,8 @@ class ControlPanel(object):
         self.switch_window('console')
 
         # battle screen
-        self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font)
+        self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font,
+                                        window_size=(main_window_width, main_window_height))
         self.window_list['Battle'].components.append(self.space_battle)
         self.sidebar_list['Battle'].components.append(self.space_battle.side_panel)
 
@@ -147,7 +148,6 @@ class ControlPanel(object):
     def new_game(self, captain=None):
         self.ship.load('data/start.shp')
         if captain is not None:
-            print 'Trying to mutiny...'
             del self.ship.crew[:]
             self.ship.add_crew(captain)
         self.load_event(event_file=self.intro_event_file, event_name=self.intro_event_id)
