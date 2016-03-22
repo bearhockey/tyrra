@@ -1,7 +1,9 @@
+import os
 import pygame
 from time import sleep
 
 import Color
+import settings
 
 from Box import Box
 from Debug import Debug
@@ -33,7 +35,7 @@ class ControlPanel(object):
         self.window_lock = False
 
         # some events consants
-        self.intro_event_file = 'data/intro.eve'
+        self.intro_event_file = os.path.join(settings.main_path, 'data', 'intro.eve')
         self.intro_event_id = 'INTRO_1'
         self.station = None
 
@@ -146,7 +148,7 @@ class ControlPanel(object):
         self.event.run_event(event_name)
 
     def new_game(self, captain=None):
-        self.ship.load('data/start.shp')
+        self.ship.load(os.path.join(settings.main_path, 'data', 'start.shp'))
         if captain is not None:
             del self.ship.crew[:]
             self.ship.add_crew(captain)

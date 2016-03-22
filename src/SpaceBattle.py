@@ -1,6 +1,7 @@
 import pygame
 
 import Color
+import settings
 
 from Orbit import Orbit
 from Ship import Ship
@@ -18,13 +19,13 @@ class SpaceBattle(object):
         if player_ship is None:
             print "You have no ship and you lose somehow"
 
-        self.close_range = Orbit(position=self.center, orbit=100, color=Color.gray, outline=2)
+        self.close_range = Orbit(position=self.center, orbit=200, color=Color.gray, outline=2)
 
         self.enemy_ships = []
 
         for _ in range(3):
             en_ship = Ship(size_x=40, size_y=40)
-            en_ship.load('data/enemy_1.txt')
+            en_ship.load('{0}data/enemy_1.txt'.format(settings.main_path))
             self.enemy_ships.append(en_ship)
 
         for ship in self.enemy_ships:
@@ -55,8 +56,8 @@ class SpaceBattle(object):
         zoom = 4
         screen.fill(Color.black)
         # center screen: player
-        player_position = (self.center[0] - self.player_ship.get_ship_size(zoom=zoom)[0],
-                           self.center[1] - self.player_ship.get_ship_size(zoom=zoom)[1])
+        player_position = (self.center[0] - self.player_ship.get_ship_size(zoom=zoom)[0]/2,
+                           self.center[1] - self.player_ship.get_ship_size(zoom=zoom)[1]/2)
         player = pygame.Surface(self.player_ship.get_ship_size(zoom=zoom))
         player.fill(Color.black)
         self.player_ship.draw_ship(player, position=(0, 0), zoom=zoom)

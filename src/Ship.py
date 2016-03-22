@@ -3,6 +3,7 @@ import pygame
 
 import Color
 import Text
+import settings
 
 from Box import Box
 from InputBox import InputBox
@@ -162,9 +163,9 @@ class Ship(object):
                 self.ship_grid.selected_cell_type = self.floor_dictionary[tile.name]
                 self.ship_grid.selected_cell_stats = self.floor_stats[tile.name]
         if self.load_box.update(key, mouse, offset):
-            self.load('data/save.shp')
+            self.load('{0}data/save.shp'.format(settings.main_path))
         if self.save_box.update(key, mouse, offset):
-            self.save('data/save.shp')
+            self.save('{0}data/save.shp'.format(settings.main_path))
 
     def update_crew_panel(self, key, mouse, offset=(0, 0)):
         for crew in self.crew_list:

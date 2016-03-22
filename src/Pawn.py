@@ -1,6 +1,8 @@
 import pygame
 import os
 
+import settings
+
 
 class Pawn(object):
     def __init__(self, name=None, age=None, race=None, bio=None, profile=None, ship_skills=None, battle_skills=None):
@@ -10,7 +12,8 @@ class Pawn(object):
         self.bio = bio or 'To just short of infinity, and then we head back, because fuck man, space is hard.'
         # portrait is 250x250
         try:
-            self.portrait = profile or pygame.image.load(os.path.join('res', 'face', 'buzz.png'))
+            print 'Getting portrait {0}'.format(os.path.join(settings.main_path, 'res', 'face', 'buzz.png'))
+            self.portrait = profile or pygame.image.load(os.path.join(settings.main_path, 'res', 'face', 'buzz.png'))
         except Exception as e:
             print 'oh no: {0}'.format(e)
 

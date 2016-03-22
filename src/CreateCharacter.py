@@ -3,6 +3,7 @@ import pygame
 
 import Color
 import Text
+import settings
 
 from Box import Box
 from InputBox import InputBox
@@ -21,7 +22,7 @@ class CreateCharacter(object):
                        name='Character Creation Box')
         box_x = self.box.rect.x
         box_y = self.box.rect.y
-        self.portrait = pygame.image.load(os.path.join('res', 'face', 'buzz.png'))
+        self.portrait = pygame.image.load(os.path.join(settings.main_path, 'res', 'face', 'buzz.png'))
         self.portrait_box = Box(pygame.Rect(int(box_x + self.box.rect.width / 10),
                                             int(box_y + self.box.rect.height / 7),
                                             250, 250),

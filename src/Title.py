@@ -2,6 +2,7 @@ import pygame
 import os
 
 import Color
+import settings
 
 from Box import Box
 from TextBox import TextBox
@@ -10,8 +11,8 @@ from TextBox import TextBox
 class Title(object):
     def __init__(self, font, screen_width=800, screen_height=600):
         self.font = font
-        title_image = pygame.image.load(os.path.join('res', 'tyrra_title.png'))
-        pygame.mixer.music.load(os.path.join('res', 'tyrra_bit.ogg'))
+        title_image = pygame.image.load(os.path.join(settings.main_path, 'res', 'tyrra_title.png'))
+        pygame.mixer.music.load(os.path.join(settings.main_path, 'res', 'tyrra_bit.ogg'))
         self.title_image = Box(rect=pygame.Rect(10, 10, screen_width-20, screen_height-20), border_color=Color.white,
                                highlight_color=Color.white, active_color=Color.white, border=4, image=title_image)
         self.new_game = TextBox(rect=pygame.Rect(screen_width/2-40, screen_height/2+20, 120, 30),
