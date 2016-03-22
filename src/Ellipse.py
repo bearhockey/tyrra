@@ -29,7 +29,7 @@ class Ellipse(object):
             y = -y
         return int(x)+self.position[0], int(y)+self.position[1]
 
-    def draw(self, screen, color=None, outline=None):
+    def draw(self, screen, color=None, outline=2):
         box = pygame.Rect(self.position[0] - self.x_radius, self.position[1] - self.y_radius,
                           self.x_radius * 2, self.y_radius * 2)
         if color is None:

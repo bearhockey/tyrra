@@ -3,7 +3,7 @@ import pygame
 import Color
 import settings
 
-from Orbit import Orbit
+from Range import Range
 from Ship import Ship
 from TextBox import TextBox
 
@@ -19,13 +19,19 @@ class SpaceBattle(object):
         if player_ship is None:
             print "You have no ship and you lose somehow"
 
-        self.close_range = Orbit(position=self.center, orbit=200, color=Color.gray, outline=2)
+        self.melee_range = Range(distance=100, center=self.center)
+        self.close_range = Range(distance=150, center=self.center)
+        self.far_range = Range(distance=200, center=self.center)
+
+        self.ranges = [self.melee_range, self.close_range, self.far_range]
 
         self.enemy_ships = []
 
         for _ in range(3):
             en_ship = Ship(size_x=40, size_y=40)
             en_ship.load('{0}data/enemy_1.txt'.format(settings.main_path))
+            self.far_range.enemies.append(en_ship)
+            # random.choice(self.ranges).enemies.append(en_ship)
             self.enemy_ships.append(en_ship)
 
         for ship in self.enemy_ships:
@@ -43,6 +49,7 @@ class SpaceBattle(object):
         for enemy in self.enemy_ships:
             if enemy.box.update(key=key, mouse=mouse, offset=offset):
                 self.target = enemy
+                print 'hey got a target'
         # check movements
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
@@ -64,17 +71,8 @@ class SpaceBattle(object):
         screen.blit(player, player_position)
         # self.player_ship.draw_ship(screen, position=player_position, zoom=zoom)
 
-        self.close_range.draw(screen)
-
-        enemy_start_x = 350 - len(self.enemy_ships)*50
-        x_offset = 0
-        for ship in self.enemy_ships:
-            if ship == self.target:
-                color = Color.red
-            else:
-                color = Color.white
-            ship.draw_ship(screen, position=(enemy_start_x+x_offset, 50), color=color, zoom=zoom)
-            x_offset += 100
+        for circle in self.ranges:
+            circle.draw(screen, self.target, zoom=zoom)
         # screen.blit(self.player_ship_sprite, (300, 400))
         # self.player_ship.draw_ship(screen, position=(300, 400), zoom=zoom)
 
