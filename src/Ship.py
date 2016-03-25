@@ -34,7 +34,9 @@ class Ship(object):
                            'attack': 0,
                            'armor': 0,
                            'speed': 0,
-                           'power': 0}
+                           'power': 0,
+                           'shield': 0,
+                           'component_capacity': 4}
 
         # objects are drawn on side bar
         self.name_box = InputBox(pygame.Rect(70, 10, 250, 50), box_color=None, border_color=Color.d_gray,
@@ -61,13 +63,15 @@ class Ship(object):
                                  'armor': 2,
                                  'engine': 3,
                                  'gun': 4,
-                                 'power': 5}
+                                 'power': 5,
+                                 'shield': 7}
         self.floor_stats = {'blank': (0, 0, 0, 0),
                             'floor': (0, -1, -1, -1),
                             'armor': (0, 10, -2, 0),
                             'engine': (0, 0, 10, -5),
                             'gun': (10, 0, -1, -5),
-                            'power': (0, 0, -1, 10)}
+                            'power': (0, 0, -1, 10),
+                            'shield': (0, 0, 0, -10)}
 
         self.floors = []
         self.floors.append(Box(pygame.Rect(25, 140, 25, 25), Color.black, border_color=Color.d_gray,
@@ -96,7 +100,7 @@ class Ship(object):
         self.power_value = TextBox(pygame.Rect(300, 515, 50, 50), message='', text_color=Color.green,
                                    font=self.small_font)
 
-        # components
+        # Parts
         self.floors.append(TextBox(pygame.Rect(25, 180, 25, 25), Color.black, border_color=Color.d_gray,
                                    highlight_color=Color.white, active_color=Color.blue, border=1, name='engine',
                                    message='E1', text_color=Color.blue, text_outline=True, font=self.small_font))
@@ -106,6 +110,15 @@ class Ship(object):
         self.floors.append(TextBox(pygame.Rect(85, 180, 25, 25), Color.black, border_color=Color.d_gray,
                                    highlight_color=Color.white, active_color=Color.blue, border=1, name='power',
                                    message='P1', text_color=Color.green, text_outline=True, font=self.small_font))
+
+        # components
+        self.component_list = []
+        for i in range(1, self.ship_stats['component_capacity']):
+            self.component_list.append(TextBox(pygame.Rect(25, 250+((i-1)*60), 300, 50), Color.d_gray,
+                                               border_color=Color.gray, highlight_color=Color.white,
+                                               active_color=Color.blue, border=2, name='Component {0}'.format(i),
+                                               message='EMPTY', text_color=Color.gray, text_outline=True,
+                                               font=self.font))
 
         # debug load button
         self.load_box = TextBox(pygame.Rect(230, 545, 75, 40), Color.blue, border_color=Color.gray,
@@ -207,6 +220,9 @@ class Ship(object):
         self.floor_text.draw(screen)
         for tile in self.floors:
             tile.draw(screen)
+        Text.draw_text(screen, self.small_font, 'Components:', Color.white, position=(25, 220))
+        for box in self.component_list:
+            box.draw(screen)
 
         self.load_box.draw(screen)
         self.save_box.draw(screen)
@@ -493,11 +509,11 @@ class CrewProfile(object):
             Text.draw_text(screen, self.small_font, '{0}:'.format(skill), Color.white, (25, y))
             Text.draw_text(screen, self.small_font, str(value), Color.white, (125, y))
             y += 30
-        Text.draw_text(screen, self.font, 'STATS', Color.white, (225, 300))
+        Text.draw_text(screen, self.font, 'STATS', Color.white, (175, 300))
         y = 350
         for stat, value in self.pawn.battle_skills.iteritems():
-            Text.draw_text(screen, self.small_font, '{0}:'.format(stat), Color.white, (225, y))
-            Text.draw_text(screen, self.small_font, str(value), Color.white, (325, y))
+            Text.draw_text(screen, self.small_font, '{0}:'.format(stat), Color.white, (175, y))
+            Text.draw_text(screen, self.small_font, str(value), Color.white, (300, y))
             y += 30
 
     def update(self, key, mouse, offset=(0, 0)):

@@ -11,7 +11,8 @@ node_type = {
     'ENGINE': 3,
     'GUN': 4,
     'POWER': 5,
-    'GUN-SIGHT': 6
+    'GUN-SIGHT': 6,
+    'SHIELD': 7
     }
 
 
@@ -77,6 +78,8 @@ class ShipNode(Box):
             self.box_color = Color.red
         elif self.type == node_type['ENGINE']:
             self.box_color = Color.blue
+        elif self.type == node_type['SHIELD']:
+            self.box_color = Color.yellow
         elif self.type == node_type['ARMOR']:
             self.box_color = Color.d_gray
         elif self.type == node_type['FLOOR']:

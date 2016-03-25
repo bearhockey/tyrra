@@ -19,18 +19,19 @@ class SpaceBattle(object):
         if player_ship is None:
             print "You have no ship and you lose somehow"
 
-        self.melee_range = Range(distance=100, center=self.center)
-        self.close_range = Range(distance=150, center=self.center)
-        self.far_range = Range(distance=200, center=self.center)
+        self.melee_range = Range(distance=100, center=self.center, ring_color=Color.red)
+        self.close_range = Range(distance=150, center=self.center, ring_color=Color.gray)
+        self.far_range = Range(distance=200, center=self.center, ring_color=Color.d_gray)
+        self.scanner_range = Range(distance=250, center=self.center, ring_color=Color.black, ship_color=Color.d_gray)
 
-        self.ranges = [self.melee_range, self.close_range, self.far_range]
+        self.ranges = [self.melee_range, self.close_range, self.far_range, self.scanner_range]
 
         self.enemy_ships = []
 
         for _ in range(3):
             en_ship = Ship(size_x=40, size_y=40)
             en_ship.load('{0}data/enemy_1.txt'.format(settings.main_path))
-            self.far_range.enemies.append(en_ship)
+            self.scanner_range.enemies.append(en_ship)
             # random.choice(self.ranges).enemies.append(en_ship)
             self.enemy_ships.append(en_ship)
 

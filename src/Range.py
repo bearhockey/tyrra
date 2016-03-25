@@ -3,10 +3,12 @@ from Ellipse import Ellipse
 
 
 class Range(object):
-    def __init__(self, distance, center=(0, 0)):
+    def __init__(self, distance, center=(0, 0), ring_color=Color.d_gray, ship_color=Color.white):
         self.distance = distance
         self.circle = Ellipse(position=center, x_radius=distance, y_radius=distance)
         self.enemies = []
+        self.ring_color = ring_color
+        self.ship_color = ship_color
 
     def add_enemy(self, enemy):
         self.enemies.append(enemy)
@@ -17,7 +19,7 @@ class Range(object):
             i += 1
 
     def draw(self, screen, target, zoom=4):
-        self.circle.draw(screen, Color.d_gray)
+        self.circle.draw(screen, self.ring_color)
         if len(self.enemies) > 0:
             orbit_position = 360 / len(self.enemies)
             i = 1
@@ -29,6 +31,6 @@ class Range(object):
                 if enemy == target:
                     color = Color.red
                 else:
-                    color = Color.white
+                    color = self.ship_color
                 enemy.draw_ship(screen, position=draw_point, color=color, zoom=zoom)
                 i += 1

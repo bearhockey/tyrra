@@ -22,12 +22,23 @@ class CreateCharacter(object):
                        name='Character Creation Box')
         box_x = self.box.rect.x
         box_y = self.box.rect.y
-        self.portrait = pygame.image.load(os.path.join(settings.main_path, 'res', 'face', 'buzz.png'))
+        # build portrait roster
+        self.portrait_roster = []
+        self.portrait_index = 0
+        for face in os.listdir(settings.face_path):
+            if face.endswith('.png'):
+                self.portrait_roster.append(pygame.image.load(os.path.join(settings.face_path, face)))
+        for face in os.listdir(settings.mod_path):
+            if face.endswith('.png'):
+                self.portrait_roster.append(pygame.image.load(os.path.join(settings.mod_path, face)))
+
+        self.portrait = None
         self.portrait_box = Box(pygame.Rect(int(box_x + self.box.rect.width / 10),
                                             int(box_y + self.box.rect.height / 7),
                                             250, 250),
                                 box_color=Color.black, border_color=Color.white, highlight_box=False,
-                                name='Portrait Box', image=self.portrait)
+                                name='Portrait Box')
+        self.update_roster_portrait_box()
         self.left_portrait = TextBox(pygame.Rect(self.portrait_box.rect.x - 35,
                                                  self.portrait_box.rect.y + self.portrait_box.rect.height/3,
                                                  25, 40),
@@ -83,6 +94,10 @@ class CreateCharacter(object):
         pawn.ship_skills[self.profession.message] = 1
         return pawn
 
+    def update_roster_portrait_box(self):
+        self.portrait = self.portrait_roster[self.portrait_index]
+        self.portrait_box.image = self.portrait
+
     def update_profession_stats(self):
         if self.profession.message == 'Pilot':
             self.skills = {'Melee': 2, 'Ranged': 1, 'Defense': 1, 'Intelligence': 1, 'Speed': 1}
@@ -96,6 +111,13 @@ class CreateCharacter(object):
             self.skills = {'Melee': 1, 'Ranged': 1, 'Defense': 1, 'Intelligence': 2, 'Speed': 1}
 
     def update(self, key, mouse, offset=(0, 0)):
+        if self.portrait_index > 0 and self.left_portrait.update(key=key, mouse=mouse, offset=offset):
+            self.portrait_index -= 1
+            self.update_roster_portrait_box()
+        if self.portrait_index < len(self.portrait_roster)-1 \
+                and self.right_portrait.update(key=key, mouse=mouse, offset=offset):
+            self.portrait_index += 1
+            self.update_roster_portrait_box()
         self.name.update(key=key, mouse=mouse, offset=offset)
         self.age.update(key=key, mouse=mouse, offset=offset)
         self.race.update(key=key, mouse=mouse, offset=offset)

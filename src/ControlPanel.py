@@ -120,7 +120,7 @@ class ControlPanel(object):
 
         # battle screen
         self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font,
-                                        window_size=(main_window_width, main_window_height))
+                                        window_size=(main_window_width, main_window_height - self.console_height))
         self.window_list['Battle'].components.append(self.space_battle)
         self.sidebar_list['Battle'].components.append(self.space_battle.side_panel)
 
