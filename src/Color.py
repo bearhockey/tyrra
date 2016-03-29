@@ -1,3 +1,5 @@
+import random
+
 white = (255, 255, 255)
 black = (0, 0, 0)
 l_gray = (210, 210, 210)

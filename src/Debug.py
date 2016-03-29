@@ -16,14 +16,19 @@ class Debug(object):
         self.font = font
         self.buttons = []
 
-        self.add_crew = TextBox(pygame.Rect(20, 50, 200, 45), Color.d_gray, border_color=None,
+        self.add_crew = TextBox(pygame.Rect(20, 50, 250, 45), Color.d_gray, border_color=None,
                                 highlight_color=Color.white, active_color=None, message='Add Crew',
                                 text_color=Color.white, text_outline=True, font=self.font)
         self.buttons.append(self.add_crew)
 
-        self.spam_console = TextBox(pygame.Rect(20, 100, 200, 45), Color.d_gray, highlight_color=Color.white,
+        self.spam_console = TextBox(pygame.Rect(20, 100, 250, 45), Color.d_gray, highlight_color=Color.white,
                                     message='Spam Debug', text_color=Color.white, text_outline=True, font=self.font)
         self.buttons.append(self.spam_console)
+
+        self.damage_shield = TextBox(pygame.Rect(20, 150, 250, 45), Color.d_gray, highlight_color=Color.white,
+                                     message='Damage Ship Shields', text_color=Color.white, text_outline=True,
+                                     font=self.font)
+        self.buttons.append(self.damage_shield)
 
     def draw(self, screen):
         for button in self.buttons:
@@ -38,4 +43,8 @@ class Debug(object):
             self.debug_console.add_message('>> Added crew member ')
         if self.spam_console.update(key, mouse, offset):
             self.debug_console.add_message('>> BLAH BLAH BLAH')
+
+        if self.damage_shield.update(key, mouse, offset):
+            self.ship.current_shield -= 10
+            self.debug_console.add_message('>> Ship shield depleted by 10 to {0}'.format(self.ship.current_shield))
 
