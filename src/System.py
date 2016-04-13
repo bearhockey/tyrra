@@ -30,7 +30,7 @@ class System(object):
         self.font = font
         self.small_font = small_font
 
-        self.main_window = pygame.Rect(0, 0, self.panel.main_width, self.panel.main_height)
+        self.main_window = pygame.Rect(0, 0, self.panel.main_width, self.panel.main_height-120)
         self.star_orbit = Orbit(self.main_window.center, orbit=0, color=Color.d_gray, outline=2)
 
         self.system_map = None
@@ -346,8 +346,8 @@ class System(object):
 class SystemMap(object):
     def __init__(self, font, small_font, stars, planets, star_orbit, window_width=200, window_height=100):
         self.main_window = pygame.Rect(0, 0, window_width, window_height)
-        self.center_x = window_width/2
-        self.center_y = window_height/2
+        self.center_x = window_width / 2
+        self.center_y = window_height / 2
         self.big_font_size = 24
         self.small_font_size = 16
         self.font = font
@@ -361,6 +361,11 @@ class SystemMap(object):
         self.star_orbit = star_orbit
 
         self.planet_focus = 0
+        # makes a circular mask
+        self.planet_mask = pygame.Surface(size=(window_width, window_height))
+        self.planet_mask.fill(color=Color.black)
+        pygame.draw.circle(self.planet_mask, Color.white, (self.center_x, self.center_y), 100)
+        self.planet_mask.set_colorkey(Color.white)
 
     def draw_bodies(self, screen):
         # orbits
@@ -395,7 +400,8 @@ class SystemMap(object):
         # self.draw_stars(screen)
         # self.draw_planets(screen)
         if self.planet_focus > 0:
-            self.planets[self.planet_focus-1].map.draw(screen)
+            self.planets[self.planet_focus - 1].map.draw(screen)
+            screen.blit(self.planet_mask, (0, 0))
         else:
             self.draw_bodies(screen)
         # self.x_box.draw(screen)
