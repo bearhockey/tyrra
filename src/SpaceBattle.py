@@ -2,10 +2,9 @@ import pygame
 
 import Color
 import settings
-
 from Range import Range
 from Ship import Ship
-from TextBox import TextBox
+from src.components.text.TextBox import TextBox
 
 
 class SpaceBattle(object):

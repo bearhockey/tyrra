@@ -1,11 +1,11 @@
 import os
+
 import pygame
 
 import Color
 import settings
-
 from Pawn import Pawn
-from TextBox import TextBox
+from src.components.text.TextBox import TextBox
 
 
 class Debug(object):

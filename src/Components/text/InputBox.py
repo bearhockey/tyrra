@@ -1,6 +1,7 @@
 import pygame
-from TextBox import TextBox
-from TextCursor import TextCursor
+
+from src.components.text.TextBox import TextBox
+from src.components.text.TextCursor import TextCursor
 
 
 class InputBox(TextBox):

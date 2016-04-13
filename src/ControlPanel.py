@@ -1,21 +1,20 @@
 import os
-import pygame
 from time import sleep
+
+import pygame
 
 import Color
 import settings
-
-from Box import Box
 from Debug import Debug
 from Event import Event
-from Map import Map
 from Ship import Ship
 from SpaceBattle import SpaceBattle
 from System import System
-from TextBox import TextBox
-from TextBoxList import TextBoxList
 from Warp import Warp
-from Window import Window
+from src.components.Box import Box
+from src.components.Window import Window
+from src.components.text.TextBox import TextBox
+from src.components.text.TextBoxList import TextBoxList
 
 
 class ControlPanel(object):
@@ -70,7 +69,7 @@ class ControlPanel(object):
                                             main_window_width, self.console_height), box_color=Color.d_gray,
                                 border_color=Color.gray, highlight_color=Color.gray, active_color=Color.gray,
                                 border=3, name='Console-back')
-        self.console = TextBoxList(pygame.Rect(main_white_space+10, main_white_space+main_window_height-
+        self.console = TextBoxList(pygame.Rect(main_white_space+10, main_white_space+main_window_height -
                                                self.console_height+10, main_window_width, self.console_height),
                                    name='Console', text_color=Color.white, text_outline=True, font=self.small_font,
                                    list_size=5, line_size=20)
@@ -113,8 +112,6 @@ class ControlPanel(object):
         self.system = None
         self.warp_to_system(x=6541, y=43322)
 
-        # planet surface map
-        self.generate_planet_map()
         self.screen_title = None
         self.switch_window('console')
 
@@ -173,11 +170,6 @@ class ControlPanel(object):
             self.event.adhoc_event(picture=self.station.image,
                                    text='You have docked with {0}'.format(self.station.name),
                                    goto='console')
-
-    def generate_planet_map(self):
-        del self.window_list['planet'].sprites[:]
-        planet_map = Map(width=320, height=200, rando=False, seed=self.system.seed)
-        self.window_list['planet'].sprites.append(planet_map)
 
     def switch_window(self, new_window):
         self.window_lock = True

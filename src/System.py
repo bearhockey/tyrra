@@ -1,15 +1,15 @@
 import math
-import pygame
 import random
 
-import Color
-import Text
+import pygame
 
+import Color
 from Orbit import Orbit
-from Satellite import Satellite
+from Planet import Planet
 from Star import Star
 from Station import Station
-from TextBox import TextBox
+from src.components.text import Text
+from src.components.text.TextBox import TextBox
 
 
 class System(object):
@@ -90,10 +90,12 @@ class System(object):
             planet_num -= random.randrange(10, 50)
             print 'planet num is {0}'.format(planet_num)
             planet_name = '{0} {1}'.format(self.short_name, self.roman[planet_count])
-            self.planets.append(Satellite(sun_position=center,
-                                          radius=random.randint(1, 255),
-                                          orbit=planet_num+star_sum,
-                                          name=planet_name))
+            self.planets.append(Planet(index=planet_count,
+                                       seed=self.seed,
+                                       sun_position=center,
+                                       radius=random.randint(1, 255),
+                                       orbit=planet_num+star_sum,
+                                       name=planet_name))
             planet_count += 1
         orbit_position = 360/len(self.planets)
         i = 1
@@ -241,11 +243,22 @@ class System(object):
             #
             Text.draw_text(screen, self.small_font, 'Luminosity:', Color.white, (20, 260))
             Text.draw_text(screen, self.small_font, str(body.get_luminosity()), Color.white, (150, 260))
-        elif type(body) is Satellite:
+        elif type(body) is Planet:
             Text.draw_text(screen, self.small_font, 'I is planet', Color.green, (25, 200))
+            Text.draw_text(screen, self.small_font, "Atmosphere is {0}".format(body.atmosphere_density),
+                           Color.blue, (25, 240))
+            Text.draw_text(screen, self.small_font, "Temperature is {0}K".format(body.temperature),
+                           Color.red, (25, 280))
+            if body.temperature > 373:
+                water = "BOILED"
+            elif body.temperature < 273:
+                water = "FROZEN"
+            else:
+                water = "LIFE"
+            Text.draw_text(screen, self.small_font, water, Color.green, (25, 320))
             if body.station is not None:
                 Text.draw_text(screen, self.small_font, 'Station {0} is online'.format(body.station.name),
-                               Color.blue, (25, 250))
+                               Color.blue, (25, 350))
                 self.station_dock_button.draw(screen)
         else:
             Text.draw_text(screen, self.small_font, 'What am I?', Color.white, (25, 200))
@@ -264,9 +277,10 @@ class System(object):
     def update(self, key, mouse, offset=(0, 0)):
         if self.system_button.update(key, mouse, offset):
             self.current_body = None
+            self.system_map.planet_focus = 0
         if self.current_body is None:
             self.update_body_list(key, mouse, offset)
-        elif type(self.current_body) is Satellite:
+        elif type(self.current_body) is Planet:
             if self.current_body.station:
                 if self.station_dock_button.update(key, mouse, offset):
                     self.panel.dock_with_station(self.current_body.station)
@@ -278,6 +292,7 @@ class System(object):
         for planet in self.planet_buttons:
             if planet.update(key, mouse, offset):
                 self.current_body = self.get_body_by_name(self.planets, planet.message)
+                self.system_map.planet_focus = self.current_body.planet_index
 
     @staticmethod
     def get_body_by_name(body_list, name):
@@ -345,6 +360,8 @@ class SystemMap(object):
         self.planets = planets
         self.star_orbit = star_orbit
 
+        self.planet_focus = 0
+
     def draw_bodies(self, screen):
         # orbits
         if self.star_orbit.orbit > 0:
@@ -377,7 +394,10 @@ class SystemMap(object):
         screen.fill(Color.black)
         # self.draw_stars(screen)
         # self.draw_planets(screen)
-        self.draw_bodies(screen)
+        if self.planet_focus > 0:
+            self.planets[self.planet_focus-1].map.draw(screen)
+        else:
+            self.draw_bodies(screen)
         # self.x_box.draw(screen)
         # self.y_box.draw(screen)
         # self.mouse_box.draw(screen)

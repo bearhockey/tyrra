@@ -1,7 +1,8 @@
 import random
 
 from noise import snoise2
-from Maths import Maths
+
+from src.components.Maths import Maths
 
 
 class Elevation(object):

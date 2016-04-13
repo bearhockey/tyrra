@@ -1,16 +1,16 @@
 import json
+
 import pygame
 
 import Color
-import Text
 import settings
-
-from Box import Box
 from Component import Component
-from InputBox import InputBox
 from Pawn import Pawn
 from ShipNode import ShipNode
-from TextBox import TextBox
+from src.components.text import Text
+from src.components.Box import Box
+from src.components.text.InputBox import InputBox
+from src.components.text.TextBox import TextBox
 
 
 class Ship(object):

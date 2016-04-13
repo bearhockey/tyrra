@@ -1,11 +1,11 @@
-import pygame
 import os
+
+import pygame
 
 import Color
 import settings
-
-from Box import Box
-from TextBox import TextBox
+from src.components.Box import Box
+from src.components.text.TextBox import TextBox
 
 
 class Title(object):

@@ -1,6 +1,6 @@
 import pygame
 
-from TextBox import TextBox
+from src.components.text.TextBox import TextBox
 
 
 class TextBoxList(object):

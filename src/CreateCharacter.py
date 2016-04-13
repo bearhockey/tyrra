@@ -1,14 +1,14 @@
 import os
+
 import pygame
 
 import Color
-import Text
 import settings
-
-from Box import Box
-from InputBox import InputBox
 from Pawn import Pawn
-from TextBox import TextBox
+from src.components.text import Text
+from src.components.Box import Box
+from src.components.text.InputBox import InputBox
+from src.components.text.TextBox import TextBox
 
 
 class CreateCharacter(object):

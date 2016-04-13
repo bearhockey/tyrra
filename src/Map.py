@@ -6,12 +6,12 @@ from Node import Node
 
 
 class Map(object):
-    def __init__(self, width=20, height=10, rando=False, seed=None):
+    def __init__(self, width=20, height=10, rando=False, seed=None, zoom=1):
         random.seed(seed)
         # map data
         self.width = width
         self.height = height
-        self.zoom = 1
+        self.zoom = zoom
 
         self.map = []
         for x in range(0, width):

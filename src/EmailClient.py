@@ -1,7 +1,7 @@
 import pygame
 
 import Color
-from TextBox import TextBox
+from src.components.text.TextBox import TextBox
 
 
 class EmailClient(object):

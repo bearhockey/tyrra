@@ -1,6 +1,6 @@
 import Color
 
-from Ellipse import Ellipse
+from src.components.Ellipse import Ellipse
 
 
 class Orbit(object):

@@ -1,8 +1,7 @@
 import pygame
 
 import Color
-
-from Box import Box
+from src.components.Box import Box
 
 node_type = {
     'BLANK': 0,

@@ -1,10 +1,9 @@
 import pygame
 
 import Color
-import Text
-
-from InputBox import InputBox
-from TextBox import TextBox
+from src.components.text import Text
+from src.components.text.InputBox import InputBox
+from src.components.text.TextBox import TextBox
 
 
 class Warp(object):
