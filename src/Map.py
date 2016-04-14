@@ -6,7 +6,7 @@ from Node import Node
 
 
 class Map(object):
-    def __init__(self, width=20, height=10, rando=False, seed=None, zoom=1):
+    def __init__(self, width=20, height=10, rando=False, seed=None, zoom=1, temperature=0):
         random.seed(seed)
         # map data
         self.width = width
@@ -29,9 +29,8 @@ class Map(object):
         self.x_offset = 0
         self.y_offset = 0
 
-        Elevation.rando_card(self.map, octaves=16, seed=random.randint(-65536, 65536))
+        Elevation.rando_card(self.map, scale=100.0, octaves=4, seed=random.randint(-65536, 65536))
         Elevation.land_ceiling(self.map, 0.7)
-        Elevation.amplify(self.map, self.sea_level, 0.5)
 
         # map layers
         self.drawing_layers = {
@@ -42,6 +41,15 @@ class Map(object):
             'temperature': False,
             'rainfall': False
         }
+
+        if temperature > 373:
+            self.drawing_layers['water'] = False
+            self.drawing_layers['ice'] = False
+        if temperature < 273:
+            self.drawing_layers['water'] = False
+
+        if self.drawing_layers['water']:
+            Elevation.amplify(self.map, self.sea_level, 0.5)
 
         self.create_map(zoom_level=self.zoom)
 

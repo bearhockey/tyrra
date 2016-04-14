@@ -10,14 +10,20 @@ class Elevation(object):
         print 'elevation is cool'
 
     @staticmethod
-    def rando_card(node_map, octaves=1, seed=0):
-        freq = octaves * 16.0
-        for row in node_map:
-            for node in row:
+    def rando_card(node_map, scale=1, octaves=1, seed=0):
+        # freq = octaves * octaves
+        map_width = len(node_map)
+        for column in node_map:
+            for node in column:
+                '''old way
                 node.elevation = (snoise2(x=(node.x + seed) / freq,
                                           y=(node.y + seed) / freq,
                                           octaves=octaves) + 1) / 2
-                # print node.elevation
+                '''
+                node.elevation = (snoise2((node.x + seed) / scale,
+                                          (node.y + seed) / scale,
+                                          octaves=octaves,
+                                          repeatx=map_width / scale) + 1) / 2
 
     @staticmethod
     def flat_land(node_map, level=0.5):
