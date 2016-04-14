@@ -361,10 +361,11 @@ class SystemMap(object):
         self.star_orbit = star_orbit
 
         self.planet_focus = 0
+        self.planet_radius = 200
         # makes a circular mask
         self.planet_mask = pygame.Surface(size=(window_width, window_height))
         self.planet_mask.fill(color=Color.black)
-        pygame.draw.circle(self.planet_mask, Color.white, (self.center_x, self.center_y), 100)
+        pygame.draw.circle(self.planet_mask, Color.white, (self.center_x, self.center_y), self.planet_radius)
         self.planet_mask.set_colorkey(Color.white)
 
     def draw_bodies(self, screen):
@@ -390,7 +391,15 @@ class SystemMap(object):
                 body.orbit_point += 360
 
     def always(self):
-        self.rotate(10)
+        if self.planet_focus > 0:
+            planet = self.planets[self.planet_focus - 1]
+            planet.map.y_offset = self.center_y - self.planet_radius
+            if planet.map.x_offset > self.center_x - self.planet_radius - (planet.map.width * planet.map.zoom):
+                planet.map.x_offset -= 1
+            else:
+                planet.map.x_offset = self.center_x - self.planet_radius
+        else:
+            self.rotate(10)
 
     def update(self, key, mouse, offset=(0, 0)):
         pass
@@ -400,6 +409,12 @@ class SystemMap(object):
         # self.draw_stars(screen)
         # self.draw_planets(screen)
         if self.planet_focus > 0:
+            planet = self.planets[self.planet_focus - 1]
+            planet.map.draw(screen)
+            if planet.map.x_offset + (planet.map.width * planet.map.zoom) < self.center_x + self.planet_radius:
+                planet.map.draw_at_offset(screen,
+                                          planet.map.x_offset + (planet.map.width * planet.map.zoom) - planet.map.zoom,
+                                          planet.map.y_offset)
             self.planets[self.planet_focus - 1].map.draw(screen)
             screen.blit(self.planet_mask, (0, 0))
         else:

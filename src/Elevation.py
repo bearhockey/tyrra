@@ -14,9 +14,9 @@ class Elevation(object):
         freq = octaves * 16.0
         for row in node_map:
             for node in row:
-                node.elevation = (snoise2((node.x + seed) / freq,
-                                          (node.y + seed) / freq,
-                                          octaves) + 1) / 2
+                node.elevation = (snoise2(x=(node.x + seed) / freq,
+                                          y=(node.y + seed) / freq,
+                                          octaves=octaves) + 1) / 2
                 # print node.elevation
 
     @staticmethod

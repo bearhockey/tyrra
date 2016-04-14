@@ -27,7 +27,7 @@ class Planet(object):
         self.temperature = 1000-orbit
         self.temperature += int(self.temperature * atmopshere_mod)
 
-        self.map = Map(width=292, height=194, rando=False, seed=self.planet_seed, zoom=3)
+        self.map = Map(width=300, height=200, rando=False, seed=self.planet_seed, zoom=2)
 
     def draw(self, screen):
         # pygame.draw.circle(screen, (255, 255, 255), position, self.radius / 10)

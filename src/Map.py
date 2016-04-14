@@ -30,7 +30,7 @@ class Map(object):
         self.y_offset = 0
 
         Elevation.rando_card(self.map, octaves=16, seed=random.randint(-65536, 65536))
-        Elevation.land_ceiling(self.map, 0.6)
+        Elevation.land_ceiling(self.map, 0.7)
         Elevation.amplify(self.map, self.sea_level, 0.5)
 
         # map layers
@@ -58,3 +58,7 @@ class Map(object):
     def draw(self, screen):
         if self.canvas:
             screen.blit(self.canvas, (self.x_offset, self.y_offset))
+
+    def draw_at_offset(self, screen, x_offset, y_offset):
+        if self.canvas:
+            screen.blit(self.canvas, (x_offset, y_offset))
