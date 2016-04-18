@@ -26,8 +26,11 @@ class Node(object):
         r = height
         g = height
         b = height
+        a = 255
         if filters:
             if 'water' in filters:
                 b = min(height + (255 / 2), 255)
-        pygame.draw.rect(screen, (r, g, b), rect)
+            if 'clouds' in filters:
+                a = height
+        pygame.draw.rect(screen, (r, g, b, a), rect)
 

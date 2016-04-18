@@ -46,11 +46,15 @@ class Elevation(object):
                     node.elevation = floor
 
     @staticmethod
-    def amplify(node_map, cutoff, factor):
+    def amplify(node_map, base, ceiling, factor, direction='positive'):
         for row in node_map:
             for node in row:
-                if node.elevation < cutoff:
-                    node.elevation *= factor
+                if direction == 'positive' or direction == 'up':
+                    delta = factor
+                else:
+                    delta = 1/factor
+                if base < node.elevation < ceiling:
+                        node.elevation *= delta
 
     @staticmethod
     def build(node_map, x, y, floor, ceiling, branch):

@@ -14,10 +14,13 @@ class Map(object):
         self.zoom = zoom
 
         self.map = []
+        self.clouds = []
         for x in range(0, width):
             self.map.append([])
+            self.clouds.append([])
             for y in range(0, height):
                 self.map[x].append(Node(x=x, y=y))
+                self.clouds[x].append(Node(x=x, y=y))
 
         self.sea_level = 0.5
         self.canvas = None
@@ -32,11 +35,14 @@ class Map(object):
         Elevation.rando_card(self.map, scale=100.0, octaves=4, seed=random.randint(-65536, 65536))
         Elevation.land_ceiling(self.map, 0.7)
 
+        Elevation.rando_card(self.clouds, scale=200.0, octaves=2, seed=random.randint(-65536, 65536))
+
         # map layers
         self.drawing_layers = {
             'water': True,
             'ice': True,
             'biome': True,
+            'clouds': False,
             'coast': False,
             'temperature': False,
             'rainfall': False
@@ -49,7 +55,7 @@ class Map(object):
             self.drawing_layers['water'] = False
 
         if self.drawing_layers['water']:
-            Elevation.amplify(self.map, self.sea_level, 0.5)
+            Elevation.amplify(self.map, base=0.0, ceiling=self.sea_level, factor=2.0, direction='negative')
 
         self.create_map(zoom_level=self.zoom)
 
@@ -62,6 +68,10 @@ class Map(object):
                     if not node.is_above(self.sea_level):
                         filters.append('water')
                 node.draw(self.canvas, zoom=zoom_level, filters=filters)
+        if self.drawing_layers['clouds']:
+            for row in self.clouds:
+                for node in row:
+                    node.draw(self.canvas, zoom=zoom_level, filters=['clouds'])
 
     def draw(self, screen):
         if self.canvas:
