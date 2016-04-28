@@ -20,6 +20,8 @@ class Event(object):
     def run_event(self, event_name):
         event = self.data[event_name]
         if event:
+            if 'BATTLE' in event:
+                pass
             if 'IMAGE' in event:
                 self.picture.image = pygame.image.load(os.path.normpath(event['IMAGE']))
             if 'TEXT' in event:
@@ -31,10 +33,12 @@ class Event(object):
             if 'NEXT' in event:
                 self.run_event(event['NEXT'])
 
-    def adhoc_event(self, picture=None, text=None, goto=None):
+    def adhoc_event(self, picture=None, text=None, goto=None, battle=None):
         if picture:
             self.picture.image = picture
         if text:
             self.text.add_message('>> {0}'.format(text))
         if goto:
             self.panel.switch_window(goto)
+        if battle:
+            self.panel.start_space_battle(battle)

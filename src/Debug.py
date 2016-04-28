@@ -12,6 +12,7 @@ class Debug(object):
     def __init__(self, debug_console, panel, ship, font):
         self.debug_console = debug_console
         self.panel = panel
+        self.event = self.panel.event
         self.ship = ship
         self.font = font
         self.buttons = []
@@ -30,6 +31,11 @@ class Debug(object):
                                      font=self.font)
         self.buttons.append(self.damage_shield)
 
+        self.enter_battle = TextBox(pygame.Rect(20, 200, 250, 45), Color.d_gray, highlight_color=Color.white,
+                                    message="Enter Battle", text_color=Color.white, text_outline=True,
+                                    font=self.font)
+        self.buttons.append(self.enter_battle)
+
     def draw(self, screen):
         for button in self.buttons:
             button.draw(screen)
@@ -41,6 +47,7 @@ class Debug(object):
                                     profile=pygame.image.load(os.path.join(settings.main_path,
                                                                            'res', 'face', 'joe.png'))))
             self.debug_console.add_message('>> Added crew member ')
+
         if self.spam_console.update(key, mouse, offset):
             self.debug_console.add_message('>> BLAH BLAH BLAH')
 
@@ -48,3 +55,6 @@ class Debug(object):
             self.ship.current_shield -= 10
             self.debug_console.add_message('>> Ship shield depleted by 10 to {0}'.format(self.ship.current_shield))
 
+        if self.enter_battle.update(key, mouse, offset):
+            self.event.adhoc_event(battle={"Bad": "guy", "enemies": [{"ship_file": "data/enemy_1.txt"},
+                                                                     {"ship_file": "data/enemy_1.txt"}]})

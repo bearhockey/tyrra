@@ -44,7 +44,7 @@ class ControlPanel(object):
                             'Ship': True,
                             'System': True,
                             'planet': False,
-                            'Battle': True,
+                            'Battle': False,
                             'Warp': True,
                             'Debug': True,
                             'Station': True}
@@ -116,10 +116,13 @@ class ControlPanel(object):
         self.switch_window('console')
 
         # battle screen
+        self.space_battle = None
+        '''
         self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font,
                                         window_size=(main_window_width, main_window_height - self.console_height))
         self.window_list['Battle'].components.append(self.space_battle)
         self.sidebar_list['Battle'].components.append(self.space_battle.side_panel)
+        '''
 
         # warp menu
         self.sidebar_list['Warp'].components.append(self.back_to_console)
@@ -170,6 +173,22 @@ class ControlPanel(object):
             self.event.adhoc_event(picture=self.station.image,
                                    text='You have docked with {0}'.format(self.station.name),
                                    goto='console')
+
+    def start_space_battle(self, battle_params=None):
+        del self.window_list["Battle"].components[:]
+        del self.sidebar_list["Battle"].components[:]
+        if battle_params:
+            if "enemies" in battle_params:
+                enemies = battle_params["enemies"]
+            else:
+                enemies = None
+        self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font,
+                                        window_size=(self.main_width, self.main_height - self.console_height),
+                                        enemies=enemies)
+
+        self.window_list["Battle"].components.append(self.space_battle)
+        self.sidebar_list["Battle"].components.append(self.space_battle.side_panel)
+        self.switch_window(new_window="Battle")
 
     def switch_window(self, new_window):
         self.window_lock = True

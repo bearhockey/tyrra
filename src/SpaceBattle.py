@@ -8,7 +8,7 @@ from src.components.text.TextBox import TextBox
 
 
 class SpaceBattle(object):
-    def __init__(self, player_ship, font, small_font, window_size):
+    def __init__(self, player_ship, font, small_font, window_size, enemies=None):
         self.player_ship = player_ship
         self.font = font
         self.small_font = small_font
@@ -27,12 +27,12 @@ class SpaceBattle(object):
 
         self.enemy_ships = []
 
-        for _ in range(3):
-            en_ship = Ship(size_x=40, size_y=40)
-            en_ship.load('{0}data/enemy_1.txt'.format(settings.main_path))
-            self.scanner_range.enemies.append(en_ship)
-            # random.choice(self.ranges).enemies.append(en_ship)
-            self.enemy_ships.append(en_ship)
+        if enemies:
+            for enemy in enemies:
+                en_ship = Ship(size_x=40, size_y=40)
+                en_ship.load("{0}{1}".format(settings.main_path, enemy["ship_file"]))
+                self.scanner_range.enemies.append(en_ship)
+                self.enemy_ships.append(en_ship)
 
         for ship in self.enemy_ships:
             print 'attack: {0} - armor: {1} - speed: {2}'.format(ship.ship_stats['attack'],
