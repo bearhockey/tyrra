@@ -108,9 +108,6 @@ class Ship(object):
         self.save_box = TextBox(pygame.Rect(230, 650, 75, 40), Color.red, border_color=Color.gray,
                                 highlight_color=Color.white, active_color=Color.white, message='SAVE',
                                 text_color=Color.white, text_outline=True, font=self.font)
-        # debug add shield
-        self.add_component(Component('empty', name='REMOVE'))
-        self.add_component(Component('shield', name='Shield Mk I', stats={'shield': 100, 'power': -10}))
 
         # crew screen
         self.crew_list = []
@@ -146,9 +143,9 @@ class Ship(object):
                                                text_color=Color.white, text_outline=True, font=self.font))
             y_offset += 55
 
-    def install_component(self, component):
-        if component.component_type is not 'empty':
-            self.installed_components.append(component)
+    def install_component(self, index):
+        if self.component_inventory[index].component_type is not 'empty':
+            self.installed_components.append(index)
         self.make_installed_component_list()
 
     def remove_component(self, index):
@@ -158,12 +155,13 @@ class Ship(object):
 
     def make_installed_component_list(self):
         del self.installed_list[:]
-        for i in range(1, self.ship_stats['component_capacity']+1):
-            if len(self.installed_components) > i-1:
-                self.installed_list.append(TextBox(pygame.Rect(25, 250+((i-1)*50), 300, 40), Color.d_gray,
+        for i in range(1, self.ship_stats['component_capacity'] + 1):
+            if len(self.installed_components) > i - 1:
+                index = self.installed_components[i - 1]
+                self.installed_list.append(TextBox(pygame.Rect(25, 250 + ((i - 1) * 50), 300, 40), Color.d_gray,
                                                    border_color=Color.gray, highlight_color=Color.white,
                                                    active_color=Color.blue, border=2, name=i,
-                                                   message=self.installed_components[i-1].name, text_color=Color.gray,
+                                                   message=self.component_inventory[index].name, text_color=Color.gray,
                                                    text_outline=True, font=self.font))
             else:
                 self.installed_list.append(TextBox(pygame.Rect(25, 250+((i-1)*50), 300, 40), Color.d_gray,
@@ -214,10 +212,15 @@ class Ship(object):
 
     def update_component_panel(self, key, mouse, offset=(0, 0)):
         for component in self.component_list:
-            if self.component_inventory[component.name] not in self.installed_components:
+            if len(self.component_inventory) > 0:
+                index = int(component.name)
+            else:
+                index = 0
+            if index not in self.installed_components:
                 if component.update(key, mouse, offset):
-                    self.remove_component(self.selected_component)
-                    self.install_component(self.component_inventory[component.name])
+                    print "index is {0}".format(index)
+                    self.remove_component(index)
+                    self.install_component(index)
                     self.panel_mode = 'edit'
 
     def update_crew_panel(self, key, mouse, offset=(0, 0)):
@@ -236,7 +239,8 @@ class Ship(object):
         self.ship_stats['speed'] = speed
         self.ship_stats['power'] = power
         self.ship_stats['shield'] = 0
-        for component in self.installed_components:
+        for index in self.installed_components:
+            component = self.component_inventory[index]
             if component.stats:
                 for stat, value in component.stats.iteritems():
                     if stat in self.ship_stats:
@@ -327,16 +331,32 @@ class Ship(object):
         return w, h
 
     def load(self, file_name):
-        with open(file_name) as data_file:
-            data = json.load(data_file)
-        self.name_box.message = data['NAME']
-        index = 0
-        for row in self.ship_grid.grid:
-            for node in row:
-                node.type = data['GRID'][index][0]
-                node.set_stats(data['GRID'][index][1])
-                index += 1
-        self.update_stats()
+        try:
+            with open(file_name) as data_file:
+                data = json.load(data_file)
+            self.name_box.message = data['NAME']
+            index = 0
+            for row in self.ship_grid.grid:
+                for node in row:
+                    node.type = data['GRID'][index][0]
+                    node.set_stats(data['GRID'][index][1])
+                    index += 1
+            del self.component_inventory[:]
+            self.make_component_list()
+            self.add_component(Component('empty', name='REMOVE'))
+            if "C_INV" in data:
+                for inventory in data["C_INV"]:
+                    self.add_component(Component(component_type=inventory["TYPE"],
+                                                 name=inventory["NAME"],
+                                                 stats=inventory["STATS"]))
+            del self.installed_components[:]
+            if "C_ACT" in data:
+                self.installed_components = data["C_ACT"]
+            self.make_installed_component_list()
+
+            self.update_stats()
+        except Exception as e:
+            print "Failed to load ship file {0} : {1}".format(file_name, e)
 
     def save(self, file_name):
         dump = {'NAME': self.name_box.message}
@@ -345,6 +365,15 @@ class Ship(object):
             for node in row:
                 grid.append((node.type, node.get_stats()))
         dump['GRID'] = grid
+        component_list = []
+        for component in self.component_inventory:
+            if self.component_inventory.index(component) != 0:
+                component_list.append(component.component_dict())
+        dump["C_INV"] = component_list
+        # active_list = []
+        # for active in self.installed_components:
+        #     active_list.append(active.component_dict())
+        dump["C_ACT"] = self.installed_components
         with open(file_name, 'w') as outfile:
             json.dump(dump, outfile)
         print 'saved to file'
