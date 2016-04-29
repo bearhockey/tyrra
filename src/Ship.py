@@ -341,6 +341,7 @@ class Ship(object):
                     node.type = data['GRID'][index][0]
                     node.set_stats(data['GRID'][index][1])
                     index += 1
+            # components
             del self.component_inventory[:]
             self.make_component_list()
             self.add_component(Component('empty', name='REMOVE'))
@@ -353,6 +354,17 @@ class Ship(object):
             if "C_ACT" in data:
                 self.installed_components = data["C_ACT"]
             self.make_installed_component_list()
+            # crew
+            del self.crew[:]
+            if "CREW" in data:
+                for crew in data["CREW"]:
+                    self.add_crew(Pawn(name=crew["NAME"],
+                                       age=crew["AGE"],
+                                       race=crew["RACE"],
+                                       bio=crew["BIO"],
+                                       profile=crew["PICTURE"],
+                                       ship_skills=crew["SKILLS"],
+                                       battle_skills=crew["STATS"]))
 
             self.update_stats()
         except Exception as e:
@@ -365,15 +377,18 @@ class Ship(object):
             for node in row:
                 grid.append((node.type, node.get_stats()))
         dump['GRID'] = grid
+        # components
         component_list = []
         for component in self.component_inventory:
             if self.component_inventory.index(component) != 0:
                 component_list.append(component.component_dict())
         dump["C_INV"] = component_list
-        # active_list = []
-        # for active in self.installed_components:
-        #     active_list.append(active.component_dict())
         dump["C_ACT"] = self.installed_components
+        # crew
+        crew_list = []
+        for crew in self.crew:
+            crew_list.append(crew.get_data())
+        dump["CREW"] = crew_list
         with open(file_name, 'w') as outfile:
             json.dump(dump, outfile)
         print 'saved to file'

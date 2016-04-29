@@ -44,8 +44,7 @@ class Debug(object):
         if self.add_crew.update(key, mouse, offset):
             self.ship.add_crew(Pawn(name='FooBar', age='Female', race='Compooter',
                                     bio='Stop all the downloadin!',
-                                    profile=pygame.image.load(os.path.join(settings.main_path,
-                                                                           'res', 'face', 'joe.png'))))
+                                    profile=(os.path.join(settings.main_path, 'res', 'face', 'joe.png'))))
             self.debug_console.add_message('>> Added crew member ')
 
         if self.spam_console.update(key, mouse, offset):

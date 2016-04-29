@@ -177,11 +177,10 @@ class ControlPanel(object):
     def start_space_battle(self, battle_params=None):
         del self.window_list["Battle"].components[:]
         del self.sidebar_list["Battle"].components[:]
+        enemies = None
         if battle_params:
             if "enemies" in battle_params:
                 enemies = battle_params["enemies"]
-            else:
-                enemies = None
         self.space_battle = SpaceBattle(player_ship=self.ship, font=self.font, small_font=self.small_font,
                                         window_size=(self.main_width, self.main_height - self.console_height),
                                         enemies=enemies)

@@ -27,10 +27,12 @@ class CreateCharacter(object):
         self.portrait_index = 0
         for face in os.listdir(settings.face_path):
             if face.endswith('.png'):
-                self.portrait_roster.append(pygame.image.load(os.path.join(settings.face_path, face)))
+                path = os.path.join(settings.face_path, face)
+                self.portrait_roster.append({"PATH": path, "IMAGE": pygame.image.load(path)})
         for face in os.listdir(settings.mod_path):
             if face.endswith('.png'):
-                self.portrait_roster.append(pygame.image.load(os.path.join(settings.mod_path, face)))
+                path = os.path.join(settings.mod_path, face)
+                self.portrait_roster.append({"PATH": path, "IMAGE": pygame.image.load(path)})
 
         self.portrait = None
         self.portrait_box = Box(pygame.Rect(int(box_x + self.box.rect.width / 10),
@@ -90,12 +92,12 @@ class CreateCharacter(object):
 
     def return_character(self):
         pawn = Pawn(name=self.name.message, age=self.age.message, race=self.race.message, bio=self.bio.message,
-                    profile=self.portrait, battle_skills=self.skills)
+                    profile=self.portrait_roster[self.portrait_index]["PATH"], battle_skills=self.skills)
         pawn.ship_skills[self.profession.message] = 1
         return pawn
 
     def update_roster_portrait_box(self):
-        self.portrait = self.portrait_roster[self.portrait_index]
+        self.portrait = self.portrait_roster[self.portrait_index]["IMAGE"]
         self.portrait_box.image = self.portrait
 
     def update_profession_stats(self):
