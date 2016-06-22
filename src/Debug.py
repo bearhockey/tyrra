@@ -4,6 +4,7 @@ import pygame
 
 import Color
 import settings
+from Component import Component
 from Pawn import Pawn
 from src.components.text.TextBox import TextBox
 
@@ -22,16 +23,20 @@ class Debug(object):
                                 text_color=Color.white, text_outline=True, font=self.font)
         self.buttons.append(self.add_crew)
 
-        self.spam_console = TextBox(pygame.Rect(20, 100, 250, 45), Color.d_gray, highlight_color=Color.white,
+        self.add_shield = TextBox(pygame.Rect(20, 100, 250, 45), Color.d_gray, highlight_color=Color.white,
+                                  message='Add Shield', text_color=Color.white, text_outline=True, font=self.font)
+        self.buttons.append(self.add_shield)
+
+        self.spam_console = TextBox(pygame.Rect(20, 150, 250, 45), Color.d_gray, highlight_color=Color.white,
                                     message='Spam Debug', text_color=Color.white, text_outline=True, font=self.font)
         self.buttons.append(self.spam_console)
 
-        self.damage_shield = TextBox(pygame.Rect(20, 150, 250, 45), Color.d_gray, highlight_color=Color.white,
+        self.damage_shield = TextBox(pygame.Rect(20, 200, 250, 45), Color.d_gray, highlight_color=Color.white,
                                      message='Damage Ship Shields', text_color=Color.white, text_outline=True,
                                      font=self.font)
         self.buttons.append(self.damage_shield)
 
-        self.enter_battle = TextBox(pygame.Rect(20, 200, 250, 45), Color.d_gray, highlight_color=Color.white,
+        self.enter_battle = TextBox(pygame.Rect(20, 250, 250, 45), Color.d_gray, highlight_color=Color.white,
                                     message="Enter Battle", text_color=Color.white, text_outline=True,
                                     font=self.font)
         self.buttons.append(self.enter_battle)
@@ -45,7 +50,11 @@ class Debug(object):
             self.ship.add_crew(Pawn(name='FooBar', age='Female', race='Compooter',
                                     bio='Stop all the downloadin!',
                                     profile=(os.path.join(settings.main_path, 'res', 'face', 'joe.png'))))
-            self.debug_console.add_message('>> Added crew member ')
+            self.debug_console.add_message(">> Added crew member.")
+
+        if self.add_shield.update(key, mouse, offset):
+            self.ship.add_component(Component("shield", name="Mk I Shield", stats={"shield": 100, "power": -10}))
+            self.debug_console.add_message(">> Mk I Shield added to inventory.")
 
         if self.spam_console.update(key, mouse, offset):
             self.debug_console.add_message('>> BLAH BLAH BLAH')
@@ -55,5 +64,5 @@ class Debug(object):
             self.debug_console.add_message('>> Ship shield depleted by 10 to {0}'.format(self.ship.current_shield))
 
         if self.enter_battle.update(key, mouse, offset):
-            self.event.adhoc_event(battle={"Bad": "guy", "enemies": [{"ship_file": "data/enemy_1.txt"},
-                                                                     {"ship_file": "data/enemy_1.txt"}]})
+            self.event.adhoc_event(battle={"Bad": "guy", "enemies": [{"ship_file": "data/enemy_1.shp"},
+                                                                     {"ship_file": "data/enemy_1.shp"}]})

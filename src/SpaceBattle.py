@@ -35,9 +35,10 @@ class SpaceBattle(object):
                 self.enemy_ships.append(en_ship)
 
         for ship in self.enemy_ships:
-            print 'attack: {0} - armor: {1} - speed: {2}'.format(ship.ship_stats['attack'],
-                                                                 ship.ship_stats['armor'],
-                                                                 ship.ship_stats['speed'])
+            print 'attack: {0} - armor: {1} - speed: {2} - shield: {3}'.format(ship.ship_stats['attack'],
+                                                                               ship.ship_stats['armor'],
+                                                                               ship.ship_stats['speed'],
+                                                                               ship.ship_stats["shield"])
 
         self.side_panel = SpaceBattlePanel(self)
 
@@ -67,6 +68,8 @@ class SpaceBattle(object):
                            self.center[1] - self.player_ship.get_ship_size(zoom=zoom)[1]/2)
         player = pygame.Surface(self.player_ship.get_ship_size(zoom=zoom))
         # player.fill(Color.black)
+        self.player_ship.draw_ship(player, position=(0, 0), zoom=zoom)
+        screen.blit(player, player_position)
         if self.player_ship.ship_stats['shield'] is not 0 and self.player_ship.current_shield > 0:
             shield_green = int(float(self.player_ship.current_shield) / float(self.player_ship.ship_stats['shield']) * 255)
             shield_red = 255 - shield_green
@@ -74,8 +77,6 @@ class SpaceBattle(object):
             shield_green = 0
             shield_red = 0
         pygame.draw.circle(screen, (shield_red, shield_green, 0), self.center, 50, 10)
-        self.player_ship.draw_ship(player, position=(0, 0), zoom=zoom)
-        screen.blit(player, player_position)
         # self.player_ship.draw_ship(screen, position=player_position, zoom=zoom)
 
         for circle in self.ranges:
