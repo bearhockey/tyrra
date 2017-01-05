@@ -2,8 +2,7 @@ import pygame
 
 import Color
 import settings
-
-from BattleNode import BattleNode
+from Range import Range
 from Ship import Ship
 from src.components.text.TextBox import TextBox
 
@@ -19,23 +18,20 @@ class SpaceBattle(object):
         if player_ship is None:
             print "You have no ship and you lose somehow"
 
-        self.enemy_ships = []
+        self.melee_range = Range(distance=100, center=self.center, ring_color=Color.red)
+        self.close_range = Range(distance=150, center=self.center, ring_color=Color.gray)
+        self.far_range = Range(distance=200, center=self.center, ring_color=Color.d_gray)
+        self.scanner_range = Range(distance=250, center=self.center, ring_color=Color.black, ship_color=Color.d_gray)
 
-        self.battle_field = []
-        battle_width = 20
-        battle_height = 20
-        self.cell_size = 4
-        for y in range(0, battle_height):
-            self.battle_field.append([])
-            for x in range(0, battle_width):
-                self.battle_field[y].append(BattleNode(x, y, cell_size=64))
-        self.grid_offset = (25, 55)
-        self.zoom_level = 1
+        self.ranges = [self.melee_range, self.close_range, self.far_range, self.scanner_range]
+
+        self.enemy_ships = []
 
         if enemies:
             for enemy in enemies:
                 en_ship = Ship(size_x=40, size_y=40)
                 en_ship.load("{0}{1}".format(settings.main_path, enemy["ship_file"]))
+                self.scanner_range.enemies.append(en_ship)
                 self.enemy_ships.append(en_ship)
 
         for ship in self.enemy_ships:
@@ -67,10 +63,6 @@ class SpaceBattle(object):
     def draw(self, screen):
         zoom = 4
         screen.fill(Color.black)
-        # grid
-        for row in self.battle_field:
-            for node in row:
-                node.draw(screen=screen)
         # center screen: player
         player_position = (self.center[0] - self.player_ship.get_ship_size(zoom=zoom)[0]/2,
                            self.center[1] - self.player_ship.get_ship_size(zoom=zoom)[1]/2)
@@ -87,6 +79,8 @@ class SpaceBattle(object):
         pygame.draw.circle(screen, (shield_red, shield_green, 0), self.center, 50, 10)
         # self.player_ship.draw_ship(screen, position=player_position, zoom=zoom)
 
+        for circle in self.ranges:
+            circle.draw(screen, self.target, zoom=zoom)
         # screen.blit(self.player_ship_sprite, (300, 400))
         # self.player_ship.draw_ship(screen, position=(300, 400), zoom=zoom)
 
