@@ -88,7 +88,7 @@ class System(object):
         planet_count = 1
         while planet_num > 100:
             planet_num -= random.randrange(10, 50)
-            print 'planet num is {0}'.format(planet_num)
+            # print('planet num is {0}'.format(planet_num))
             planet_name = '{0} {1}'.format(self.short_name, self.roman[planet_count])
             self.planets.append(Planet(index=planet_count,
                                        seed=self.seed,
@@ -106,7 +106,7 @@ class System(object):
     def generate_seed(self):
         self.seed = float(0.5) * float(self.x + self.y) * float(self.x + self.y + 1) + self.y
         self.seed = int(self.seed)
-        print 'Seed: {0}'.format(self.seed)
+        print("Seed: {0}".format(self.seed))
 
     def generate_stars(self):
         random.seed(self.seed)
@@ -173,7 +173,7 @@ class System(object):
         while num > 0:
             digit = num % base
             num /= base
-            name.append(lookup[digit])
+            name.append(lookup[int(digit)])
 
         string = u""
         string += u"{0} supercluster.  ".format(name.pop())
@@ -311,17 +311,16 @@ class System(object):
             y = 0
             while y < self.panel.main_height:
                 val = random.random()*255
-                if val > 254.5:
+                if val > 254:
                     i = random.randrange(50, 255)
                     color = pygame.Color(i, i, i)
                     pygame.draw.circle(canvas, color, (x, y), int(math.log10(random.randrange(1, 1000))))
-                    # canvas.set_at((x, y), pygame.Color(int(val), int(val), int(val), 255))
                 y += 1
             x += 1
 
         # draw parent stars
-        center_x = self.panel.main_width/2 + random.randrange(-100, 100)
-        center_y = self.panel.main_height/2 + random.randrange(-100, 100)
+        center_x = int(self.panel.main_width/2 + random.randrange(-100, 100))
+        center_y = int(self.panel.main_height/2 + random.randrange(-100, 100))
         for star in self.stars:
             center = center_x+random.randrange(0, 100), center_y+random.randrange(0, 100)
             width = int(star.get_size())*2
@@ -332,6 +331,7 @@ class System(object):
                 # r -= width*10
                 # print 'colors: {0} {1} {2} {3} @ {4}'.format(r, b, g, a, width)
                 # color = pygame.Color(r, g, b, a)
+                print("{0} {1} {2}".format((r, g, b, a), center, width))
                 pygame.draw.circle(canvas, (r, g, b, a), center, width)
                 width -= 1
             # lens flares?
@@ -346,8 +346,8 @@ class System(object):
 class SystemMap(object):
     def __init__(self, font, small_font, stars, planets, star_orbit, window_width=200, window_height=100):
         self.main_window = pygame.Rect(0, 0, window_width, window_height)
-        self.center_x = window_width / 2
-        self.center_y = window_height / 2
+        self.center_x = int(window_width / 2)
+        self.center_y = int(window_height / 2)
         self.big_font_size = 24
         self.small_font_size = 16
         self.font = font

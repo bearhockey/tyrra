@@ -25,8 +25,8 @@ class Star(object):
         return round(float(self.luminosity) / 255, 3)
 
     def draw_grid(self, screen, position):
-        pygame.draw.circle(screen, self.convert_temperature_to_color(), position, self.radius / self.radius_mod)
-        pygame.draw.circle(screen, (0, 0, 0), position, self.radius / self.radius_mod, 1)
+        pygame.draw.circle(screen, self.convert_temperature_to_color(), position, int(self.radius / self.radius_mod))
+        pygame.draw.circle(screen, (0, 0, 0), position, int(self.radius / self.radius_mod), 1)
 
     def draw_orbit(self, screen, orbit):
         self.draw_grid(screen, position=orbit.get_point(self.orbit_point))

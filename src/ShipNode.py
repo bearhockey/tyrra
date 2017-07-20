@@ -44,7 +44,7 @@ class ShipNode(Box):
     def get_stats(self):
         return self.attack, self.armor, self.speed, self.power
 
-    def set_stats(self, (attack, armor, speed, power)):
+    def set_stats(self, attack, armor, speed, power):
         if attack:
             self.attack = attack
         else:

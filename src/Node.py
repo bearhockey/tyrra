@@ -21,7 +21,7 @@ class Node(object):
             return False
 
     def draw(self, screen, zoom=1, filters=None):
-        height = self.elevation * 255
+        height = int(self.elevation * 255)
         rect = pygame.Rect(self.x * zoom + 1, self.y * zoom + 1, zoom + 1, zoom + 1)
         r = height
         g = height
@@ -32,5 +32,6 @@ class Node(object):
                 b = min(height + (255 / 2), 255)
             if 'clouds' in filters:
                 a = height
+        # print("Color is {0}".format((r, g, b, a)))
         pygame.draw.rect(screen, (r, g, b, a), rect)
 

@@ -32,6 +32,9 @@ class Planet(object):
     def draw(self, screen):
         # pygame.draw.circle(screen, (255, 255, 255), position, self.radius / 10)
         # pygame.draw.circle(screen, (0, 0, 0), position, max(self.radius / 10, 5), 1)
-        pygame.draw.circle(screen, Color.gray, self.orbit.get_point(self.orbit_point), self.radius / self.radius_mod)
+        pygame.draw.circle(screen,
+                           Color.gray,
+                           self.orbit.get_point(self.orbit_point),
+                           int(self.radius / self.radius_mod))
         pygame.draw.circle(screen, Color.black, self.orbit.get_point(self.orbit_point),
-                           max(self.radius / self.radius_mod, 5), 1)
+                           int(max(self.radius / self.radius_mod, 5)), 1)

@@ -13,10 +13,10 @@ class SpaceBattle(object):
         self.font = font
         self.small_font = small_font
         self.window_size = window_size
-        self.center = (self.window_size[0]/2, self.window_size[1]/2)
+        self.center = (int(self.window_size[0]/2), int(self.window_size[1]/2))
 
         if player_ship is None:
-            print "You have no ship and you lose somehow"
+            print("You have no ship and you lose somehow")
 
         self.melee_range = Range(distance=100, center=self.center, ring_color=Color.red)
         self.close_range = Range(distance=150, center=self.center, ring_color=Color.gray)
@@ -35,10 +35,10 @@ class SpaceBattle(object):
                 self.enemy_ships.append(en_ship)
 
         for ship in self.enemy_ships:
-            print 'attack: {0} - armor: {1} - speed: {2} - shield: {3}'.format(ship.ship_stats['attack'],
+            print('attack: {0} - armor: {1} - speed: {2} - shield: {3}'.format(ship.ship_stats['attack'],
                                                                                ship.ship_stats['armor'],
                                                                                ship.ship_stats['speed'],
-                                                                               ship.ship_stats["shield"])
+                                                                               ship.ship_stats["shield"]))
 
         self.side_panel = SpaceBattlePanel(self)
 
@@ -50,15 +50,15 @@ class SpaceBattle(object):
         for enemy in self.enemy_ships:
             if enemy.box.update(key=key, mouse=mouse, offset=offset):
                 self.target = enemy
-                print 'hey got a target'
+                print('hey got a target')
         # check movements
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            print 'up'
+            print('up')
         if keys[pygame.K_a]:
-            print 'left'
+            print('left')
         elif keys[pygame.K_d]:
-            print 'right'
+            print('right')
 
     def draw(self, screen):
         zoom = 4
@@ -71,7 +71,8 @@ class SpaceBattle(object):
         self.player_ship.draw_ship(player, position=(0, 0), zoom=zoom)
         screen.blit(player, player_position)
         if self.player_ship.ship_stats['shield'] is not 0 and self.player_ship.current_shield > 0:
-            shield_green = int(float(self.player_ship.current_shield) / float(self.player_ship.ship_stats['shield']) * 255)
+            shield_green = float(self.player_ship.current_shield) / float(self.player_ship.ship_stats['shield'])
+            shield_green = int(shield_green * 255)
             shield_red = 255 - shield_green
         else:
             shield_green = 0
@@ -99,9 +100,9 @@ class SpaceBattlePanel(object):
     def update(self, key, mouse, offset=(0, 0)):
         if self.attack_but.update(key=key, mouse=mouse, offset=offset):
             if self.battle.target is None:
-                print 'You need a fuckin target mate'
+                print('You need a fuckin target mate')
             else:
-                print 'Gonna attack {0} then'.format(self.battle.target)
+                print('Gonna attack {0} then'.format(self.battle.target))
                 # attack stuff
                 self.battle.target = None
 

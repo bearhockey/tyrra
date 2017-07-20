@@ -1,13 +1,12 @@
 import random
 
-from noise import snoise2
-
+from src.components.perlin import SimplexNoise
 from src.components.Maths import Maths
 
 
 class Elevation(object):
     def __init__(self):
-        print 'elevation is cool'
+        print("elevation is cool")
 
     @staticmethod
     def rando_card(node_map, scale=1, octaves=1, seed=0):
@@ -15,15 +14,8 @@ class Elevation(object):
         map_width = len(node_map)
         for column in node_map:
             for node in column:
-                '''old way
-                node.elevation = (snoise2(x=(node.x + seed) / freq,
-                                          y=(node.y + seed) / freq,
-                                          octaves=octaves) + 1) / 2
-                '''
-                node.elevation = (snoise2((node.x + seed) / scale,
-                                          (node.y + seed) / scale,
-                                          octaves=octaves,
-                                          repeatx=map_width / scale) + 1) / 2
+                noise = SimplexNoise()
+                node.elevation = (noise.noise2(x=(node.x + seed) / scale, y=(node.y + seed) / scale) + 1) / 2
 
     @staticmethod
     def flat_land(node_map, level=0.5):
@@ -123,4 +115,4 @@ class Elevation(object):
                     Elevation.build_land(node_map, x, y + 1, Maths.move_to_zero(val, increment), base_line,
                                          render_limit, increment)
             else:
-                print 'something is wrong'
+                print('something is wrong')

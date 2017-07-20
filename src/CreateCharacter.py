@@ -158,7 +158,7 @@ class CreateCharacter(object):
                        position=(self.portrait_box.rect.x, self.profession.rect.y))
         # stats
         i = 25
-        for key, value in self.skills.iteritems():
+        for key, value in self.skills.items():
             Text.draw_text(screen, self.small_font, text=key, color=Color.l_gray,
                            position=(self.portrait_box.rect.x, self.profession.rect.y + i))
             Text.draw_text(screen, self.small_font, text=value, color=Color.l_gray,
