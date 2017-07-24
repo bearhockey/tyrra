@@ -28,11 +28,11 @@ class CreateCharacter(object):
         for face in os.listdir(settings.face_path):
             if face.endswith('.png'):
                 path = os.path.join(settings.face_path, face)
-                self.portrait_roster.append({"PATH": path, "IMAGE": pygame.image.load(path)})
+                self.portrait_roster.append({"PATH": path, "IMAGE": pygame.image.load_extended(path)})
         for face in os.listdir(settings.mod_path):
             if face.endswith('.png'):
                 path = os.path.join(settings.mod_path, face)
-                self.portrait_roster.append({"PATH": path, "IMAGE": pygame.image.load(path)})
+                self.portrait_roster.append({"PATH": path, "IMAGE": pygame.image.load_extended(path)})
 
         self.portrait = None
         self.portrait_box = Box(pygame.Rect(int(box_x + self.box.rect.width / 10),

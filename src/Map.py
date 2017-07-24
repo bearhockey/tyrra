@@ -32,10 +32,10 @@ class Map(object):
         self.x_offset = 0
         self.y_offset = 0
 
-        Elevation.rando_card(self.map, scale=100.0, octaves=4, seed=random.randint(-65536, 65536))
+        Elevation.rando_card(self.map, scale=100.0, seed=random.randint(-65536, 65536))
         Elevation.land_ceiling(self.map, 0.7)
 
-        Elevation.rando_card(self.clouds, scale=200.0, octaves=2, seed=random.randint(-65536, 65536))
+        Elevation.rando_card(self.clouds, scale=200.0, seed=random.randint(-65536, 65536))
 
         # map layers
         self.drawing_layers = {

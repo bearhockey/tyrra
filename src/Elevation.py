@@ -9,9 +9,8 @@ class Elevation(object):
         print("elevation is cool")
 
     @staticmethod
-    def rando_card(node_map, scale=1, octaves=1, seed=0):
-        # freq = octaves * octaves
-        map_width = len(node_map)
+    def rando_card(node_map, scale=1, seed=0):
+        # map_width = len(node_map)
         for column in node_map:
             for node in column:
                 noise = SimplexNoise()

@@ -1,7 +1,6 @@
 import math
-import random
-
 import pygame
+import random
 
 import Color
 from Orbit import Orbit
@@ -313,6 +312,7 @@ class System(object):
                 val = random.random()*255
                 if val > 254:
                     i = random.randrange(50, 255)
+                    # Ignore this warning; it's dumb
                     color = pygame.Color(i, i, i)
                     pygame.draw.circle(canvas, color, (x, y), int(math.log10(random.randrange(1, 1000))))
                 y += 1
@@ -384,7 +384,7 @@ class SystemMap(object):
     def rotate(self, amount):
         bodies = self.stars + self.planets
         for body in bodies:
-            body.orbit_point += amount/10
+            body.orbit_point += amount * 0.1
             if body.orbit_point > 360:
                 body.orbit_point -= 360
             if body.orbit_point < 1:
