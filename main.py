@@ -8,11 +8,37 @@ from src.ControlPanel import ControlPanel
 from src.Controller import Controller
 from src.CreateCharacter import CreateCharacter
 from src.Title import Title
+from src.castle.castle_main import Castle
+
+
+def make_title():
+    return Title(font=font, screen_width=width, screen_height=height)
+
+
+def make_panel():
+    return ControlPanel(main_window_width=875,
+                        main_window_height=700,
+                        main_white_space=10,
+                        side_window_width=375,
+                        side_window_height=700,
+                        side_white_space=10,
+                        font=font,
+                        small_font=small_font)
+
+
+def make_castle():
+    return Castle(tile_size=64,
+                  main_window_width=15,
+                  main_window_height=9,
+                  main_white_space=10,
+                  side_window_width=375,
+                  side_window_height=700,
+                  side_white_space=10,
+                  font=font,
+                  small_font=small_font)
 
 settings.init()
-
 pygame.init()
-
 clock = pygame.time.Clock()
 
 screen_size = width, height = (1280, 720)
@@ -27,39 +53,45 @@ big_font = pygame.font.Font(os.path.join(settings.main_path, 'res', 'kaiti.ttf')
 font = pygame.font.Font(os.path.join(settings.main_path, 'res', 'kaiti.ttf'), big_font_size)
 small_font = pygame.font.Font(os.path.join(settings.main_path, 'res', 'kaiti.ttf'), small_font_size)
 
-mode = {'title': 0,
-        'main': 1,
-        'ship': 2,
-        'system': 3,
-        'planet': 4,
-        'new': 5}
+mode = {"title": 0,
+        "main": 1,
+        "ship": 2,
+        "system": 3,
+        "planet": 4,
+        "new": 5,
+        "castle": 6}
 
 keys = Controller()
-title = Title(font=font, screen_width=width, screen_height=height)
-panel = ControlPanel(main_window_width=875, main_window_height=700, main_white_space=10,
-                     side_window_width=375, side_window_height=700, side_white_space=10,
-                     font=font, small_font=small_font)
+title = make_title()
+panel = None
 ship = None
+castle = None
 # ship = Ship(size_x=40, size_y=40)
 system = None
 # system = System()
 planet_map = None
 # planet_map = Map(width/2, height/2, seed=123)
 
-mouse_button = {'LEFT': 1, 'MIDDLE': 2, 'RIGHT': 3, 'WHEEL_UP': 4, 'WHEEL_DOWN': 5}
+mouse_button = {"LEFT": 1, "MIDDLE": 2, "RIGHT": 3, "WHEEL_UP": 4, "WHEEL_DOWN": 5}
 
-mouse = {mouse_button['LEFT']: 0, mouse_button['MIDDLE']: 0, mouse_button['RIGHT']: 0, mouse_button['WHEEL_UP']: 0,
-         mouse_button['WHEEL_DOWN']: 0}
+mouse = {mouse_button["LEFT"]: 0,
+         mouse_button["MIDDLE"]: 0,
+         mouse_button["RIGHT"]: 0,
+         mouse_button["WHEEL_UP"]: 0,
+         mouse_button["WHEEL_DOWN"]: 0}
 
 # show fonts for debug purposes
 # print pygame.font.get_fonts()
 
 # start game things
 # title.play_title_music()
-game_mode = mode['title']
+game_mode = mode["title"]
 
-create_character = CreateCharacter(big_font=big_font, font=font, small_font=small_font,
-                                   screen_width=width, screen_height=height)
+create_character = CreateCharacter(big_font=big_font,
+                                   font=font,
+                                   small_font=small_font,
+                                   screen_width=width,
+                                   screen_height=height)
 
 while 1:
     clock.tick(60)
@@ -82,12 +114,20 @@ while 1:
                 game_mode = mode['new']
             elif response == 'load':
                 title.stop_title_music()
-                game_mode = mode['main']
-                panel.new_game()
+                if castle is None:
+                    castle = make_castle()
+                game_mode = mode["castle"]
+                # if panel is None: panel = make_panel(); panel.new_game()
             elif response == 'quit':
                 sys.exit(0)
         elif game_mode == mode['main']:
+            if panel is None:
+                panel = make_panel()
             panel.update((key_pressed, unicode_pressed), mouse)
+        elif game_mode == mode["castle"]:
+            if castle is None:
+                castle = make_castle()
+            castle.update((key_pressed, unicode_pressed), mouse)
         elif game_mode == mode['ship']:
             ship.update(key_pressed, mouse)
         elif game_mode == mode['system']:
@@ -101,26 +141,30 @@ while 1:
             if done:
                 title.stop_title_music()
                 game_mode = mode['main']
+                if panel is None:
+                    panel = make_panel()
                 panel.new_game(captain=done)
 
-    # key_pressed = keys.poll_keyboard()
+    key_pressed = keys.poll_keyboard()
     # draw
     screen.fill(black)
-    if game_mode == mode['title'] or game_mode == mode['new']:
+    if game_mode == mode["title"] or game_mode == mode["new"]:
         title.draw(screen)
-    elif game_mode == mode['main']:
+    elif game_mode == mode["main"]:
         # always do always
         panel.always()
         panel.draw(screen)
-    elif game_mode == mode['ship']:
+    elif game_mode == mode["ship"]:
         ship.draw(screen)
-    elif game_mode == mode['system']:
+    elif game_mode == mode["system"]:
         if system:
             system.draw(screen)
-    elif game_mode == mode['planet']:
+    elif game_mode == mode["planet"]:
         if planet_map:
             planet_map.draw(screen)
-    if game_mode == mode['new']:
+    elif game_mode == mode["castle"]:
+        castle.draw(screen)
+    if game_mode == mode["new"]:
         create_character.draw(screen)
 
     pygame.display.flip()

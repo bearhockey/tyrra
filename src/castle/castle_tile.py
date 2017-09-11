@@ -1,0 +1,47 @@
+import pygame
+
+
+class CastleTile(object):
+    def __init__(self, image=None, x=0, y=0, tile_size=64):
+        self.tile_size = tile_size
+        self.x = x
+        self.y = y
+        self.image = image
+        if image is None:
+            self.image = pygame.Surface((self.tile_size, self.tile_size))
+            self.image.fill((128, 128, 128), pygame.Rect(10, 10, 54, 54))
+
+    def get_cords(self):
+        return self.x, self.y
+
+    def get_east(self):
+        return self.x+1, self.y
+
+    def get_west(self):
+        return self.x-1, self.y
+
+    def get_north(self):
+        return self.x, self.y-1
+
+    def get_south(self):
+        return self.x, self.y+1
+
+    def move_to(self, x=0, y=0):
+        self.x = x
+        self.y = y
+
+    def move(self, direction=None, velocity=1):
+        # 0,0 is top left corner
+        if direction.lower() == "north":
+            self.y -= velocity
+        elif direction.lower() == "south":
+            self.y += velocity
+        elif direction.lower() == "east":
+            self.x += velocity
+        elif direction.lower() == "west":
+            self.x -= velocity
+        else:
+            print("Invalid direction given; not moving tile")
+
+    def draw(self, screen, location):
+        screen.blit(self.image, dest=location)
