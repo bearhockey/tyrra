@@ -12,9 +12,9 @@ from castle.castle_map_maker import CastleMapMaker as MapMaker
 class CastleMap(object):
     def __init__(self, width=10, height=10, tile_size=64, event_file=None):
         self.tile_size = tile_size
-        self.size = (width, height)
+        self.size = (height, width)
         # self.grid = MapMaker.make_test_map(width=width, height=height, tile_size=tile_size)
-        self.grid = MapMaker.make_dungeon_map(width=width, height=height, tile_size=tile_size, percent_filled=80)
+        self.grid = MapMaker.make_dungeon_map(width=width, height=height, tile_size=tile_size, percent_filled=75)
         self.entities = []
         starting_node = self.find_node("ENTRANCE")
         if starting_node is None:
@@ -30,6 +30,8 @@ class CastleMap(object):
         self.event_file = os.path.join(settings.main_path, "data", event_file)
         self.npc = Entity(x=8, y=7)
         self.entities.append(self.npc)
+        # debug
+        MapMaker.print_map(self.grid)
 
     def get_node(self, cord=(0, 0)):
         return self.grid[cord[0]][cord[1]]

@@ -9,6 +9,7 @@ class CastleNode(object):
         self.node = node
         self.passable = passable
         if image is None:
+            self.image = pygame.Surface((self.tile_size, self.tile_size))
             self.refresh_image()
         else:
             self.image = image
@@ -24,7 +25,6 @@ class CastleNode(object):
         self.refresh_image()
 
     def refresh_image(self):
-        self.image = pygame.Surface((self.tile_size, self.tile_size))
         tile_colors = {"WALL": (100, 100, 100, 255),
                        "ENTRANCE": (10, 240, 50, 255),
                        "EXIT": (0, 50, 250, 255),

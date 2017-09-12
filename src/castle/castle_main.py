@@ -16,7 +16,8 @@ class Castle(object):
         self.camera = Camera(pos=(main_white_space, main_white_space),
                              size=(main_window_width, main_window_height),
                              tile_size=self.tile_size)
-        self.map = Map(width=32, height=16, tile_size=self.tile_size, event_file="test_map.eve")
+        self.map = Map(width=50, height=30, tile_size=self.tile_size, event_file="test_map.eve")
+        self.camera.center_player(self.map.pc.tile.x, self.map.pc.tile.y)
 
         self.keys = Controller()
         self.console_height = 140
@@ -40,8 +41,13 @@ class Castle(object):
         # seen things
         for y in range(self.map.pc.tile.get_north()[0], self.map.pc.tile.get_south()[0]+1):
             for x in range(self.map.pc.tile.get_west()[1], self.map.pc.tile.get_east()[1]+1):
-                if 0 < x < self.map.size[0]-1 and 0 < y < self.map.size[1]-1:
-                    self.map.grid[y][x].seen = True
+                if -1 < x < self.map.size[1] and -1 < y < self.map.size[0]:
+                    try:
+                        self.map.grid[y][x].seen = True
+                    except IndexError:
+                        print("Out of range: x:{1} y:{0}".format(y, x))
+                    except Exception as e:
+                        raise Exception(e)
         for key, value in compass.items():
             if self.keys.check_key(key):
                 event = self.map.get_event(self.map.pc.direction(value))

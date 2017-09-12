@@ -81,6 +81,29 @@ class CastleMapMaker(object):
         return walls, doors
 
     @staticmethod
+    def fix_border(grid):
+        for row in grid:
+            for node in row:
+                if node.tile.x < 1 or node.tile.y < 1:
+                    node.set(node="WALL", passable=False)
+                elif node.tile.x > len(grid[0])-2 or node.tile.y > len(grid)-2:
+                    node.set(node="WALL", passable=False)
+
+    @staticmethod
+    def fix_doors(grid, door_list):
+        remove_doors = []
+        for door in door_list:
+            walls = CastleMapMaker.count_adjacent_walls(grid, door['x'], door['y'])
+            if walls[0] < 4 or walls[0] > 7:
+                try:
+                    grid[door['y']][door['x']].set()
+                except Exception as e:
+                    raise Exception("Whoops: {0}/{1}\n{2})".format(door['y'], door['x'], e))
+                remove_doors.append(door)
+        for door in remove_doors:
+            door_list.remove(door)
+
+    @staticmethod
     def carve_room(grid, min_size=3, max_size=10, door_max=4, center=None, overlap=False, door_list=None):
         # build room first
         room_size = (random.randint(min_size, max_size), random.randint(min_size, max_size))
@@ -129,6 +152,7 @@ class CastleMapMaker(object):
                     door = {'x': left-1, 'y': random.randint(top, bottom), "direction": "west"}
                 else:
                     door = {'x': right, 'y': random.randint(top, bottom), "direction": "east"}
+                print("Tried to make a door at: {0}, {1}".format(door['x'], door['y']))
                 walls, existing_doors = CastleMapMaker.count_adjacent_walls(grid, door['x'], door['y'])
                 if walls < 8 and existing_doors < 1:
                     try:
@@ -218,6 +242,15 @@ class CastleMapMaker(object):
             CastleMapMaker.carve_room(grid, door_list=doors)
         for door in doors:
             CastleMapMaker.link_door(grid, door)
+        count = 1
+        for door in doors:
+            print("{0} - {1}".format(count, door))
+            count += 1
+        CastleMapMaker.fix_border(grid)
+        try:
+            CastleMapMaker.fix_doors(grid, doors)
+        except Exception as e:
+            print("Ran into a problem again: {0}".format(e))
         return grid
 
     @staticmethod

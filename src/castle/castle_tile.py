@@ -12,21 +12,21 @@ class CastleTile(object):
             self.image.fill((128, 128, 128), pygame.Rect(10, 10, 54, 54))
 
     def get_cords(self):
-        return self.x, self.y
+        return self.y, self.x
 
     def get_east(self):
-        return self.x+1, self.y
+        return self.y, self.x+1
 
     def get_west(self):
-        return self.x-1, self.y
+        return self.y, self.x-1
 
     def get_north(self):
-        return self.x, self.y-1
+        return self.y-1, self.x
 
     def get_south(self):
-        return self.x, self.y+1
+        return self.y+1, self.x
 
-    def move_to(self, x=0, y=0):
+    def move_to(self, y=0, x=0):
         self.x = x
         self.y = y
 
