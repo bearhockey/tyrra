@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 class CastleTile(object):
@@ -10,6 +11,8 @@ class CastleTile(object):
         if image is None:
             self.image = pygame.Surface((self.tile_size, self.tile_size))
             self.image.fill((128, 128, 128), pygame.Rect(10, 10, 54, 54))
+        self.seen = False
+        self.compass = {"LEFT": "west", "RIGHT": "east", "UP": "north", "DOWN": "south"}
 
     def get_cords(self):
         return self.y, self.x
@@ -43,5 +46,9 @@ class CastleTile(object):
         else:
             print("Invalid direction given; not moving tile")
 
+    def move_random(self, velocity=1):
+        self.move(direction=random.choice(["north", "south", "east", "west"], velocity=velocity))
+
     def draw(self, screen, location):
-        screen.blit(self.image, dest=location)
+        if self.seen:
+            screen.blit(self.image, dest=location)

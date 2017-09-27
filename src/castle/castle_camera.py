@@ -45,5 +45,7 @@ class CastleCamera(object):
                 node.draw(self.canvas, self.get_location(node.tile))
         for entity in castle_map.entities:
             entity.draw(self.canvas, self.get_location(entity.tile))
+        # always draw player last
+        castle_map.pc.draw(self.canvas, self.get_location(castle_map.pc.tile))
         screen.blit(self.canvas, self.position)
         self.border.draw(screen)

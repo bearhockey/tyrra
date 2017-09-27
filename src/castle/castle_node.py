@@ -17,7 +17,9 @@ class CastleNode(object):
         self.tile = Tile(image=self.image, x=x, y=y, tile_size=tile_size)
 
         self.event = event
-        self.seen = False
+
+    def see(self, is_seen=True):
+        self.tile.seen = is_seen
 
     def set(self, node="FLOOR", passable=True):
         self.node = node.upper()
@@ -27,12 +29,15 @@ class CastleNode(object):
     def refresh_image(self):
         tile_colors = {"WALL": (100, 100, 100, 255),
                        "ENTRANCE": (10, 240, 50, 255),
+                       "LIGHT": (200, 200, 250, 255),
                        "EXIT": (0, 50, 250, 255),
                        "DOOR": (250, 250, 25, 255),
-                       "FLOOR": (200, 200, 200, 255)}
+                       "FLOOR": (200, 200, 200, 255),
+                       "DEAD_END": (230, 230, 230, 255),
+                       "SPAWNER": (230, 40, 40, 255),
+                       "SPAWNER_LIGHT": (230, 40, 40, 255)}
 
         self.image.fill(tile_colors[self.node], pygame.Rect(0, 0, self.tile_size, self.tile_size))
 
     def draw(self, screen, location):
-        if self.seen:
-            self.tile.draw(screen, location)
+        self.tile.draw(screen, location)

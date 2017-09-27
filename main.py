@@ -31,7 +31,7 @@ def make_castle():
                   main_window_width=15,
                   main_window_height=9,
                   main_white_space=10,
-                  side_window_width=375,
+                  side_window_width=280,
                   side_window_height=700,
                   side_white_space=10,
                   font=font,
@@ -47,7 +47,7 @@ screen = pygame.display.set_mode(screen_size)
 
 huge_font_size = 48
 big_font_size = 24
-small_font_size = 16
+small_font_size = 12
 print('heres that file: {0}'.format(os.path.join(settings.main_path, 'res', 'kaiti.ttf')))
 big_font = pygame.font.Font(os.path.join(settings.main_path, 'res', 'kaiti.ttf'), huge_font_size)
 font = pygame.font.Font(os.path.join(settings.main_path, 'res', 'kaiti.ttf'), big_font_size)

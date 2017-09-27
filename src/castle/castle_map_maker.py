@@ -26,10 +26,10 @@ class CastleMapMaker(object):
 
     @staticmethod
     def get_valid_size(grid):
-        return len(grid[0])-2, len(grid)-2
+        return len(grid)-2, len(grid[0])-2
 
     @staticmethod
-    def is_out_of_bounds(x, y, grid):
+    def is_out_of_bounds(y, x, grid):
         if x < 0 or x > len(grid[0])-1:
             return True
         elif y < 0 or y > len(grid)-1:
@@ -63,13 +63,17 @@ class CastleMapMaker(object):
         return int((filled/total)*100)
 
     @staticmethod
+    def get_random_node(grid):
+        return grid[random.randint(0, len(grid)-1)][random.randint(0, len(grid[0])-1)]
+
+    @staticmethod
     def count_adjacent_walls(grid, x, y):
         walls = 0
         doors = 0
         count = 0
         for j in range(y-1, y+2):
             for i in range(x-1, x+2):
-                if CastleMapMaker.is_out_of_bounds(i, j, grid):
+                if CastleMapMaker.is_out_of_bounds(y=j, x=i, grid=grid):
                     walls += 1
                 else:
                     try:
@@ -97,11 +101,71 @@ class CastleMapMaker(object):
             if walls[0] < 4 or walls[0] > 7:
                 try:
                     grid[door['y']][door['x']].set()
+                    print("Removing door at {0} {1}".format(door['x'], door['y']))
                 except Exception as e:
                     raise Exception("Whoops: {0}/{1}\n{2})".format(door['y'], door['x'], e))
                 remove_doors.append(door)
         for door in remove_doors:
             door_list.remove(door)
+
+    @staticmethod
+    def mark_dead_ends(grid, dead_end="DEAD_END"):
+        for y in range(0, len(grid)):
+            for x in range(0, len(grid[0])):
+                if not CastleMapMaker.is_wall(grid[y][x]):
+                    if CastleMapMaker.count_adjacent_walls(grid, x=x, y=y)[0] == 7:
+                        grid[y][x].set(node=dead_end)
+
+    @staticmethod
+    def section_search(grid, cords, node_list):
+        try:
+            node = grid[cords[0]][cords[1]]
+        except IndexError as e:
+            raise Exception("GRUMBLE ({0}): {1}".format(cords, e))
+        if node.node != "WALL" and node.tile.get_cords() not in node_list:
+            node_list.append(node.tile.get_cords())
+            CastleMapMaker.section_search(grid=grid, cords=node.tile.get_north(), node_list=node_list)
+            CastleMapMaker.section_search(grid=grid, cords=node.tile.get_south(), node_list=node_list)
+            CastleMapMaker.section_search(grid=grid, cords=node.tile.get_east(), node_list=node_list)
+            CastleMapMaker.section_search(grid=grid, cords=node.tile.get_west(), node_list=node_list)
+        else:
+            return
+
+    @staticmethod
+    def tunnel(grid, start_point, end_point):
+        cursor = start_point
+        while cursor != end_point:
+            # y pass
+            y = cursor[0]
+            x = cursor[1]
+            if y < end_point[0]:
+                y += 1
+            elif y > end_point[0]:
+                y -= 1
+            node = grid[y][x]
+            if CastleMapMaker.is_wall(node):
+                node.set()
+            # x pass
+            if x < end_point[1]:
+                x += 1
+            elif x > end_point[1]:
+                x -= 1
+            node = grid[y][x]
+            if CastleMapMaker.is_wall(node):
+                node.set()
+            cursor = (y, x)
+
+    @staticmethod
+    def place_spawners(grid, number_of_spawners=10):
+        placed = 0
+        while placed < number_of_spawners:
+            node = CastleMapMaker.get_random_node(grid)
+            if node.node == "FLOOR":
+                node.set("SPAWNER", passable=True)
+                placed += 1
+            elif node.node == "LIGHT":
+                node.set("SPAWNER_LIGHT", passable=True)
+                placed += 1
 
     @staticmethod
     def carve_room(grid, min_size=3, max_size=10, door_max=4, center=None, overlap=False, door_list=None):
@@ -111,34 +175,42 @@ class CastleMapMaker(object):
         if center is None:
             center = (random.randint(2+int(room_size[0]/2), valid[0]-int(room_size[0]/2)),
                       random.randint(2+int(room_size[1]/2), valid[1]-int(room_size[1]/2)))
-        left = int(center[0]-room_size[0]/2)
-        right = int(center[0]+room_size[0]/2)
-        top = int(center[1]-room_size[1]/2)
-        bottom = int(center[1]+room_size[1]/2)
+        left = int(center[1]-room_size[0]/2)
+        right = int(center[1]+room_size[0]/2)
+        top = int(center[0]-room_size[1]/2)
+        bottom = int(center[0]+room_size[1]/2)
         valid_cords = []
         can_build = True
         for y in range(top, bottom):
             for x in range(left, right):
-                if not overlap and CastleMapMaker.count_adjacent_walls(grid, x, y)[0] < 9:
+                if CastleMapMaker.is_out_of_bounds(y=y, x=x, grid=grid):
+                    can_build = False
+                    break
+                elif not overlap and CastleMapMaker.count_adjacent_walls(grid, x, y)[0] < 9:
                     can_build = False
                     break
                 else:
-                    valid_cords.append((x, y))
+                    valid_cords.append((y, x))
         if can_build:
-            if random.random() > 0.6:
-                circle = True
+            circle = random.random()
+            lit = random.random()
+            if lit > 0.5:
+                floor = "LIGHT"
             else:
-                circle = False
+                floor = "FLOOR"
             for cords in valid_cords:
-                if right-left == bottom-top and 4 < right-left and circle:
-                    if 1 < cords[0]-left < right-left-2 or 1 < cords[1]-top < bottom-top-2:
-                        grid[cords[1]][cords[0]].set(node="FLOOR", passable=True)
+                if right-left == bottom-top and 4 < right-left and circle > 0.6:
+                    if 1 < cords[1]-left < right-left-2 or 1 < cords[0]-top < bottom-top-2:
+                        grid[cords[0]][cords[1]].set(node=floor, passable=True)
                 else:
-                    grid[cords[1]][cords[0]].set(node="FLOOR", passable=True)
+                    try:
+                        grid[cords[0]][cords[1]].set(node=floor, passable=True)
+                    except Exception as e:
+                        raise Exception("Cords are at {0} {1}: {2}".format(cords[0], cords[1], e))
 
             # if the door list is empty, this is the first room (probably)
             if not door_list:
-                grid[center[1]][center[0]].set(node="ENTRANCE", passable=True)
+                grid[center[0]][center[1]].set(node="ENTRANCE", passable=True)
 
             door_num = 0
             door_tries = 20
@@ -152,7 +224,6 @@ class CastleMapMaker(object):
                     door = {'x': left-1, 'y': random.randint(top, bottom), "direction": "west"}
                 else:
                     door = {'x': right, 'y': random.randint(top, bottom), "direction": "east"}
-                print("Tried to make a door at: {0}, {1}".format(door['x'], door['y']))
                 walls, existing_doors = CastleMapMaker.count_adjacent_walls(grid, door['x'], door['y'])
                 if walls < 8 and existing_doors < 1:
                     try:
@@ -160,11 +231,12 @@ class CastleMapMaker(object):
                         door_num += 1
                         door_list.append(door)
                     except Exception as e:
-                        raise Exception("WHOPOS: {0}\n{1".format(e, door))
+                        print("WHOPOS: {0}\n{1}".format(e, door))
                 if door_tries > 0:
                     door_tries -= 1
                 else:
                     break
+            return {"CORNER_1": (top, left), "CORNER_2": (bottom, right), "CENTER": center}
 
     @staticmethod
     def cursor_move(cursor):
@@ -179,14 +251,14 @@ class CastleMapMaker(object):
             cursor['x'] += 1
 
     @staticmethod
-    def link_door(grid, door):
-        cursor = door
-        distance = 0
-        while distance < 6:
+    def link_door(grid, door, max_distance=10):
+        cursor = door.copy()
+        distance = random.randint(0, max_distance-1)
+        while distance < max_distance:
             CastleMapMaker.cursor_move(cursor)
             x = cursor['x']
             y = cursor['y']
-            if not CastleMapMaker.is_out_of_bounds(x, y, grid):
+            if not CastleMapMaker.is_out_of_bounds(y=y, x=x, grid=grid):
                 if CastleMapMaker.is_wall(grid[y][x]):
                     grid[y][x].set(node="FLOOR", passable=True)
                     distance += 1
@@ -237,20 +309,42 @@ class CastleMapMaker(object):
     @staticmethod
     def make_dungeon_map(width=50, height=50, tile_size=64, percent_filled=50):
         grid = CastleMapMaker.get_new_grid(width, height, tile_size, style="filled")
+        rooms = []
         doors = []
         while CastleMapMaker.get_filled_percentage(grid) > percent_filled:
-            CastleMapMaker.carve_room(grid, door_list=doors)
+            room = CastleMapMaker.carve_room(grid, door_list=doors)
+            if room:
+                rooms.append(room)
         for door in doors:
-            CastleMapMaker.link_door(grid, door)
-        count = 1
-        for door in doors:
-            print("{0} - {1}".format(count, door))
-            count += 1
+            CastleMapMaker.link_door(grid, door, max_distance=width)
+        CastleMapMaker.fix_doors(grid, doors)
         CastleMapMaker.fix_border(grid)
-        try:
-            CastleMapMaker.fix_doors(grid, doors)
-        except Exception as e:
-            print("Ran into a problem again: {0}".format(e))
+        sections = []
+        for room in rooms:
+            # check if its there yet
+            used = False
+            for cord_list in sections:
+                if room["CENTER"] in cord_list:
+                    used = True
+                    break
+            if not used:
+                node_list = []
+                CastleMapMaker.section_search(grid, room["CENTER"], node_list)
+                sections.append(node_list)
+        print("Should be {0} sections.".format(len(sections)))
+        if len(sections) > 1:
+            for i in range(1, len(sections)):
+                if not sections[i]:
+                    print("Don't know how this happened but we caught it: {0}".format(sections[i]))
+                else:
+                    start_point = random.choice(sections[i-1])
+                    try:
+                        end_point = random.choice(sections[i])
+                    except Exception as e:
+                        raise Exception("Why not: {0} {1}".format(sections[i], e))
+                    CastleMapMaker.tunnel(grid=grid, start_point=start_point, end_point=end_point)
+        CastleMapMaker.mark_dead_ends(grid)
+        CastleMapMaker.place_spawners(grid)
         return grid
 
     @staticmethod
@@ -262,10 +356,16 @@ class CastleMapMaker(object):
             for node in row:
                 if node.node == "ENTRANCE":
                     output += '!'
+                elif node.node == "SPAWNER":
+                    output += '&'
+                elif node.node == "DEAD_END":
+                    output += '-'
                 elif node.node == "DOOR":
-                    output += 'O'
-                elif node.node == "FLOOR":
+                    output += '@'
+                elif node.node == "LIGHT":
                     output += '.'
+                elif node.node == "FLOOR":
+                    output += ' '
                 else:
                     output += '#'
             i += 1
