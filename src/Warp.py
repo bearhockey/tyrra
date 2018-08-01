@@ -1,6 +1,6 @@
 import pygame
 
-import Color
+import src.Color as Color
 from src.components.text import Text
 from src.components.text.InputBox import InputBox
 from src.components.text.TextBox import TextBox

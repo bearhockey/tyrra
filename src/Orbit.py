@@ -1,4 +1,4 @@
-import Color
+import src.Color as Color
 
 from src.components.Ellipse import Ellipse
 

@@ -15,7 +15,7 @@ class Event(object):
             with open(event_file) as data_file:
                 self.data = json.load(data_file)
         except Exception as e:
-            print 'Exception loading {0}: {1}'.format(event_file, e)
+            print('Exception loading {0}: {1}'.format(event_file, e))
 
     def run_event(self, event_name):
         event = self.data[event_name]
@@ -29,7 +29,7 @@ class Event(object):
             if 'GOTO' in event:
                 self.panel.switch_window(event['GOTO'])
             if 'PAUSE' in event:
-                print 'This wuld be a paws'
+                print('This wuld be a paws')
             if 'NEXT' in event:
                 self.run_event(event['NEXT'])
 

@@ -2,11 +2,11 @@ import json
 
 import pygame
 
-import Color
+import src.Color as Color
 import settings
-from Component import Component
-from Pawn import Pawn
-from ShipNode import ShipNode
+from src.Component import Component
+from src.Pawn import Pawn
+from src.ShipNode import ShipNode
 from src.components.text import Text
 from src.components.Box import Box
 from src.components.text.InputBox import InputBox
@@ -218,7 +218,7 @@ class Ship(object):
                 index = 0
             if index not in self.installed_components:
                 if component.update(key, mouse, offset):
-                    print "index is {0}".format(index)
+                    print("index is {0}".format(index))
                     self.remove_component(index)
                     self.install_component(index)
                     self.panel_mode = 'edit'
@@ -368,7 +368,7 @@ class Ship(object):
 
             self.update_stats()
         except Exception as e:
-            print "Failed to load ship file {0} : {1}".format(file_name, e)
+            print("Failed to load ship file {0} : {1}".format(file_name, e))
 
     def save(self, file_name):
         dump = {'NAME': self.name_box.message}
@@ -391,7 +391,7 @@ class Ship(object):
         dump["CREW"] = crew_list
         with open(file_name, 'w') as outfile:
             json.dump(dump, outfile)
-        print 'saved to file'
+        print('saved to file')
 
 
 class ShipPreview(object):
@@ -522,7 +522,8 @@ class ShipGrid(object):
                 for row in self.grid:
                     for node in row:
                         if node.update(mouse=mouse, floor_type=self.selected_cell_type, offset=offset):
-                            node.set_stats(self.selected_cell_stats)
+                            s = self.selected_cell_stats
+                            node.set_stats(s[0], s[1], s[2], s[3])
                             break
             elif mouse[4]:
                 self.zoom_level += 1
@@ -591,7 +592,7 @@ class ShipStats(object):
         self.ship.draw_ship(screen, position=(600, 100), color=Color.gray, zoom=10)
         Text.draw_text(screen, font=self.font, text='Teest test test', color=Color.green, position=(50, 50))
         y_offset = 0
-        for stat, value in self.ship.ship_stats.iteritems():
+        for stat, value in self.ship.ship_stats.items():
             formatted_stat = stat.capitalize()
             formatted_stat = formatted_stat.replace('_', ' ')
             Text.draw_text(screen, font=self.font, text='{0}: {1}'.format(formatted_stat, value), color=Color.white,
@@ -626,13 +627,13 @@ class CrewProfile(object):
 
         Text.draw_text(screen, self.font, 'JOBS', Color.white, (25, 300))
         y = 350
-        for skill, value in self.pawn.ship_skills.iteritems():
+        for skill, value in self.pawn.ship_skills.items():
             Text.draw_text(screen, self.small_font, '{0}:'.format(skill), Color.white, (25, y))
             Text.draw_text(screen, self.small_font, str(value), Color.white, (125, y))
             y += 30
         Text.draw_text(screen, self.font, 'STATS', Color.white, (175, 300))
         y = 350
-        for stat, value in self.pawn.battle_skills.iteritems():
+        for stat, value in self.pawn.battle_skills.items():
             Text.draw_text(screen, self.small_font, '{0}:'.format(stat), Color.white, (175, y))
             Text.draw_text(screen, self.small_font, str(value), Color.white, (300, y))
             y += 30

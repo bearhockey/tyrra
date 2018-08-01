@@ -1,9 +1,9 @@
 import pygame
 
-import Color
+import src.Color as Color
 import settings
-from Range import Range
-from Ship import Ship
+from src.Range import Range
+from src.Ship import Ship
 from src.components.text.TextBox import TextBox
 
 
@@ -16,7 +16,7 @@ class SpaceBattle(object):
         self.center = (self.window_size[0]/2, self.window_size[1]/2)
 
         if player_ship is None:
-            print "You have no ship and you lose somehow"
+            print("You have no ship and you lose somehow")
 
         self.melee_range = Range(distance=100, center=self.center, ring_color=Color.red)
         self.close_range = Range(distance=150, center=self.center, ring_color=Color.gray)
@@ -35,10 +35,10 @@ class SpaceBattle(object):
                 self.enemy_ships.append(en_ship)
 
         for ship in self.enemy_ships:
-            print 'attack: {0} - armor: {1} - speed: {2} - shield: {3}'.format(ship.ship_stats['attack'],
+            print('attack: {0} - armor: {1} - speed: {2} - shield: {3}'.format(ship.ship_stats['attack'],
                                                                                ship.ship_stats['armor'],
                                                                                ship.ship_stats['speed'],
-                                                                               ship.ship_stats["shield"])
+                                                                               ship.ship_stats["shield"]))
 
         self.side_panel = SpaceBattlePanel(self)
 
@@ -50,15 +50,15 @@ class SpaceBattle(object):
         for enemy in self.enemy_ships:
             if enemy.box.update(key=key, mouse=mouse, offset=offset):
                 self.target = enemy
-                print 'hey got a target'
+                print('hey got a target')
         # check movements
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            print 'up'
+            print('up')
         if keys[pygame.K_a]:
-            print 'left'
+            print('left')
         elif keys[pygame.K_d]:
-            print 'right'
+            print('right')
 
     def draw(self, screen):
         zoom = 4
@@ -76,7 +76,7 @@ class SpaceBattle(object):
         else:
             shield_green = 0
             shield_red = 0
-        pygame.draw.circle(screen, (shield_red, shield_green, 0), self.center, 50, 10)
+        pygame.draw.circle(screen, (shield_red, shield_green, 0), (int(self.center[0]), int(self.center[1])), 50, 10)
         # self.player_ship.draw_ship(screen, position=player_position, zoom=zoom)
 
         for circle in self.ranges:
@@ -99,9 +99,9 @@ class SpaceBattlePanel(object):
     def update(self, key, mouse, offset=(0, 0)):
         if self.attack_but.update(key=key, mouse=mouse, offset=offset):
             if self.battle.target is None:
-                print 'You need a fuckin target mate'
+                print('You need a fuckin target mate')
             else:
-                print 'Gonna attack {0} then'.format(self.battle.target)
+                print('Gonna attack {0} then'.format(self.battle.target))
                 # attack stuff
                 self.battle.target = None
 

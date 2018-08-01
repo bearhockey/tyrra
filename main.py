@@ -22,7 +22,7 @@ screen = pygame.display.set_mode(screen_size)
 huge_font_size = 48
 big_font_size = 24
 small_font_size = 16
-print 'heres that file: {0}'.format(os.path.join(settings.main_path, 'res', 'kaiti.ttf'))
+print('heres that file: {0}'.format(os.path.join(settings.main_path, 'res', 'kaiti.ttf')))
 big_font = pygame.font.Font(os.path.join(settings.main_path, 'res', 'kaiti.ttf'), huge_font_size)
 font = pygame.font.Font(os.path.join(settings.main_path, 'res', 'kaiti.ttf'), big_font_size)
 small_font = pygame.font.Font(os.path.join(settings.main_path, 'res', 'kaiti.ttf'), small_font_size)

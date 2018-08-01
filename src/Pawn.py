@@ -15,7 +15,7 @@ class Pawn(object):
         try:
             self.portrait = pygame.image.load(self.portrait_path)
         except Exception as e:
-            print 'oh no: {0}'.format(e)
+            print('oh no: {0}'.format(e))
             self.portrait = None
 
         self.health = 100

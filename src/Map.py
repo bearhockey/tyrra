@@ -1,8 +1,8 @@
 import pygame
 import random
 
-from Elevation import Elevation
-from Node import Node
+from src.Elevation import Elevation
+from src.Node import Node
 
 
 class Map(object):

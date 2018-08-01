@@ -2,7 +2,7 @@ import os
 
 import pygame
 
-import Color
+import src.Color as Color
 import settings
 from src.components.Box import Box
 from src.components.text.TextBox import TextBox

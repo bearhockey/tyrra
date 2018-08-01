@@ -2,10 +2,10 @@ import os
 
 import pygame
 
-import Color
+import src.Color as Color
 import settings
-from Component import Component
-from Pawn import Pawn
+from src.Component import Component
+from src.Pawn import Pawn
 from src.components.text.TextBox import TextBox
 
 
