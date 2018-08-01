@@ -3,11 +3,11 @@ import random
 
 import pygame
 
-import Color
-from Orbit import Orbit
-from Planet import Planet
-from Star import Star
-from Station import Station
+import src.Color as Color
+from src.Orbit import Orbit
+from src.Planet import Planet
+from src.Star import Star
+from src.Station import Station
 from src.components.text import Text
 from src.components.text.TextBox import TextBox
 
@@ -88,7 +88,7 @@ class System(object):
         planet_count = 1
         while planet_num > 100:
             planet_num -= random.randrange(10, 50)
-            print 'planet num is {0}'.format(planet_num)
+            print('planet num is {0}'.format(planet_num))
             planet_name = '{0} {1}'.format(self.short_name, self.roman[planet_count])
             self.planets.append(Planet(index=planet_count,
                                        seed=self.seed,
@@ -106,7 +106,7 @@ class System(object):
     def generate_seed(self):
         self.seed = float(0.5) * float(self.x + self.y) * float(self.x + self.y + 1) + self.y
         self.seed = int(self.seed)
-        print 'Seed: {0}'.format(self.seed)
+        print('Seed: {0}'.format(self.seed))
 
     def generate_stars(self):
         random.seed(self.seed)
@@ -171,7 +171,7 @@ class System(object):
         name = []
         num = self.seed + pow(2, 25)
         while num > 0:
-            digit = num % base
+            digit = int(num % base)
             num /= base
             name.append(lookup[digit])
 
@@ -332,7 +332,7 @@ class System(object):
                 # r -= width*10
                 # print 'colors: {0} {1} {2} {3} @ {4}'.format(r, b, g, a, width)
                 # color = pygame.Color(r, g, b, a)
-                pygame.draw.circle(canvas, (r, g, b, a), center, width)
+                pygame.draw.circle(canvas, (r, g, b, a), (int(center[0]), int(center[1])), int(width))
                 width -= 1
             # lens flares?
             f = 0
@@ -365,7 +365,7 @@ class SystemMap(object):
         # makes a circular mask
         self.planet_mask = pygame.Surface(size=(window_width, window_height))
         self.planet_mask.fill(color=Color.black)
-        pygame.draw.circle(self.planet_mask, Color.white, (self.center_x, self.center_y), self.planet_radius)
+        pygame.draw.circle(self.planet_mask, Color.white, (int(self.center_x), int(self.center_y)), self.planet_radius)
         self.planet_mask.set_colorkey(Color.white)
 
     def draw_bodies(self, screen):

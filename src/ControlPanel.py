@@ -3,14 +3,14 @@ from time import sleep
 
 import pygame
 
-import Color
+import src.Color as Color
 import settings
-from Debug import Debug
-from Event import Event
-from Ship import Ship
-from SpaceBattle import SpaceBattle
-from System import System
-from Warp import Warp
+from src.Debug import Debug
+from src.Event import Event
+from src.Ship import Ship
+from src.SpaceBattle import SpaceBattle
+from src.System import System
+from src.Warp import Warp
 from src.components.Box import Box
 from src.components.Window import Window
 from src.components.text.TextBox import TextBox
@@ -83,7 +83,7 @@ class ControlPanel(object):
         self.nav_button = {}
         y_offset = 0
         # self.big_font_size+4)/2*len(window)
-        for window, visible in self.window_dict.iteritems():
+        for window, visible in self.window_dict.items():
             if visible:
                 self.nav_button[window] = TextBox(pygame.Rect(20, 50+y_offset, 200, 45),
                                                   Color.d_gray, border_color=None, highlight_color=Color.white,
@@ -196,7 +196,7 @@ class ControlPanel(object):
             self.side_window = self.sidebar_list[new_window]
             sleep(0.1)
         except Exception as e:
-            print e
+            print(e)
             pass
         self.screen_title = self.main_window.name
         self.window_lock = False

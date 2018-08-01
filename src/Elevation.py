@@ -7,7 +7,7 @@ from src.components.Maths import Maths
 
 class Elevation(object):
     def __init__(self):
-        print 'elevation is cool'
+        print('elevation is cool')
 
     @staticmethod
     def rando_card(node_map, scale=1, octaves=1, seed=0):
@@ -123,4 +123,4 @@ class Elevation(object):
                     Elevation.build_land(node_map, x, y + 1, Maths.move_to_zero(val, increment), base_line,
                                          render_limit, increment)
             else:
-                print 'something is wrong'
+                print('something is wrong')

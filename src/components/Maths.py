@@ -6,7 +6,7 @@ class Maths(object):
     minimum = 0.001
 
     def __init__(self):
-        print 'Why are you initializing this it should be static'
+        print('Why are you initializing this it should be static')
 
     @staticmethod
     def move_to_zero(value, increment):
