@@ -3,7 +3,8 @@ from time import sleep
 
 import pygame
 
-import src.Color as Color
+import src.const.Color as Color
+import src.components.ObjectBuilder as Bob
 import settings
 from src.Debug import Debug
 from src.Event import Event
@@ -13,107 +14,121 @@ from src.System import System
 from src.Warp import Warp
 from src.components.Box import Box
 from src.components.Window import Window
-from src.components.text.TextBox import TextBox
 from src.components.text.TextBoxList import TextBoxList
 
 
 class ControlPanel(object):
-    def __init__(self, main_window_width=800, main_window_height=600, main_white_space=50, side_window_width=350,
-                 side_window_height=650, side_white_space=50, font=None, small_font=None):
-        self.big_font_size = 24
-        self.small_font_size = 16
+    def __init__(self, screen, console_height=120, font=None, small_font=None):
+        self.screen = screen
         self.main_window = None
-        self.main_width = main_window_width
-        self.main_height = main_window_height
-        self.console_height = 120
+        width = settings.screen_width
+        height = settings.screen_height
+        spacer = settings.spacing
+        self.main_width = int(width/4*3)
+        self.main_height = height - spacer*2
+        self.console_height = console_height
+
         self.side_window = None
+        side_width = int(width/4)-spacer*3
+
         self.font = font
         self.small_font = small_font
 
         # keeps buttons from being pressed when they aren't supposed to
         self.window_lock = False
 
-        # some events consants
-        self.intro_event_file = os.path.join(settings.main_path, 'data', 'intro.eve')
-        self.intro_event_id = 'INTRO_1'
+        # some events constants
+        self.intro_event_file = os.path.join(settings.main_path, "data", "intro.eve")
+        self.intro_event_id = "INTRO_1"
         self.station = None
 
-        self.window_dict = {'console': False,
-                            'Messages': True,
-                            'email': False,
-                            'Ship': True,
-                            'System': True,
-                            'planet': False,
-                            'Battle': False,
-                            'Warp': True,
-                            'Debug': True,
-                            'Station': True}
+        self.window_dict = {"Console": False,
+                            "Messages": True,
+                            "Email": False,
+                            "Ship": True,
+                            "System": True,
+                            "planet": False,
+                            "Battle": False,
+                            "Warp": True,
+                            "Debug": True,
+                            "Station": True,
+                            "Options": True}
 
         self.window_list = {}
         self.sidebar_list = {}
 
         for window in self.window_dict:
-            self.window_list[window] = Window((main_white_space, main_white_space),
-                                              (main_window_width, main_window_height-self.console_height),
+            self.window_list[window] = Window((spacer, spacer),
+                                              (self.main_width, self.main_height-self.console_height),
                                               name=window)
-            self.sidebar_list[window] = Window((main_white_space + main_window_width + side_white_space,
-                                                side_white_space),
-                                               (side_window_width, side_window_height),
+            self.sidebar_list[window] = Window((spacer + self.main_width + spacer, spacer),
+                                               (side_width, self.main_height),
                                                name=window,
-                                               border_color=Color.d_gray)
+                                               border_color=Color.D_GRAY)
 
         # console
-        self.the_big_board = Box(pygame.Rect(0, 0, main_window_width, main_window_height-self.console_height),
-                                 box_color=None, border_color=None, highlight_color=None, active_color=None)
-        self.board_bottom = Box(pygame.Rect(main_white_space, main_white_space+main_window_height-self.console_height,
-                                            main_window_width, self.console_height), box_color=Color.d_gray,
-                                border_color=Color.gray, highlight_color=Color.gray, active_color=Color.gray,
-                                border=3, name='Console-back')
-        self.console = TextBoxList(pygame.Rect(main_white_space+10, main_white_space+main_window_height -
-                                               self.console_height+10, main_window_width, self.console_height),
-                                   name='Console', text_color=Color.white, text_outline=True, font=self.small_font,
+        self.the_big_board = Box(pygame.Rect(0, 0, self.main_width, self.main_height-self.console_height),
+                                 box_color=None,
+                                 border_color=None,
+                                 highlight_color=None,
+                                 active_color=None)
+        self.board_bottom = Box(pygame.Rect(spacer,
+                                            spacer + self.main_height - self.console_height,
+                                            self.main_width,
+                                            self.console_height),
+                                box_color=Color.D_GRAY,
+                                border_color=Color.GRAY,
+                                highlight_color=Color.GRAY,
+                                active_color=Color.GRAY,
+                                border=3, name="Console-back")
+        self.console = TextBoxList(pygame.Rect(spacer+10,
+                                               spacer + self.main_height - self.console_height + 10,
+                                               self.main_width,
+                                               self.console_height),
+                                   name="Console",
+                                   text_color=Color.WHITE,
+                                   text_outline=True,
+                                   font=self.small_font,
                                    list_size=5, line_size=20)
 
         self.event = Event(panel=self, picture=self.the_big_board, text=self.console)
 
-        self.window_list['console'].sprites.append(self.the_big_board)
+        self.window_list["Console"].sprites.append(self.the_big_board)
         # self.window_list['console'].sprites.append(self.board_bottom)
         # self.window_list['console'].sprites.append(self.console)
         # main navigation buttons
         self.nav_button = {}
         y_offset = 0
         # self.big_font_size+4)/2*len(window)
+        button_width = side_width - spacer*2
         for window, visible in self.window_dict.items():
             if visible:
-                self.nav_button[window] = TextBox(pygame.Rect(20, 50+y_offset, 200, 45),
-                                                  Color.d_gray, border_color=None, highlight_color=Color.white,
-                                                  active_color=None, message=window, text_color=Color.white,
-                                                  text_outline=True, font=self.font)
+                self.nav_button[window] = Bob.cp_button(x=spacer, y=50+y_offset, width=button_width, message=window)
+                # self.nav_button[window] = TextBox(pygame.Rect(spacer, 50+y_offset, side_width-spacer*2, 40),
                 y_offset += 55
 
         for button in self.nav_button:
-            self.sidebar_list['console'].components.append(self.nav_button[button])
+            self.sidebar_list["Console"].components.append(self.nav_button[button])
 
-        self.back_to_console = TextBox(pygame.Rect(10, 10, 50, 30), Color.d_gray, border_color=None,
-                                       highlight_color=Color.blue, active_color=None, message='< <',
-                                       text_color=Color.white, font=self.font)
+        self.back_to_console = Bob.back_button()
+        for key, value in self.sidebar_list.items():
+            if self.window_dict[key]:
+                value.components.append(self.back_to_console)
 
         # email  client  construct
         # self.email = EmailClient()
-        self.sidebar_list['Messages'].components.append(self.back_to_console)
 
         # ship construct
         self.ship = Ship(size_x=40, size_y=40)
         self.window_list['Ship'].components.append(self.ship.main_screen)
         self.sidebar_list['Ship'].components.append(self.ship)
-        self.sidebar_list['Ship'].components.append(self.back_to_console)
 
         # system construct
         self.system = None
         self.warp_to_system(x=6541, y=43322)
 
         self.screen_title = None
-        self.switch_window('console')
+        self.switch_window("Console")
 
         # battle screen
         self.space_battle = None
@@ -125,23 +140,21 @@ class ControlPanel(object):
         '''
 
         # warp menu
-        self.sidebar_list['Warp'].components.append(self.back_to_console)
         self.warp = Warp(self, font=self.font, small_font=self.small_font)
         self.sidebar_list['Warp'].components.append(self.warp)
         # self.window_list['Warp'].sprites.append(self.board_bottom)
         # self.window_list['Warp'].sprites.append(self.console)
 
         # debug
-        self.debug_console = TextBoxList(pygame.Rect(10, main_window_height-300, main_window_width, 300),
-                                         name='D_con', text_color=Color.white, text_outline=True, font=self.small_font,
+        self.debug_console = TextBoxList(pygame.Rect(10, self.main_height-300, self.main_width, 300),
+                                         name='D_con', text_color=Color.WHITE, text_outline=True, font=self.small_font,
                                          list_size=14, line_size=20)
         self.debug = Debug(self.debug_console, self, self.ship, self.font)
 
-        self.window_list['Debug'].sprites.append(Box(pygame.Rect(5, main_window_height-310, main_window_width-10, 5),
-                                                     box_color=Color.white, name='LINE'))
+        self.window_list['Debug'].sprites.append(Box(pygame.Rect(5, self.main_height-310, self.main_width-10, 5),
+                                                     box_color=Color.WHITE, name='LINE'))
         self.window_list['Debug'].sprites.append(self.debug_console)
         self.sidebar_list['Debug'].components.append(self.debug)
-        self.sidebar_list['Debug'].components.append(self.back_to_console)
 
     def load_event(self, event_file, event_name):
         self.event.read_event_file(event_file)
@@ -158,21 +171,26 @@ class ControlPanel(object):
         del self.window_list['System'].components[:]
         del self.sidebar_list['System'].components[:]
         self.station = None
-        self.system = System(panel=self, font=self.font, small_font=self.small_font, x=x, y=y, add_station=True)
+        self.system = System(screen=self.screen,
+                             panel=self,
+                             font=self.font,
+                             small_font=self.small_font,
+                             x=x,
+                             y=y,
+                             add_station=True)
         self.window_list['System'].components.append(self.system.system_map)
         self.sidebar_list['System'].components.append(self.system)
         # self.system_map_index = len(self.window_list['System'].components)-1
-        self.sidebar_list['System'].components.append(self.back_to_console)
         self.event.adhoc_event(picture=self.system.family_portrait(),
                                text='Warped to system: {0}'.format(self.system.name),
-                               goto='console')
+                               goto="Console")
 
     def dock_with_station(self, station=None):
         if station:
             self.station = station
             self.event.adhoc_event(picture=self.station.image,
                                    text='You have docked with {0}'.format(self.station.name),
-                                   goto='console')
+                                   goto="Console")
 
     def start_space_battle(self, battle_params=None):
         del self.window_list["Battle"].components[:]
@@ -210,9 +228,10 @@ class ControlPanel(object):
             self.side_window.update(key=key, mouse=mouse)
 
             if self.back_to_console.update(key=key, mouse=mouse, offset=self.side_window.position):
-                self.switch_window('console')
+                print("Going back go console")
+                self.switch_window("Console")
 
-            if self.screen_title == 'console':
+            if self.screen_title == "Console":
                 for button in self.nav_button:
                     if self.nav_button[button].update(key=key, mouse=mouse, offset=self.side_window.position):
                         if button == 'Station' and self.station is None:

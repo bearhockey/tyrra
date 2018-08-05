@@ -1,6 +1,6 @@
 import pygame
 
-import src.Color as Color
+import src.const.Color as Color
 from src.components.Box import Box
 
 node_type = {
@@ -72,19 +72,19 @@ class ShipNode(Box):
 
     def draw(self, screen):
         if self.type == node_type['POWER']:
-            self.box_color = Color.green
+            self.box_color = Color.GREEN
         elif self.type == node_type['GUN']:
-            self.box_color = Color.red
+            self.box_color = Color.RED
         elif self.type == node_type['ENGINE']:
-            self.box_color = Color.blue
+            self.box_color = Color.BLUE
         elif self.type == node_type['SHIELD']:
-            self.box_color = Color.yellow
+            self.box_color = Color.YELLOW
         elif self.type == node_type['ARMOR']:
-            self.box_color = Color.d_gray
+            self.box_color = Color.D_GRAY
         elif self.type == node_type['FLOOR']:
-            self.box_color = Color.gray
+            self.box_color = Color.GRAY
         else:
-            self.box_color = Color.black
+            self.box_color = Color.BLACK
         zoomed_size = self.cell_size * self.zoom
         self.rect.x = self.cell_x * zoomed_size + self.offset[0]
         self.rect.y = self.cell_y * zoomed_size + self.offset[1]

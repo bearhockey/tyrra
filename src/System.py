@@ -3,7 +3,8 @@ import random
 
 import pygame
 
-import src.Color as Color
+import src.const.Color as Color
+import src.components.Loading as Loading
 from src.Orbit import Orbit
 from src.Planet import Planet
 from src.Star import Star
@@ -13,7 +14,9 @@ from src.components.text.TextBox import TextBox
 
 
 class System(object):
-    def __init__(self, panel, font, small_font, x=0, y=0, generate=True, add_station=False):
+    def __init__(self, screen, panel, font, small_font, x=0, y=0, generate=True, add_station=False):
+        # throw up the loading screen because this might take a while
+        Loading.loading_screen(screen=screen)
         self.panel = panel
 
         self.x = x
@@ -31,7 +34,7 @@ class System(object):
         self.small_font = small_font
 
         self.main_window = pygame.Rect(0, 0, self.panel.main_width, self.panel.main_height-120)
-        self.star_orbit = Orbit(self.main_window.center, orbit=0, color=Color.d_gray, outline=2)
+        self.star_orbit = Orbit(self.main_window.center, orbit=0, color=Color.D_GRAY, outline=2)
 
         self.system_map = None
 
@@ -45,11 +48,11 @@ class System(object):
                       8: 'VIII',
                       9: 'IX'}
 
-        self.system_button = TextBox(pygame.Rect(20, 60, 300, 30), message=self.short_name, box_color=Color.l_gray,
-                                     highlight_color=Color.gray, active_color=Color.blue, text_color=Color.black,
+        self.system_button = TextBox(pygame.Rect(20, 60, 300, 30), message=self.short_name, box_color=Color.L_GRAY,
+                                     highlight_color=Color.GRAY, active_color=Color.BLUE, text_color=Color.BLACK,
                                      text_outline=True, font=self.small_font, highlight_text=False, highlight_box=True)
-        self.station_dock_button = TextBox(pygame.Rect(20, 460, 300, 30), message='DOCK', box_color=Color.d_gray,
-                                           highlight_color=Color.white, active_color=Color.blue, text_color=Color.white,
+        self.station_dock_button = TextBox(pygame.Rect(20, 460, 300, 30), message='DOCK', box_color=Color.D_GRAY,
+                                           highlight_color=Color.WHITE, active_color=Color.BLUE, text_color=Color.WHITE,
                                            text_outline=True, font=self.small_font,
                                            highlight_text=False, highlight_box=True)
         self.star_buttons = []
@@ -190,11 +193,11 @@ class System(object):
         y_off = 60
         for star in self.stars:
             star_list.append(TextBox(pygame.Rect(20, 50+y_off, 50, 50), star.convert_temperature_to_color(),
-                                     border_color=None, highlight_color=Color.white, active_color=Color.blue))
+                                     border_color=None, highlight_color=Color.WHITE, active_color=Color.BLUE))
             self.star_buttons.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
                                              message=star.name,
-                                             highlight_color=Color.gray, active_color=Color.blue,
-                                             text_color=Color.white, text_outline=True,
+                                             highlight_color=Color.GRAY, active_color=Color.BLUE,
+                                             text_color=Color.WHITE, text_outline=True,
                                              font=self.small_font, highlight_text=True, highlight_box=False))
 
             y_off += 60
@@ -204,15 +207,15 @@ class System(object):
         y_off += 40
         for planet in self.planets:
             if planet.station:
-                color = Color.d_gray
+                color = Color.D_GRAY
             else:
-                color = Color.white
+                color = Color.WHITE
             planet_list.append(TextBox(pygame.Rect(25, 50+y_off, 40, 40), color, border_color=None,
-                                       highlight_color=Color.d_gray, active_color=Color.blue))
+                                       highlight_color=Color.D_GRAY, active_color=Color.BLUE))
             self.planet_buttons.append(TextBox(pygame.Rect(80, 60+y_off, 400, 50),
                                                message=planet.name,
-                                               highlight_color=Color.gray, active_color=Color.blue,
-                                               text_color=Color.white, text_outline=True,
+                                               highlight_color=Color.GRAY, active_color=Color.BLUE,
+                                               text_color=Color.WHITE, text_outline=True,
                                                font=self.small_font, highlight_text=True, highlight_box=False))
             y_off += 50
             self.planet_buttons.append(planet_list[-1])
@@ -233,45 +236,45 @@ class System(object):
 
     def draw_body_detail(self, screen):
         body = self.current_body
-        Text.draw_text(screen, self.font, body.name, Color.white, (25, 100))
+        Text.draw_text(screen, self.font, body.name, Color.WHITE, (25, 100))
         if type(body) is Star:
-            Text.draw_text(screen, self.small_font, 'Temperature:', Color.white, (20, 200))
-            Text.draw_text(screen, self.small_font, str(body.get_temperature()), Color.white, (150, 200))
+            Text.draw_text(screen, self.small_font, 'Temperature:', Color.WHITE, (20, 200))
+            Text.draw_text(screen, self.small_font, str(body.get_temperature()), Color.WHITE, (150, 200))
             #
-            Text.draw_text(screen, self.small_font, 'Size:', Color.white, (20, 230))
-            Text.draw_text(screen, self.small_font, str(body.get_size()), Color.white, (150, 230))
+            Text.draw_text(screen, self.small_font, 'Size:', Color.WHITE, (20, 230))
+            Text.draw_text(screen, self.small_font, str(body.get_size()), Color.WHITE, (150, 230))
             #
-            Text.draw_text(screen, self.small_font, 'Luminosity:', Color.white, (20, 260))
-            Text.draw_text(screen, self.small_font, str(body.get_luminosity()), Color.white, (150, 260))
+            Text.draw_text(screen, self.small_font, 'Luminosity:', Color.WHITE, (20, 260))
+            Text.draw_text(screen, self.small_font, str(body.get_luminosity()), Color.WHITE, (150, 260))
         elif type(body) is Planet:
-            Text.draw_text(screen, self.small_font, 'I is planet', Color.green, (25, 200))
+            Text.draw_text(screen, self.small_font, 'I is planet', Color.GREEN, (25, 200))
             Text.draw_text(screen, self.small_font, "Atmosphere is {0}".format(body.atmosphere_density),
-                           Color.blue, (25, 240))
+                           Color.BLUE, (25, 240))
             Text.draw_text(screen, self.small_font, "Temperature is {0}K".format(body.temperature),
-                           Color.red, (25, 280))
+                           Color.RED, (25, 280))
             if body.temperature > 373:
                 water = "BOILED"
             elif body.temperature < 273:
                 water = "FROZEN"
             else:
                 water = "LIFE"
-            Text.draw_text(screen, self.small_font, water, Color.green, (25, 320))
+            Text.draw_text(screen, self.small_font, water, Color.GREEN, (25, 320))
             if body.station is not None:
                 Text.draw_text(screen, self.small_font, 'Station {0} is online'.format(body.station.name),
-                               Color.blue, (25, 350))
+                               Color.BLUE, (25, 350))
                 self.station_dock_button.draw(screen)
         else:
-            Text.draw_text(screen, self.small_font, 'What am I?', Color.white, (25, 200))
+            Text.draw_text(screen, self.small_font, 'What am I?', Color.WHITE, (25, 200))
 
     def draw_gui(self, screen):
-        Text.draw_text(screen, self.font, self.name, Color.white, (20, 20))
+        Text.draw_text(screen, self.font, self.name, Color.WHITE, (20, 20))
         text_offset = 0
         for star in self.stars:
             text_offset = self.stars.index(star) * 100
-            Text.draw_text(screen, self.small_font, '{0}'.format(star.name), Color.white, (900, 50 + text_offset))
+            Text.draw_text(screen, self.small_font, '{0}'.format(star.name), Color.WHITE, (900, 50 + text_offset))
 
         for _ in self.planets:
-            Text.draw_text(screen, self.small_font, 'Planets: {0}'.format(len(self.planets)), Color.white,
+            Text.draw_text(screen, self.small_font, 'Planets: {0}'.format(len(self.planets)), Color.WHITE,
                            (900, 350 + text_offset))
 
     def update(self, key, mouse, offset=(0, 0)):
@@ -288,9 +291,9 @@ class System(object):
     def update_body_list(self, key, mouse, offset=(0, 0)):
         for star in self.star_buttons:
             if star.update(key, mouse, offset):
-                self.current_body = self.get_body_by_name(self.stars, star.message)
+                self.current_body = self.get_body_by_name(self.stars, star.name)
         for planet in self.planet_buttons:
-            if planet.update(key, mouse, offset):
+            if planet.update(key, mouse, offset) and planet.message:
                 self.current_body = self.get_body_by_name(self.planets, planet.message)
                 self.system_map.planet_focus = self.current_body.planet_index
 
@@ -305,7 +308,7 @@ class System(object):
         # random star background
         random.seed(self.seed)
         canvas = pygame.Surface((self.panel.main_width, self.panel.main_height))
-        canvas.fill(color=Color.black)
+        canvas.fill(color=Color.BLACK)
         x = 0
         while x < self.panel.main_width:
             y = 0
@@ -361,12 +364,12 @@ class SystemMap(object):
         self.star_orbit = star_orbit
 
         self.planet_focus = 0
-        self.planet_radius = 200
+        self.planet_radius = int(window_height/2.5)
         # makes a circular mask
         self.planet_mask = pygame.Surface(size=(window_width, window_height))
-        self.planet_mask.fill(color=Color.black)
-        pygame.draw.circle(self.planet_mask, Color.white, (int(self.center_x), int(self.center_y)), self.planet_radius)
-        self.planet_mask.set_colorkey(Color.white)
+        self.planet_mask.fill(color=Color.BLACK)
+        pygame.draw.circle(self.planet_mask, Color.WHITE, (int(self.center_x), int(self.center_y)), self.planet_radius)
+        self.planet_mask.set_colorkey(Color.WHITE)
 
     def draw_bodies(self, screen):
         # orbits
@@ -395,7 +398,7 @@ class SystemMap(object):
             planet = self.planets[self.planet_focus - 1]
             planet.map.y_offset = self.center_y - self.planet_radius
             if planet.map.x_offset > self.center_x - self.planet_radius - (planet.map.width * planet.map.zoom):
-                planet.map.x_offset -= 1
+                planet.map.x_offset -= 0.5
             else:
                 planet.map.x_offset = self.center_x - self.planet_radius
         else:
@@ -405,9 +408,7 @@ class SystemMap(object):
         pass
 
     def draw(self, screen):
-        screen.fill(Color.black)
-        # self.draw_stars(screen)
-        # self.draw_planets(screen)
+        screen.fill(Color.BLACK)
         if self.planet_focus > 0:
             planet = self.planets[self.planet_focus - 1]
             planet.map.draw(screen)
@@ -419,6 +420,3 @@ class SystemMap(object):
             screen.blit(self.planet_mask, (0, 0))
         else:
             self.draw_bodies(screen)
-        # self.x_box.draw(screen)
-        # self.y_box.draw(screen)
-        # self.mouse_box.draw(screen)

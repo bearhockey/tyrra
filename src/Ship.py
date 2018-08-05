@@ -2,7 +2,7 @@ import json
 
 import pygame
 
-import src.Color as Color
+import src.const.Color as Color
 import settings
 from src.Component import Component
 from src.Pawn import Pawn
@@ -28,8 +28,11 @@ class Ship(object):
         self.stat_screen = ShipStats(self, self.font, self.small_font)
         self.crew_profile = CrewProfile(self, self.crew[0], self.font, self.small_font)
         self.main_screen = ShipMainScreen(self.stat_screen, self.ship_grid, self.crew_profile)
-        self.box = Box(self.get_ship_rect(), border_color=Color.blue, highlight_color=Color.green,
-                       active_color=Color.red, name='Ship Hit Box')
+        self.box = Box(self.get_ship_rect(),
+                       border_color=Color.BLUE,
+                       highlight_color=Color.GREEN,
+                       active_color=Color.RED,
+                       name="Ship Hit Box")
         # easy dictionary to store stats probably
         self.ship_stats = {'crew_capacity': 1,
                            'attack': 0,
@@ -41,20 +44,44 @@ class Ship(object):
         self.current_shield = 0
 
         # objects are drawn on side bar
-        self.name_box = InputBox(pygame.Rect(70, 10, 250, 50), box_color=None, border_color=Color.d_gray,
-                                 highlight_color=Color.white, active_color=Color.gray, message=self.name,
-                                 text_color=Color.white, font=self.font, text_limit=16)
+        self.name_box = InputBox(pygame.Rect(70, 10, 250, 50),
+                                 box_color=None,
+                                 border_color=Color.D_GRAY,
+                                 highlight_color=Color.WHITE,
+                                 active_color=Color.GRAY,
+                                 message=self.name,
+                                 text_color=Color.WHITE,
+                                 font=self.font,
+                                 text_limit=16)
 
         # nav
-        self.stats_button = TextBox(pygame.Rect(25, 70, 80, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                    highlight_color=Color.white, active_color=Color.d_blue, message='Stats',
-                                    text_color=Color.white, text_outline=True, font=self.font)
-        self.edit_button = TextBox(pygame.Rect(120, 70, 80, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                   highlight_color=Color.white, active_color=Color.d_blue, message='Edit',
-                                   text_color=Color.white, text_outline=True, font=self.font)
-        self.crew_button = TextBox(pygame.Rect(210, 70, 80, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                   highlight_color=Color.white, active_color=Color.d_blue, message='Crew',
-                                   text_color=Color.white, text_outline=True, font=self.font)
+        self.stats_button = TextBox(pygame.Rect(25, 70, 80, 30),
+                                    box_color=Color.D_GRAY,
+                                    border_color=Color.GRAY,
+                                    highlight_color=Color.WHITE,
+                                    active_color=Color.D_BLUE,
+                                    message="Stats",
+                                    text_color=Color.WHITE,
+                                    text_outline=True,
+                                    font=self.font)
+        self.edit_button = TextBox(pygame.Rect(120, 70, 80, 30),
+                                   box_color=Color.D_GRAY,
+                                   border_color=Color.GRAY,
+                                   highlight_color=Color.WHITE,
+                                   active_color=Color.D_BLUE,
+                                   message="Edit",
+                                   text_color=Color.WHITE,
+                                   text_outline=True,
+                                   font=self.font)
+        self.crew_button = TextBox(pygame.Rect(210, 70, 80, 30),
+                                   box_color=Color.D_GRAY,
+                                   border_color=Color.GRAY,
+                                   highlight_color=Color.WHITE,
+                                   active_color=Color.D_BLUE,
+                                   message="Crew",
+                                   text_color=Color.WHITE,
+                                   text_outline=True,
+                                   font=self.font)
 
         # floors
         self.floor_dictionary = {'blank': 0,
@@ -73,24 +100,35 @@ class Ship(object):
                             'shield': (0, 0, 0, -10)}
 
         self.floors = []
-        self.floors.append(Box(pygame.Rect(25, 140, 25, 25), Color.black, border_color=Color.d_gray,
-                               highlight_color=Color.white, active_color=Color.blue, border=1, name='blank'))
-        self.floors.append(Box(pygame.Rect(55, 140, 25, 25), Color.gray, border_color=Color.d_gray,
-                               highlight_color=Color.white, active_color=Color.blue, border=1, name='floor'))
-        self.floors.append(Box(pygame.Rect(85, 140, 25, 25), Color.d_gray, border_color=Color.d_gray,
-                               highlight_color=Color.white, active_color=Color.blue, border=1, name='armor'))
+        self.floors.append(Box(pygame.Rect(25, 140, 25, 25),
+                               Color.BLACK,
+                               border_color=Color.D_GRAY,
+                               highlight_color=Color.WHITE,
+                               active_color=Color.BLUE,
+                               border=1,
+                               name='blank'))
+        self.floors.append(Box(pygame.Rect(55, 140, 25, 25),
+                               Color.GRAY,
+                               border_color=Color.D_GRAY,
+                               highlight_color=Color.WHITE,
+                               active_color=Color.BLUE,
+                               border=1,
+                               name='floor'))
+        self.floors.append(Box(pygame.Rect(85, 140, 25, 25),
+                               Color.D_GRAY, border_color=Color.D_GRAY,
+                               highlight_color=Color.WHITE, active_color=Color.BLUE, border=1, name='armor'))
         self.ship_grid.selected_cell_type = self.floor_dictionary['blank']
 
         # Parts
-        self.floors.append(TextBox(pygame.Rect(25, 180, 25, 25), Color.black, border_color=Color.d_gray,
-                                   highlight_color=Color.white, active_color=Color.blue, border=1, name='engine',
-                                   message='E1', text_color=Color.blue, text_outline=True, font=self.small_font))
-        self.floors.append(TextBox(pygame.Rect(55, 180, 25, 25), Color.black, border_color=Color.d_gray,
-                                   highlight_color=Color.white, active_color=Color.blue, border=1, name='gun',
-                                   message='G1', text_color=Color.red, text_outline=True, font=self.small_font))
-        self.floors.append(TextBox(pygame.Rect(85, 180, 25, 25), Color.black, border_color=Color.d_gray,
-                                   highlight_color=Color.white, active_color=Color.blue, border=1, name='power',
-                                   message='P1', text_color=Color.green, text_outline=True, font=self.small_font))
+        self.floors.append(TextBox(pygame.Rect(25, 180, 25, 25), Color.BLACK, border_color=Color.D_GRAY,
+                                   highlight_color=Color.WHITE, active_color=Color.BLUE, border=1, name='engine',
+                                   message='E1', text_color=Color.BLUE, text_outline=True, font=self.small_font))
+        self.floors.append(TextBox(pygame.Rect(55, 180, 25, 25), Color.BLACK, border_color=Color.D_GRAY,
+                                   highlight_color=Color.WHITE, active_color=Color.BLUE, border=1, name='gun',
+                                   message='G1', text_color=Color.RED, text_outline=True, font=self.small_font))
+        self.floors.append(TextBox(pygame.Rect(85, 180, 25, 25), Color.BLACK, border_color=Color.D_GRAY,
+                                   highlight_color=Color.WHITE, active_color=Color.BLUE, border=1, name='power',
+                                   message='P1', text_color=Color.GREEN, text_outline=True, font=self.small_font))
 
         # components (inventory / installed are actual objects; lists are just the text boxes)
         self.selected_component = None
@@ -101,13 +139,13 @@ class Ship(object):
         self.make_installed_component_list()
 
         # debug load button
-        self.load_box = TextBox(pygame.Rect(230, 610, 75, 40), Color.blue, border_color=Color.gray,
-                                highlight_color=Color.white, active_color=Color.white, message='LOAD',
-                                text_color=Color.white, text_outline=True, font=self.font)
+        self.load_box = TextBox(pygame.Rect(230, 610, 75, 40), Color.BLUE, border_color=Color.GRAY,
+                                highlight_color=Color.WHITE, active_color=Color.WHITE, message='LOAD',
+                                text_color=Color.WHITE, text_outline=True, font=self.font)
         # debug save button
-        self.save_box = TextBox(pygame.Rect(230, 650, 75, 40), Color.red, border_color=Color.gray,
-                                highlight_color=Color.white, active_color=Color.white, message='SAVE',
-                                text_color=Color.white, text_outline=True, font=self.font)
+        self.save_box = TextBox(pygame.Rect(230, 650, 75, 40), Color.RED, border_color=Color.GRAY,
+                                highlight_color=Color.WHITE, active_color=Color.WHITE, message='SAVE',
+                                text_color=Color.WHITE, text_outline=True, font=self.font)
 
         # crew screen
         self.crew_list = []
@@ -122,9 +160,9 @@ class Ship(object):
         del self.crew_list[:]
         y_offset = 0
         for pawn in self.crew:
-            self.crew_list.append(TextBox(pygame.Rect(50, 150+y_offset, 250, 40), box_color=Color.gray,
-                                          border_color=Color.d_gray, highlight_color=Color.white,
-                                          active_color=Color.blue, border=2, message=pawn.name, text_color=Color.white,
+            self.crew_list.append(TextBox(pygame.Rect(50, 150+y_offset, 250, 40), box_color=Color.GRAY,
+                                          border_color=Color.D_GRAY, highlight_color=Color.WHITE,
+                                          active_color=Color.BLUE, border=2, message=pawn.name, text_color=Color.WHITE,
                                           text_outline=True, font=self.font))
             y_offset += 55
 
@@ -136,11 +174,11 @@ class Ship(object):
         del self.component_list[:]
         y_offset = 0
         for component in self.component_inventory:
-            self.component_list.append(TextBox(pygame.Rect(25, 150+y_offset, 250, 40), box_color=Color.d_gray,
-                                               border_color=Color.gray, highlight_color=Color.red,
-                                               active_color=Color.gray, border=2,
+            self.component_list.append(TextBox(pygame.Rect(25, 150+y_offset, 250, 40), box_color=Color.D_GRAY,
+                                               border_color=Color.GRAY, highlight_color=Color.RED,
+                                               active_color=Color.GRAY, border=2,
                                                name=self.component_inventory.index(component), message=component.name,
-                                               text_color=Color.white, text_outline=True, font=self.font))
+                                               text_color=Color.WHITE, text_outline=True, font=self.font))
             y_offset += 55
 
     def install_component(self, index):
@@ -158,16 +196,16 @@ class Ship(object):
         for i in range(1, self.ship_stats['component_capacity'] + 1):
             if len(self.installed_components) > i - 1:
                 index = self.installed_components[i - 1]
-                self.installed_list.append(TextBox(pygame.Rect(25, 250 + ((i - 1) * 50), 300, 40), Color.d_gray,
-                                                   border_color=Color.gray, highlight_color=Color.white,
-                                                   active_color=Color.blue, border=2, name=i,
-                                                   message=self.component_inventory[index].name, text_color=Color.gray,
+                self.installed_list.append(TextBox(pygame.Rect(25, 250 + ((i - 1) * 50), 300, 40), Color.D_GRAY,
+                                                   border_color=Color.GRAY, highlight_color=Color.WHITE,
+                                                   active_color=Color.BLUE, border=2, name=i,
+                                                   message=self.component_inventory[index].name, text_color=Color.GRAY,
                                                    text_outline=True, font=self.font))
             else:
-                self.installed_list.append(TextBox(pygame.Rect(25, 250+((i-1)*50), 300, 40), Color.d_gray,
-                                                   border_color=Color.gray, highlight_color=Color.white,
-                                                   active_color=Color.blue, border=2, name=i,
-                                                   message='EMPTY {0}'.format(i), text_color=Color.gray,
+                self.installed_list.append(TextBox(pygame.Rect(25, 250+((i-1)*50), 300, 40), Color.D_GRAY,
+                                                   border_color=Color.GRAY, highlight_color=Color.WHITE,
+                                                   active_color=Color.BLUE, border=2, name=i,
+                                                   message='EMPTY {0}'.format(i), text_color=Color.GRAY,
                                                    text_outline=True, font=self.font))
 
     def update(self, key, mouse, offset=(0, 0)):
@@ -249,7 +287,7 @@ class Ship(object):
         self.current_shield = self.ship_stats['shield']
 
     def draw(self, screen):
-        screen.fill(Color.black)
+        screen.fill(Color.BLACK)
         self.name_box.draw(screen)
         self.stats_button.draw(screen)
         self.edit_button.draw(screen)
@@ -267,44 +305,44 @@ class Ship(object):
             box.draw(screen)
 
     def draw_edit_panel(self, screen):
-        Text.draw_text(screen, self.small_font, 'Floors:', Color.white, position=(25, 110))
+        Text.draw_text(screen, self.small_font, 'Floors:', Color.WHITE, position=(25, 110))
         for tile in self.floors:
             tile.draw(screen)
-        Text.draw_text(screen, self.small_font, 'Components:', Color.white, position=(25, 220))
+        Text.draw_text(screen, self.small_font, 'Components:', Color.WHITE, position=(25, 220))
         for box in self.installed_list:
             box.draw(screen)
 
         self.load_box.draw(screen)
         self.save_box.draw(screen)
 
-        Text.draw_text(screen, self.small_font, 'Preview:', Color.white, position=(25, 460))
+        Text.draw_text(screen, self.small_font, 'Preview:', Color.WHITE, position=(25, 460))
 
-        Text.draw_text(screen, self.small_font, 'Attack:', Color.red, position=(230, 485))
-        Text.draw_text(screen, self.small_font, self.ship_stats['attack'], Color.red, position=(300, 485))
+        Text.draw_text(screen, self.small_font, 'Attack:', Color.RED, position=(230, 485))
+        Text.draw_text(screen, self.small_font, self.ship_stats['attack'], Color.RED, position=(300, 485))
 
-        Text.draw_text(screen, self.small_font, 'Armor:', Color.gray, position=(230, 510))
-        Text.draw_text(screen, self.small_font, self.ship_stats['armor'], Color.gray, position=(300, 510))
+        Text.draw_text(screen, self.small_font, 'Armor:', Color.GRAY, position=(230, 510))
+        Text.draw_text(screen, self.small_font, self.ship_stats['armor'], Color.GRAY, position=(300, 510))
 
-        Text.draw_text(screen, self.small_font, 'Speed:', Color.blue, position=(230, 535))
-        Text.draw_text(screen, self.small_font, self.ship_stats['speed'], Color.blue, position=(300, 535))
+        Text.draw_text(screen, self.small_font, 'Speed:', Color.BLUE, position=(230, 535))
+        Text.draw_text(screen, self.small_font, self.ship_stats['speed'], Color.BLUE, position=(300, 535))
 
-        Text.draw_text(screen, self.small_font, 'Power:', Color.yellow, position=(230, 560))
-        Text.draw_text(screen, self.small_font, self.ship_stats['power'], Color.yellow, position=(300, 560))
+        Text.draw_text(screen, self.small_font, 'Power:', Color.YELLOW, position=(230, 560))
+        Text.draw_text(screen, self.small_font, self.ship_stats['power'], Color.YELLOW, position=(300, 560))
 
-        Text.draw_text(screen, self.small_font, 'Shield:', Color.green, position=(230, 585))
-        Text.draw_text(screen, self.small_font, self.ship_stats['shield'], Color.green, position=(300, 585))
+        Text.draw_text(screen, self.small_font, 'Shield:', Color.GREEN, position=(230, 585))
+        Text.draw_text(screen, self.small_font, self.ship_stats['shield'], Color.GREEN, position=(300, 585))
 
         self.ship_preview.draw_border(screen)
         self.ship_preview.draw(screen)
 
     def draw_component_panel(self, screen):
-        Text.draw_text(screen, self.small_font, 'Components:', Color.white, position=(25, 110))
+        Text.draw_text(screen, self.small_font, 'Components:', Color.WHITE, position=(25, 110))
         for component in self.component_list:
             component.draw(screen)
 
     def draw_ship(self, screen, position, color=None, zoom=2):
         if color is None:
-            color = Color.white
+            color = Color.WHITE
         self.box.rect = self.get_ship_rect(position=position, zoom=zoom)
         # self.ship_grid.update_bounds()
         x = 0
@@ -403,16 +441,16 @@ class ShipPreview(object):
         self.padding = padding
 
     def draw_border(self, screen):
-        pygame.draw.rect(screen, Color.black, pygame.Rect(self.position[0], self.position[1], self.size[0],
+        pygame.draw.rect(screen, Color.BLACK, pygame.Rect(self.position[0], self.position[1], self.size[0],
                                                           self.size[1]))
-        pygame.draw.rect(screen, Color.white, pygame.Rect(self.position[0], self.position[1], self.size[0],
+        pygame.draw.rect(screen, Color.WHITE, pygame.Rect(self.position[0], self.position[1], self.size[0],
                                                           self.size[1]), 2)
 
     def draw(self, screen, position=None, color=None):
         if position is None:
             position = self.position
         if color is None:
-            color = Color.white
+            color = Color.WHITE
         w_offset = len(self.ship_grid.grid[0]) - \
             (self.ship_grid.ship_bounds['right'] - self.ship_grid.ship_bounds['left'])
         h_offset = len(self.ship_grid.grid) - (self.ship_grid.ship_bounds['bottom'] - self.ship_grid.ship_bounds['top'])
@@ -576,7 +614,7 @@ class ShipGrid(object):
         self.ship_bounds['bottom'] = bottom_bound
 
     def draw(self, screen):
-        screen.fill(Color.black)
+        screen.fill(Color.BLACK)
         for row in self.grid:
             for node in row:
                 node.draw(screen)
@@ -589,13 +627,13 @@ class ShipStats(object):
         self.small_font = small_font
 
     def draw(self, screen):
-        self.ship.draw_ship(screen, position=(600, 100), color=Color.gray, zoom=10)
-        Text.draw_text(screen, font=self.font, text='Teest test test', color=Color.green, position=(50, 50))
+        self.ship.draw_ship(screen, position=(600, 100), color=Color.GRAY, zoom=10)
+        Text.draw_text(screen, font=self.font, text='Teest test test', color=Color.GREEN, position=(50, 50))
         y_offset = 0
         for stat, value in self.ship.ship_stats.items():
             formatted_stat = stat.capitalize()
             formatted_stat = formatted_stat.replace('_', ' ')
-            Text.draw_text(screen, font=self.font, text='{0}: {1}'.format(formatted_stat, value), color=Color.white,
+            Text.draw_text(screen, font=self.font, text='{0}: {1}'.format(formatted_stat, value), color=Color.WHITE,
                            position=(40, 100+y_offset))
             y_offset += 30
 
@@ -612,30 +650,30 @@ class CrewProfile(object):
         if self.pawn.portrait:
             screen.blit(self.pawn.portrait, port_rect)
         else:
-            Text.draw_text(screen, self.small_font, 'No portrtait avilable', Color.red, (75, 125))
-        pygame.draw.rect(screen, Color.d_gray,
+            Text.draw_text(screen, self.small_font, 'No portrtait avilable', Color.RED, (75, 125))
+        pygame.draw.rect(screen, Color.D_GRAY,
                          (port_rect.left+1, port_rect.top+1, port_rect.width, port_rect.height), 2)
-        pygame.draw.rect(screen, Color.white, port_rect, 2)
-        Text.draw_text(screen, self.font, 'NAME:', Color.white, (300, 50))
-        Text.draw_text(screen, self.font, self.pawn.name, Color.white, (400, 50))
-        Text.draw_text(screen, self.font, 'AGE:', Color.white, (300, 80))
-        Text.draw_text(screen, self.font, str(self.pawn.age), Color.white, (400, 80))
-        Text.draw_text(screen, self.font, 'RACE:', Color.white, (300, 110))
-        Text.draw_text(screen, self.font, self.pawn.race, Color.white, (400, 110))
-        Text.draw_text(screen, self.font, 'BIO:', Color.white, (300, 150))
-        Text.draw_text(screen, self.small_font, self.pawn.bio, Color.white, (300, 180), width=400)
+        pygame.draw.rect(screen, Color.WHITE, port_rect, 2)
+        Text.draw_text(screen, self.font, 'NAME:', Color.WHITE, (300, 50))
+        Text.draw_text(screen, self.font, self.pawn.name, Color.WHITE, (400, 50))
+        Text.draw_text(screen, self.font, 'AGE:', Color.WHITE, (300, 80))
+        Text.draw_text(screen, self.font, str(self.pawn.age), Color.WHITE, (400, 80))
+        Text.draw_text(screen, self.font, 'RACE:', Color.WHITE, (300, 110))
+        Text.draw_text(screen, self.font, self.pawn.race, Color.WHITE, (400, 110))
+        Text.draw_text(screen, self.font, 'BIO:', Color.WHITE, (300, 150))
+        Text.draw_text(screen, self.small_font, self.pawn.bio, Color.WHITE, (300, 180), width=400)
 
-        Text.draw_text(screen, self.font, 'JOBS', Color.white, (25, 300))
+        Text.draw_text(screen, self.font, 'JOBS', Color.WHITE, (25, 300))
         y = 350
         for skill, value in self.pawn.ship_skills.items():
-            Text.draw_text(screen, self.small_font, '{0}:'.format(skill), Color.white, (25, y))
-            Text.draw_text(screen, self.small_font, str(value), Color.white, (125, y))
+            Text.draw_text(screen, self.small_font, '{0}:'.format(skill), Color.WHITE, (25, y))
+            Text.draw_text(screen, self.small_font, str(value), Color.WHITE, (125, y))
             y += 30
-        Text.draw_text(screen, self.font, 'STATS', Color.white, (175, 300))
+        Text.draw_text(screen, self.font, 'STATS', Color.WHITE, (175, 300))
         y = 350
         for stat, value in self.pawn.battle_skills.items():
-            Text.draw_text(screen, self.small_font, '{0}:'.format(stat), Color.white, (175, y))
-            Text.draw_text(screen, self.small_font, str(value), Color.white, (300, y))
+            Text.draw_text(screen, self.small_font, '{0}:'.format(stat), Color.WHITE, (175, y))
+            Text.draw_text(screen, self.small_font, str(value), Color.WHITE, (300, y))
             y += 30
 
     def update(self, key, mouse, offset=(0, 0)):

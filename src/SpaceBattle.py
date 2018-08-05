@@ -1,6 +1,6 @@
 import pygame
 
-import src.Color as Color
+import src.const.Color as Color
 import settings
 from src.Range import Range
 from src.Ship import Ship
@@ -18,10 +18,10 @@ class SpaceBattle(object):
         if player_ship is None:
             print("You have no ship and you lose somehow")
 
-        self.melee_range = Range(distance=100, center=self.center, ring_color=Color.red)
-        self.close_range = Range(distance=150, center=self.center, ring_color=Color.gray)
-        self.far_range = Range(distance=200, center=self.center, ring_color=Color.d_gray)
-        self.scanner_range = Range(distance=250, center=self.center, ring_color=Color.black, ship_color=Color.d_gray)
+        self.melee_range = Range(distance=100, center=self.center, ring_color=Color.RED)
+        self.close_range = Range(distance=150, center=self.center, ring_color=Color.GRAY)
+        self.far_range = Range(distance=200, center=self.center, ring_color=Color.D_GRAY)
+        self.scanner_range = Range(distance=250, center=self.center, ring_color=Color.BLACK, ship_color=Color.D_GRAY)
 
         self.ranges = [self.melee_range, self.close_range, self.far_range, self.scanner_range]
 
@@ -62,7 +62,7 @@ class SpaceBattle(object):
 
     def draw(self, screen):
         zoom = 4
-        screen.fill(Color.black)
+        screen.fill(Color.BLACK)
         # center screen: player
         player_position = (self.center[0] - self.player_ship.get_ship_size(zoom=zoom)[0]/2,
                            self.center[1] - self.player_ship.get_ship_size(zoom=zoom)[1]/2)
@@ -89,12 +89,12 @@ class SpaceBattlePanel(object):
     def __init__(self, battle):
         self.battle = battle
 
-        self.attack_but = TextBox(pygame.Rect(20, 50, 100, 40), box_color=Color.d_gray, border_color=Color.gray,
-                                  highlight_color=Color.white, active_color=Color.gray, name='Attack Button',
-                                  message='ATTACK', text_color=Color.red, text_outline=True, font=self.battle.font)
-        self.defend_but = TextBox(pygame.Rect(20, 100, 100, 40), box_color=Color.d_gray, border_color=Color.gray,
-                                  highlight_color=Color.white, active_color=Color.gray, name='Defend Button',
-                                  message='DEFEND', text_color=Color.blue, text_outline=True, font=self.battle.font)
+        self.attack_but = TextBox(pygame.Rect(20, 50, 100, 40), box_color=Color.D_GRAY, border_color=Color.GRAY,
+                                  highlight_color=Color.WHITE, active_color=Color.GRAY, name='Attack Button',
+                                  message='ATTACK', text_color=Color.RED, text_outline=True, font=self.battle.font)
+        self.defend_but = TextBox(pygame.Rect(20, 100, 100, 40), box_color=Color.D_GRAY, border_color=Color.GRAY,
+                                  highlight_color=Color.WHITE, active_color=Color.GRAY, name='Defend Button',
+                                  message='DEFEND', text_color=Color.BLUE, text_outline=True, font=self.battle.font)
 
     def update(self, key, mouse, offset=(0, 0)):
         if self.attack_but.update(key=key, mouse=mouse, offset=offset):

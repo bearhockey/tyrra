@@ -1,7 +1,7 @@
 import pygame
 import random
 
-import src.Color as Color
+import src.const.Color as Color
 
 from src.Map import Map
 from src.Orbit import Orbit
@@ -11,7 +11,7 @@ class Planet(object):
     def __init__(self, index=0, seed=0, sun_position=(0, 0), radius=128, orbit=128, orbit_point=360, name='NULL'):
         random.seed(seed)
         self.radius = radius
-        self.orbit = Orbit(position=sun_position, orbit=orbit, color=Color.gray)
+        self.orbit = Orbit(position=sun_position, orbit=orbit, color=Color.GRAY)
         self.orbit_point = orbit_point
         self.name = name
         self.radius_mod = 10
@@ -33,11 +33,11 @@ class Planet(object):
         # pygame.draw.circle(screen, (255, 255, 255), position, self.radius / 10)
         # pygame.draw.circle(screen, (0, 0, 0), position, max(self.radius / 10, 5), 1)
         pygame.draw.circle(screen,
-                           Color.gray,
+                           Color.GRAY,
                            self.orbit.get_point(self.orbit_point),
                            int(self.radius / self.radius_mod))
         pygame.draw.circle(screen,
-                           Color.black,
+                           Color.BLACK,
                            self.orbit.get_point(self.orbit_point),
                            int(max(self.radius / self.radius_mod, 5)),
                            1)

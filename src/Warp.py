@@ -1,6 +1,7 @@
 import pygame
 
-import src.Color as Color
+import settings
+import src.const.Color as Color
 from src.components.text import Text
 from src.components.text.InputBox import InputBox
 from src.components.text.TextBox import TextBox
@@ -11,22 +12,22 @@ class Warp(object):
         self.panel = panel
         self.font = font
         self.small_font = small_font
-        self.x_cord_box = InputBox(pygame.Rect(75, 200, 200, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                   highlight_color=Color.white, active_color=Color.gray, message='0',
-                                   text_color=Color.white, font=self.font, text_limit=10,
+        self.x_cord_box = InputBox(pygame.Rect(50, 200, 180, 30), box_color=Color.D_GRAY, border_color=Color.GRAY,
+                                   highlight_color=Color.WHITE, active_color=Color.GRAY, message='0',
+                                   text_color=Color.WHITE, font=self.font, text_limit=10,
                                    allowed_characters=range(48, 58))
-        self.y_cord_box = InputBox(pygame.Rect(75, 250, 200, 30), box_color=Color.d_gray, border_color=Color.gray,
-                                   highlight_color=Color.white, active_color=Color.gray, message='0',
-                                   text_color=Color.white, font=self.font, text_limit=10,
+        self.y_cord_box = InputBox(pygame.Rect(50, 250, 180, 30), box_color=Color.D_GRAY, border_color=Color.GRAY,
+                                   highlight_color=Color.WHITE, active_color=Color.GRAY, message='0',
+                                   text_color=Color.WHITE, font=self.font, text_limit=10,
                                    allowed_characters=range(48, 58))
-        self.generate_button = TextBox(pygame.Rect(125, 300, 100, 50), (20, 150, 30), Color.gray,
-                                       highlight_color=Color.white, active_color=Color.blue, message=u'\u304D',
-                                       text_color=Color.white, font=self.font)
+        self.generate_button = TextBox(pygame.Rect(75, 300, 100, 50), (20, 150, 30), Color.GRAY,
+                                       highlight_color=Color.WHITE, active_color=Color.BLUE, message=u'\u304D',
+                                       text_color=Color.WHITE, font=self.font)
 
     def draw(self, screen):
-        Text.draw_text(screen, self.font, 'Warp to System', Color.white, (105, 14))
-        Text.draw_text(screen, self.font, 'X:', Color.white, (40, 200))
-        Text.draw_text(screen, self.font, 'Y:', Color.white, (40, 250))
+        Text.draw_text(screen, self.font, "Warp to System", Color.WHITE, (10, 55))
+        Text.draw_text(screen, self.font, 'X:', Color.WHITE, (settings.spacing, 200))
+        Text.draw_text(screen, self.font, 'Y:', Color.WHITE, (settings.spacing, 250))
         self.x_cord_box.draw(screen)
         self.y_cord_box.draw(screen)
         self.generate_button.draw(screen)

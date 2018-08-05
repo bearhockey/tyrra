@@ -1,6 +1,6 @@
 import random
 
-from noise import snoise2
+# from noise import snoise2
 
 from src.components.Maths import Maths
 
@@ -19,11 +19,13 @@ class Elevation(object):
                 node.elevation = (snoise2(x=(node.x + seed) / freq,
                                           y=(node.y + seed) / freq,
                                           octaves=octaves) + 1) / 2
-                '''
+                
                 node.elevation = (snoise2((node.x + seed) / scale,
                                           (node.y + seed) / scale,
                                           octaves=octaves,
                                           repeatx=map_width / scale) + 1) / 2
+                '''
+                node.elevation = random.random()
 
     @staticmethod
     def flat_land(node_map, level=0.5):

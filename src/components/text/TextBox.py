@@ -1,6 +1,6 @@
 import pygame
 
-import src.Color
+import src.const.Color as Color
 from src.components.Box import Box
 
 
@@ -50,9 +50,9 @@ class TextBox(Box):
             if self.text_outline:
                 outline_rect = pygame.Rect(self.text_rect.left+2, self.text_rect.top+2, self.text_rect.width,
                                            self.text_rect.height)
-                if text_color == src.Color.black:
-                    screen.blit(self.font.render(self.message, True, src.Color.white), outline_rect)
+                if text_color == Color.BLACK:
+                    screen.blit(self.font.render(self.message, True, Color.WHITE), outline_rect)
                 else:
-                    screen.blit(self.font.render(self.message, True, src.Color.black), outline_rect)
+                    screen.blit(self.font.render(self.message, True, Color.BLACK), outline_rect)
 
             screen.blit(self.font.render(self.message, True, text_color), self.text_rect)

@@ -2,7 +2,7 @@ import os
 
 import pygame
 
-import src.Color as Color
+import src.const.Color as Color
 import settings
 from src.Component import Component
 from src.Pawn import Pawn
@@ -18,26 +18,26 @@ class Debug(object):
         self.font = font
         self.buttons = []
 
-        self.add_crew = TextBox(pygame.Rect(20, 50, 250, 45), Color.d_gray, border_color=None,
-                                highlight_color=Color.white, active_color=None, message='Add Crew',
-                                text_color=Color.white, text_outline=True, font=self.font)
+        self.add_crew = TextBox(pygame.Rect(20, 50, 250, 45), Color.D_GRAY, border_color=None,
+                                highlight_color=Color.WHITE, active_color=None, message='Add Crew',
+                                text_color=Color.WHITE, text_outline=True, font=self.font)
         self.buttons.append(self.add_crew)
 
-        self.add_shield = TextBox(pygame.Rect(20, 100, 250, 45), Color.d_gray, highlight_color=Color.white,
-                                  message='Add Shield', text_color=Color.white, text_outline=True, font=self.font)
+        self.add_shield = TextBox(pygame.Rect(20, 100, 250, 45), Color.D_GRAY, highlight_color=Color.WHITE,
+                                  message='Add Shield', text_color=Color.WHITE, text_outline=True, font=self.font)
         self.buttons.append(self.add_shield)
 
-        self.spam_console = TextBox(pygame.Rect(20, 150, 250, 45), Color.d_gray, highlight_color=Color.white,
-                                    message='Spam Debug', text_color=Color.white, text_outline=True, font=self.font)
+        self.spam_console = TextBox(pygame.Rect(20, 150, 250, 45), Color.D_GRAY, highlight_color=Color.WHITE,
+                                    message='Spam Debug', text_color=Color.WHITE, text_outline=True, font=self.font)
         self.buttons.append(self.spam_console)
 
-        self.damage_shield = TextBox(pygame.Rect(20, 200, 250, 45), Color.d_gray, highlight_color=Color.white,
-                                     message='Damage Ship Shields', text_color=Color.white, text_outline=True,
+        self.damage_shield = TextBox(pygame.Rect(20, 200, 250, 45), Color.D_GRAY, highlight_color=Color.WHITE,
+                                     message='Damage Ship Shields', text_color=Color.WHITE, text_outline=True,
                                      font=self.font)
         self.buttons.append(self.damage_shield)
 
-        self.enter_battle = TextBox(pygame.Rect(20, 250, 250, 45), Color.d_gray, highlight_color=Color.white,
-                                    message="Enter Battle", text_color=Color.white, text_outline=True,
+        self.enter_battle = TextBox(pygame.Rect(20, 250, 250, 45), Color.D_GRAY, highlight_color=Color.WHITE,
+                                    message="Enter Battle", text_color=Color.WHITE, text_outline=True,
                                     font=self.font)
         self.buttons.append(self.enter_battle)
 

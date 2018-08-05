@@ -2,34 +2,36 @@ import os
 
 import pygame
 
-import src.Color as Color
+import src.const.Color as Color
 import settings
 from src.components.Box import Box
 from src.components.text.TextBox import TextBox
 
 
 class Title(object):
-    def __init__(self, font, screen_width=800, screen_height=600):
+    def __init__(self, font):
         self.font = font
+        screen_width = settings.screen_width
+        screen_height = settings.screen_height
         title_image = pygame.image.load(os.path.join(settings.main_path, 'res', 'tyrra_title.png'))
         pygame.mixer.music.load(os.path.join(settings.main_path, 'res', 'tyrra_bit.ogg'))
-        self.title_image = Box(rect=pygame.Rect(10, 10, screen_width-20, screen_height-20), border_color=Color.white,
-                               highlight_color=Color.white, active_color=Color.white, border=4, image=title_image)
+        self.title_image = Box(rect=pygame.Rect(10, 10, screen_width-20, screen_height-20), border_color=Color.WHITE,
+                               highlight_color=Color.WHITE, active_color=Color.WHITE, border=4, image=title_image)
         self.new_game = TextBox(rect=pygame.Rect(screen_width/2-40, screen_height/2+20, 120, 30),
-                                highlight_color=Color.gray, active_color=Color.blue, name='new', message='New Game',
-                                text_color=Color.white, text_outline=True, font=font, highlight_text=True,
+                                highlight_color=Color.GRAY, active_color=Color.BLUE, name='new', message='New Game',
+                                text_color=Color.WHITE, text_outline=True, font=font, highlight_text=True,
                                 highlight_box=False)
         self.load_game = TextBox(rect=pygame.Rect(screen_width/2-40, screen_height/2+60, 120, 30),
-                                 highlight_color=Color.gray, active_color=Color.blue, name='load', message='Load Game',
-                                 text_color=Color.white, text_outline=True, font=font, highlight_text=True,
+                                 highlight_color=Color.GRAY, active_color=Color.BLUE, name='load', message='Load Game',
+                                 text_color=Color.WHITE, text_outline=True, font=font, highlight_text=True,
                                  highlight_box=False)
         self.options = TextBox(rect=pygame.Rect(screen_width/2-40, screen_height/2+100, 100, 30),
-                               highlight_color=Color.gray, active_color=Color.blue, name='options', message='Options',
-                               text_color=Color.white, text_outline=True, font=font, highlight_text=True,
+                               highlight_color=Color.GRAY, active_color=Color.BLUE, name='options', message='Options',
+                               text_color=Color.WHITE, text_outline=True, font=font, highlight_text=True,
                                highlight_box=False)
         self.quit = TextBox(rect=pygame.Rect(screen_width/2-40, screen_height/2+140, 80, 30),
-                            highlight_color=Color.gray, active_color=Color.blue, name='quit', message='Quit',
-                            text_color=Color.white, text_outline=True, font=font, highlight_text=True,
+                            highlight_color=Color.GRAY, active_color=Color.BLUE, name='quit', message='Quit',
+                            text_color=Color.WHITE, text_outline=True, font=font, highlight_text=True,
                             highlight_box=False)
         self.buttons = [self.new_game, self.load_game, self.options, self.quit]
 

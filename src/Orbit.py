@@ -1,10 +1,10 @@
-import src.Color as Color
+import src.const.Color as Color
 
 from src.components.Ellipse import Ellipse
 
 
 class Orbit(object):
-    def __init__(self, position=(0, 0), orbit=0, color=Color.white, outline=2):
+    def __init__(self, position=(0, 0), orbit=0, color=Color.WHITE, outline=1):
         self.position = position
         self.orbit = orbit
 

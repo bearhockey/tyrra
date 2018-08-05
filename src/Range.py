@@ -1,9 +1,9 @@
-import src.Color as Color
+import src.const.Color as Color
 from src.components.Ellipse import Ellipse
 
 
 class Range(object):
-    def __init__(self, distance, center=(0, 0), ring_color=Color.d_gray, ship_color=Color.white):
+    def __init__(self, distance, center=(0, 0), ring_color=Color.D_GRAY, ship_color=Color.WHITE):
         self.distance = distance
         self.circle = Ellipse(position=center, x_radius=distance, y_radius=distance)
         self.enemies = []
@@ -29,7 +29,7 @@ class Range(object):
                 draw_point = (self.circle.get_point(orbit_point)[0] - ship_size[0] / 2,
                               self.circle.get_point(orbit_point)[1] - ship_size[1] / 2)
                 if enemy == target:
-                    color = Color.red
+                    color = Color.RED
                 else:
                     color = self.ship_color
                 enemy.draw_ship(screen, position=draw_point, color=color, zoom=zoom)
